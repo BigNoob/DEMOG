@@ -8,7 +8,7 @@ var routes = require('routes');
 var http = require('http');
 
 var app = express();
-var server = app.listen(8099);
+var server = app.listen(process.env.PORT || 8099);
 var io = require("socket.io").listen(server);
 io.set('log level', 0);
 
