@@ -1,0 +1,22 @@
+{
+  "name": "server-0-3",
+  "version": "0.0.3",
+  "description": "experiment server",
+  "main": "server-0-3.js",
+  "dependencies": {
+    "body-parser": "~1.0.2",
+    "ejs": "~1.0.0",
+    "express": "^3.2.6",
+    "json": "~0.0.14",
+    "socket.io": "~0.9.6",
+    "urlencode": "~0.2.0",
+    "routes": "~1.1.0",
+    "logfmt": "^1.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

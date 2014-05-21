@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>client game page</title>
+	<link rel='stylesheet' href='/public/styles.css' />
+	<script src="/public/easeljs-0.7.1.min.js"></script>
+    <script>
+        function init() {
+        	var canvas = document.getElementById("tutorialCanvas");
+            var stage = new createjs.Stage(canvas);
+            var circle = new createjs.Shape();
+			circle.graphics.beginFill("red").drawCircle(0, 0, 50);
+			circle.x = 100;
+			circle.y = 100;
+			stage.addChild(circle);
+            stage.update();
+        }
+    </script>
+</head>
+<body>
+	<canvas id="spaceCoop" width="500" height="300">
+        alternate content
+    </canvas>
+</body>
+</html>
