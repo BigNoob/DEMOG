@@ -106,5 +106,5 @@ function serverMessageSender(data)
 function tick(event) {
       stage.update(event);
       //console.log("ticked");
-      sendShipPosition({ship.x,ship.y});
+      //sendShipPosition({ship.x,ship.y});
 }
