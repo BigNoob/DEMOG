@@ -406,7 +406,10 @@ function gameStateUpdate()
       {
             moveEnemies();
       }
-
+      else
+      {
+            moveEnemies();
+      }
 
       if(bulletArray.length){
             for(var i=0;i<bulletArray.length;i++){
