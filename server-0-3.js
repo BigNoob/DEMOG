@@ -22,8 +22,15 @@ app.configure(function(){
     app.use(app.router);
     app.use("/public",express.static(__dirname+"/public"));
 });
+/*
+var stdo = require('fs').createWriteStream('var/log/node-server/log.txt');
+process.stdout.write = (function(write){
+    return function(string,encoding,fd){
+        stdo.write(string);
+    }
+})(process.stdout.write)
+*/
 console.log(server.address().port);
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Global Datas, will be editable by the admin
@@ -244,13 +251,15 @@ io.sockets.on("connection", function (socket) {
                    experimentsList[i].addRoom(experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length);
                     entities[myNumber][5] = experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length;
                     socket.join(experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length);  
-                    console.log("Player: " + entities[myNumber][0]+" has reach the experiment in room: "+entities[myNumber][5])
+                    console.log("Player: " + entities[myNumber][0]+" has reach the experiment in room: "+entities[myNumber][5]+" and has to wait for another player");
                 }
                 else
                 {
                     entities[myNumber][5] = experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length;
                     socket.join(experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length);  
-                    console.log("Player: " + entities[myNumber][0]+" has reach the experiment in room: "+entities[myNumber][5])
+                    console.log("Player: " + entities[myNumber][0]+" has reach the experiment in room: "+entities[myNumber][5]);
+                    socket.broadcast.to(entities[myNumber][5]).emit("message",'G');
+                    socket.send('G');
                 }
 
             }
