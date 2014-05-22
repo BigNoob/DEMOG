@@ -195,8 +195,10 @@ function handleComplete (event)
 function startServerListen()
 {
       //Socket init
-      socket = io.connect('http://localhost:8099');
       
+      var tmpAddress = document.URL;
+      var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
+      socket = io.connect(serverAddress);
       //Socket Server Listener
       socket.on("message",function(data){
             serverMessageParser(data);
