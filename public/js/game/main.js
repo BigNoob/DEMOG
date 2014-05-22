@@ -6,7 +6,8 @@
 //
 var canvas;
 var stage;
-
+var stagewidth;
+var stageheight;
 //Proto FSM
 var lastState;
 var state;
@@ -25,7 +26,8 @@ var xp;
 
 //IO Socket
 var socket;
-
+var isSyncer = false;
+var stopListenSync = false;
 //Views
 var ship;
 var allyShip;
@@ -37,10 +39,18 @@ var progressText ;
 //Game Variables
 var score;
 
+var canfire = true;
+var invaderArray = [];
+var bulletArray = [];
+
 var xSpeed = 5;
 var shotSpeed = 10;
-
-var enemySpeed = 4;
+var invaderWidth = 32;
+var leftBounds = 25;
+var rightBounds = 575;
+var invaderSpeed = 6;
+var changeDirection = false;
+var alphaThreshold = 0.75;
 
 //Preloader
 var preloader;
@@ -55,10 +65,13 @@ var ShareView = new createjs.Container();
 var WaitWheel = new createjs.Container();
 var wheelCircleArray;
 var wheelInc = 0;
+
+var EnemiesCont = new createjs.Container();
 //Constants
 var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;
 var KEYCODE_SPACE = 32;
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -73,10 +86,12 @@ function Main(loginQuery,xpQuery) {
       canvas = document.getElementById("demoCanvas");
       stage = new createjs.Stage(canvas);
 
+      stagewidth = stage.canvas.width;
+      stageheight = stage.canvas.height;
+
       state = firstState;
 
-      document.onkeydown = handleKeyDown;
-      document.onkeyup = handleKeyUp;
+
 
       background = new createjs.Bitmap("/public/images/SpaceBackground.png");
       stage.addChild(background);
@@ -85,6 +100,14 @@ function Main(loginQuery,xpQuery) {
       //Game Loop Listener
       createjs.Ticker.setFPS(30);
       createjs.Ticker.on("tick", tick); 
+
+
+      window.addEventListener("keydown", function(e) {
+      // space and arrow keys
+      if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+            e.preventDefault();
+      }
+      }, false);
 
       StartLoading();
 }
@@ -95,8 +118,9 @@ function StartLoading()
       state = loadingState;
       //Loading Progression text
       progressText = new createjs.Text("", "20px Arial", "#FFFFFF")
-      progressText.x = 300 - progressText.getMeasuredWidth() / 2;
       progressText.y = 20;
+      progressText.x = stagewidth - progressText.getMeasuredWidth() / 2; 
+
       stage.addChild(progressText);
       stage.update();
       //Loading Manifest
@@ -188,20 +212,34 @@ function serverMessageParser(data)
             case 'I':
                   console.log('I message recieved');
                   initOwnShipPosition(splittedData);
-            break;
+                  break;
             case 'C':
                   console.log('C message recieved');
                   initOtherShipPosition(splittedData);
-            break;
+                  break;
             case 'K':
                   alert('You have been kicked by the server');
-            break;
+                  break;
             case 'G':
                   waintingForAnotherPlayer = false;
                   lastState = state;
                   state = gameState;
                   InitGameState();
-            break;
+                  break;
+            case 'UM':
+                  moveAllyShip(splittedData);
+                  break;
+            case 'S':
+                  SyncShoot(splittedData);
+                  break;
+            case 'SYNCER':
+                  isSyncer = true;
+                  //console.log(isSyncer);
+                  break;
+            case 'EU':
+                  //console.log("Enemies Sync Message :"+data)
+                  if(!isSyncer && !stopListenSync){syncEnemies(splittedData);}
+                  break;
       }
 }
 
@@ -209,8 +247,7 @@ function initOwnShipPosition(coord)
 {
       ship.x = coord[2];
       ship.y = coord[3];
-      stage.addChild(ship);  
-      console.log("move own ship to position: "+coord[1]+","+coord[2]);
+      if (state != gameState){stage.addChild(ship); }
 }
 
 function initOtherShipPosition(coord)
@@ -218,9 +255,30 @@ function initOtherShipPosition(coord)
       allyShip.x = coord[2];
       allyShip.y = coord[3];
       stage.addChild(allyShip);
-      console.log("move ally ship to position: "+coord[2]+","+coord[3]);
+      
 }
 
+function moveAllyShip(coord)
+{
+     allyShip.x = coord[2]; 
+}
+
+function syncEnemies(coord)
+{
+      stopListenSync = true;
+      for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 7; j++) {
+                  var index = i+j*4;
+                  //console.log(index);
+                  invaderArray[index].x = parseInt(coord[1]) + (j * 45);
+                  invaderArray[index].y = parseInt(coord[2]) + (i * 46);
+                  
+            }
+      }
+      console.log("Coord position : "+coord[1]+";"+coord[2]);
+      console.log("Invaders"+0+";"+0+" position : "+invaderArray[0+0].x+";"+invaderArray[0+0].y);
+      stopListenSync = false;
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Init Functions
@@ -232,8 +290,8 @@ function InitWaitState()
       var circleSize = 100;
       var elemSize = 30;
       var elemNum = 10;
-      var stageCenterX = stage.canvas.width / 2;
-      var stageCenterY = stage.canvas.height / 2;
+      var stageCenterX = stagewidth / 2;
+      var stageCenterY = stageheight / 2;
       var angle = 2*Math.PI / elemNum;
 
       for(var i = 0 ; i < elemNum ; i++)
@@ -281,7 +339,26 @@ function InitGameState()
 {
       stage.removeChild(WaitWheel);
       stage.removeChild(progressText);
+      setupInvaders();
+      document.onkeydown = handleKeyDown;
+      document.onkeyup = handleKeyUp;
 }
+
+function setupInvaders() {
+   
+    var xPos = 148;
+    var yPos = 18;
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 7; j++) {
+            tempInvader = enemy.clone()
+            tempInvader.x = xPos + j * 45;
+            tempInvader.y = yPos + i * 46;
+            stage.addChild(tempInvader);
+            invaderArray.push(tempInvader);
+        }
+    }
+}
+
 function InitShareState()
 {
 
@@ -323,14 +400,73 @@ function waitStateUpdate()
 
 function gameStateUpdate()
 {
+      if(isSyncer)
+      {
+            moveEnemies();
+      }
 
+
+      if(bulletArray.length){
+            for(var i=0;i<bulletArray.length;i++){
+                  bulletArray[i].y -= 10;
+            }
+      }
+      socket.emit("message",'UM,' + ship.x + ',' + ship.y + ',' + 0 + ',' + 0);
+      checkCollisions();
+}
+
+function moveEnemies()
+{
+      for(var i = 0; i < invaderArray.length; i++){
+            invaderArray[i].x += invaderSpeed;
+        
+            if(invaderArray[i].x > rightBounds - invaderWidth || invaderArray[i].x < leftBounds){
+                  changeDirection = true;
+            }
+      }    
+
+      if(changeDirection){
+            invaderSpeed *= -1;
+            for(var j=0;j < invaderArray.length; j++){
+                  invaderArray[j].y += 10;
+            }
+            changeDirection = false;    
+      }
+      socket.emit("message",'EU,' + invaderArray[0].x + ',' + invaderArray[0].y); 
 }
 
 function shareStateUpdate()
 {
 
 }
+function InstantiateShoot()
+{
+      if(canfire){
+      var tempBullet = shot.clone();
+      tempBullet.y = ship.y;
+      tempBullet.x = ship.x;
 
+      socket.emit("message",'S,' + tempBullet.x + ',' + tempBullet.y + ',' + 0 );
+
+      //console.log(tempBullet.x+","+tempBullet.y);
+      bulletArray.push(tempBullet);
+      stage.addChild(tempBullet);
+      canfire = false;
+
+      //createjs.Sound.play("./sound/laser.mp3");
+      setTimeout(function(){canfire = true},750);
+      }
+}
+function SyncShoot(coord)
+{
+      
+      var tempBullet = shot.clone();
+      tempBullet.x = coord[2];
+      tempBullet.y = coord[3];
+      bulletArray.push(tempBullet);
+      stage.addChild(tempBullet);
+
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Input Callbacks
@@ -353,5 +489,59 @@ function handleKeyDown(e)
 
 function handleKeyUp(e)
 {
-      
+      switch (e.keyCode) {
+        case KEYCODE_SPACE:
+            InstantiateShoot();
+        break;
+      }  
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//    Helpers Functions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function checkCollisions(){
+       if (bulletArray.length) {
+        for (var i = invaderArray.length - 1; i >= 0; i--) {
+            for (var j = bulletArray.length - 1; j >= 0; j--) {
+                  if(invaderArray[i].alpha != 0)
+                  {
+                        var collision = ndgmr.checkPixelCollision(invaderArray[i], bulletArray[j],alphaThreshold) ;
+                        if(collision){
+                              //stage.removeChild(invaderArray[i]);
+                              //invaderArray.splice(i, 1);
+                              invaderArray[i].alpha = 0;
+                              stage.removeChild(bulletArray[j]);
+                              bulletArray.splice(j, 1);                    
+                  }}
+            }
+        }
+    }
+    
+    for(var i=0;i<invaderArray.length;i++){
+      if(invaderArray[i].alpha != 0)
+                  {
+         var collision = ndgmr.checkPixelCollision(invaderArray[i], ship,alphaThreshold) ;
+         if(collision){
+            doGameOver();                    
+         }
+      }
+    }
+    
+}
+function checkWin(){
+    if(invaderArray.length == 0){
+        doGameOver();
+    }
+    
+}
+function doGameOver(){
+    createjs.Ticker.removeEventListener("tick", tick);
+    var gameOverText = new createjs.Text("Game Over", "50px Arial", "#FFFFFF");
+    gameOverText.x = stagewidth/2 - gameOverText.getMeasuredWidth()/2;
+    gameOverText.y = stageheight/2 - gameOverText.getMeasuredHeight()/2;
+    stage.addChild(gameOverText);
+    
 }

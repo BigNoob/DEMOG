@@ -248,18 +248,21 @@ io.sockets.on("connection", function (socket) {
 
                 if(experimentsList[i].roomsData.length < experimentsList[i].playersData.length / 2)
                 {
-                   experimentsList[i].addRoom(experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length);
+                    experimentsList[i].addRoom(experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length);
                     entities[myNumber][5] = experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length;
                     socket.join(experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length);  
+                    socket.send('SYNCER');
                     console.log("Player: " + entities[myNumber][0]+" has reach the experiment in room: "+entities[myNumber][5]+" and has to wait for another player");
                 }
                 else
                 {
                     entities[myNumber][5] = experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length;
                     socket.join(experimentsList[i].expName+"-Room"+experimentsList[i].roomsData.length);  
-                    console.log("Player: " + entities[myNumber][0]+" has reach the experiment in room: "+entities[myNumber][5]);
+                    
                     socket.broadcast.to(entities[myNumber][5]).emit("message",'G');
                     socket.send('G');
+
+                    console.log("Player: " + entities[myNumber][0]+" has reach the experiment in room: "+entities[myNumber][5]);
                 }
 
             }
@@ -377,8 +380,12 @@ io.sockets.on("connection", function (socket) {
             else if(new_data[0] == 'EU')
             {
                 // data[1] is first enemy X value
-                // data[2] is second enemy X value, etc...
-                socket.broadcast.to(entities[myNumber][5]).emit("message",'EU, '+ new_data[1] +','+new_data[2] +','+new_data[3] +','+new_data[4] +','+new_data[5] +','+new_data[6] +','+new_data[7] +','+new_data[8] +','+new_data[9] +','+new_data[10] +','+new_data[11] +','+new_data[12] +','+new_data[13] +','+new_data[14] +','+new_data[15] );
+                // data[2] is first enemy Y value
+                var enemiesPos = [];
+                enemiesPos[0] = new_data[1];
+                enemiesPos[1] = new_data[2];
+                //console.log("Enemies Sync Message recieved");
+                socket.broadcast.to(entities[myNumber][5]).emit("message",'EU,' +enemiesPos[0]+","+enemiesPos[1]);
             }
             else if(new_data[0] == 'D')
             {
