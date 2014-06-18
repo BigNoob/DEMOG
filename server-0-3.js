@@ -22,14 +22,7 @@ app.configure(function(){
     app.use(app.router);
     app.use("/public",express.static(__dirname+"/public"));
 });
-/*
-var stdo = require('fs').createWriteStream('var/log/node-server/log.txt');
-process.stdout.write = (function(write){
-    return function(string,encoding,fd){
-        stdo.write(string);
-    }
-})(process.stdout.write)
-*/
+
 console.log(server.address().port);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -71,25 +64,24 @@ var INITIAL_VEL_Y = 0;                                      //Initial Y speed of
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var entities = [];
 
-//Number of connected clients                    
-var count = 0;
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Classes declaration
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-function Player(login)
-{
-    this.login = login;
-}
-*/
+
 function Room(roomName,firstPlayerId,secondPlayerId)
 {
     this.roomName = roomName;
     this.firstPlayerId = firstPlayerId;
     this.secondPlayerId = secondPlayerId;
+    this.state = "WAITING";  // WAITING, RUNNING, OVER, UNEXPECTED
+
+    this.enemyPackPositionX = 148;
+    this.enemyPackPositionX = 18;
+    this.aliveEnemies = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
 }
 
 function Experiment(expName,type,roomsData,playersData)
@@ -98,6 +90,7 @@ function Experiment(expName,type,roomsData,playersData)
     this.isRunning = false;
     this.startTime = null;
     this.expType = type;
+    this.maxIteration = 1;
     this.roomsData = roomsData;
     this.playersData = playersData;
     this.startXP = function()
@@ -121,91 +114,27 @@ function Experiment(expName,type,roomsData,playersData)
     };
 }
 
-
-
+function Player()
+{
+    this.login = "NULL";
+    this.UID = -1;
+    this.points = 0;
+    this.curIteration = 0;
+    this.roomName = "NULL";
+    this.exp = "NULL";
+    this.xPos = INITIAL_X;
+    this.yPos = INITIAL_Y;
+}
+//Array containing all the clients connected
+var ClientList = [];
+//Number of connected clients                    
+var count = 0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Server Code Begin
+// Space Coop Game Code
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Admin Server Code
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.get('/admin',function(req,res){
-    res.render('admin.ejs', {exps: experimentsList});
-});
-
-app.post('/admin/add/', function(req,res){
-    console.log("Admin 'addXp' Request recieved: " +req.param('xpName') + req.param('xpType'));
-    var xpName = req.param('xpName');
-    var xpType = req.param('xpType');
-    if(xpName != '')
-    {
-        experimentsList.push(new Experiment(xpName,xpType,[],[]));
-    }
-    res.redirect('/admin');
-});
-
-app.post('/admin/delete/:xpName', function(req, res) {
-    console.log("Admin 'deleteXp' Request recieved: " +xpName);
-    var xpName = req.param('xpName');
-    if (xpName != '') {
-        for(var i =0; i < experimentsList.length; i ++)
-        {
-            if(experimentsList[i].expName == xpName)
-            {
-                experimentsList.splice(i,1);
-            }
-        }
-    }
-    res.redirect('/admin');
-});
-app.post('/admin/start/:xpName', function(req, res) {
-    console.log("Admin 'startXP' Request recieved: " +xpName);
-    var xpName = req.param('xpName');
-    if (xpName != '') {
-        for(var i =0; i < experimentsList.length; i ++)
-        {
-            if(experimentsList[i].expName == xpName)
-            {
-                experimentsList[i].startXP();
-            }
-        }
-    }
-    res.redirect('/admin');
-});
-app.post('/admin/stop/:xpName', function(req, res) {
-    console.log("Admin 'stopXP' Request recieved: " +xpName);
-    var xpName = req.param('xpName');
-    if (xpName != '') {
-        for(var i =0; i < experimentsList.length; i ++)
-        {
-            if(experimentsList[i].expName == xpName)
-            {
-                experimentsList[i].stopXP();
-            }
-        }
-    }
-    res.redirect('/admin');
-});
-/*
-app.get('/',function(req,res){
-    res.redirect(301,"http://www.running-panda.fr/stage/SpaceCoop/index.html");
-});
-*/
-app.get('/game',function(req,res){
-    //var xpName = req.param('xpName');
-    res.render('client.ejs');
-});
-app.get('/gameAmazon/:xpName',function(req,res){
-    //var xpName = req.param('xpName');
-    res.locals.query = req.param('xpName');
-    res.render('clientAmazon.ejs');
-});
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -218,11 +147,19 @@ io.sockets.on("connection", function (socket) {
 
     var mySelf = entities[myNumber] = [myNumber, INITIAL_X+5*myNumber, INITIAL_Y, INITIAL_VEL_X, INITIAL_VEL_Y,'NULL','NULL','NULL'];
 
+    
+    
+    
+    var tmpPlayer  = new Player();
+    tmpPlayer.UID = myNumber;
+    ClientList[myNumber] = tmpPlayer;
+
     //Send the initial position and ID to connecting player
     console.log('New Player Connected. New Player\'s ID : '+ myNumber);
     console.log('I message sent');
-    socket.send('I,' + mySelf[0] + ',' + mySelf[1] + ',' + mySelf[2]);
-    
+    //socket.send('I,' + mySelf[0] + ',' + mySelf[1] + ',' + mySelf[2]);
+    socket.send('I,' + tmpPlayer.UID + ',' + tmpPlayer.xPos + ',' + tmpPlayer.yPos);
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
     // On Acknowledgment event recieved
@@ -343,10 +280,6 @@ io.sockets.on("connection", function (socket) {
     // 'S'  | Shoot message         | A player has shot                                                     | Server <---> Client
     // 'EU' | Enemy Update Message  | Update and sychronize the position of the enemies ship's in a room    | Server <---> Client
     // 'D'  | Disconnect message    | Destroy the ship of the player who left the game                      | Server <---> Client
-    // 'CR' | Create Room           | Ask the server to create a new game room (name of the room in arg)    | Server <---  Client
-    // 'CU' | Create User           | Ask the server to create a new user                                   | Server <---  Client
-    // 'AU' | Assign User           | Assign a user to a specific room                                      | Server <---  Client
-    // 'CE' | Create Experiment     | Create a new Experiment
     //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -381,11 +314,24 @@ io.sockets.on("connection", function (socket) {
             {
                 // data[1] is first enemy X value
                 // data[2] is first enemy Y value
-                var enemiesPos = [];
+                var enemiesPos = []; //= new_data.slice(1,new_data.length - 2);
                 enemiesPos[0] = new_data[1];
                 enemiesPos[1] = new_data[2];
                 //console.log("Enemies Sync Message recieved");
-                socket.broadcast.to(entities[myNumber][5]).emit("message",'EU,' +enemiesPos[0]+","+enemiesPos[1]);
+                /*
+                var tmpMessageContent = "";
+                for(var i = 0; i < enemiesPos.length; i ++)
+                {
+                    tmpMessageContent += ',' + enemiesPos[i];
+                }
+                */
+                //socket.broadcast.to(entities[myNumber][5]).emit("message",'EU' +tmpMessageContent);
+                socket.broadcast.to(entities[myNumber][5]).emit("message",'EU,' + enemiesPos[0] + ',' + enemiesPos[1]);
+            }
+            else if(new_data[0] == 'ED')
+            {
+                var deathIndex = new_data[1];
+                socket.broadcast.to(entities[myNumber][5]).emit("message",'ED,' + deathIndex);
             }
             else if(new_data[0] == 'D')
             {
@@ -393,6 +339,78 @@ io.sockets.on("connection", function (socket) {
             }
         }
     });
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Express Router
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+app.get('/admin',function(req,res){
+    res.render('admin.ejs', {exps: experimentsList});
+});
+
+app.post('/admin/add/', function(req,res){
+    console.log("Admin 'addXp' Request recieved: " +req.param('xpName') + req.param('xpType'));
+    var xpName = req.param('xpName');
+    var xpType = req.param('xpType');
+    if(xpName != '')
+    {
+        experimentsList.push(new Experiment(xpName,xpType,[],[]));
+    }
+    res.redirect('/admin');
+});
+
+app.post('/admin/delete/:xpName', function(req, res) {
+    console.log("Admin 'deleteXp' Request recieved: " +xpName);
+    var xpName = req.param('xpName');
+    if (xpName != '') {
+        for(var i =0; i < experimentsList.length; i ++)
+        {
+            if(experimentsList[i].expName == xpName)
+            {
+                experimentsList.splice(i,1);
+            }
+        }
+    }
+    res.redirect('/admin');
+});
+app.post('/admin/start/:xpName', function(req, res) {
+    console.log("Admin 'startXP' Request recieved: " +xpName);
+    var xpName = req.param('xpName');
+    if (xpName != '') {
+        for(var i =0; i < experimentsList.length; i ++)
+        {
+            if(experimentsList[i].expName == xpName)
+            {
+                experimentsList[i].startXP();
+            }
+        }
+    }
+    res.redirect('/admin');
+});
+app.post('/admin/stop/:xpName', function(req, res) {
+    console.log("Admin 'stopXP' Request recieved: " +xpName);
+    var xpName = req.param('xpName');
+    if (xpName != '') {
+        for(var i =0; i < experimentsList.length; i ++)
+        {
+            if(experimentsList[i].expName == xpName)
+            {
+                experimentsList[i].stopXP();
+            }
+        }
+    }
+    res.redirect('/admin');
+});
+
+app.get('/game',function(req,res){
+    res.render('client.ejs');
+});
+app.get('/gameAmazon/:xpName',function(req,res){
+    res.locals.query = req.param('xpName');
+    res.render('clientAmazon.ejs');
 });
 
 

@@ -25,6 +25,9 @@
 				<form action="/admin/stop/<%= exp.expName %>" method="post">
 					<button class="button" type="submit">Stop XP</button>
 				</form>
+				<form action="/admin/write/<%= exp.expName %>" method="post">
+					<button class="button" type="submit"> Write XP Results</button>
+				</form>
 			</section>
 		<%} }); %>
 		</ul>
@@ -46,6 +49,9 @@
 				</form>
 				<form action="/admin/start/<%= exp.expName %>" method="post">
 					<button class="button" type="submit">Start XP</button>
+				</form>
+				<form action="/admin/write/<%= exp.expName %>" method="post">
+					<button class="button" type="submit"> Write XP Results</button>
 				</form>
 			</section>
 		<% }}); %>
