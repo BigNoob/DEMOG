@@ -14,18 +14,21 @@
 		<% exps.forEach(function(exp, index){ if(exp.isRunning){ %>
 			
 			<section class="experiment">
-				<p>Name: <%= exp.expName %></p>
-				<p>Type: <%= exp.expType %></p>
+				<p>Name: <%= exp.xpName %></p>
+				<p>Type: <%= exp.xpType %></p>
+				<p>Game: <%= exp.xpGame %></p>
+				<p>Link: <script>document.URL</script> <%=  exp.xpLink %></p>
+				<p>Iterations: <%= exp.xpMaxIter %></p>
 				<p>Is Running : <%= exp.isRunning %></p>
-				<p>Start Date : <%= exp.startTime %></p>
-			
-				<form action="/admin/delete/<%= exp.expName %>" method="post">
+				<p>Start Date : <%= exp.launchDate %></p>
+				
+				<form action="/admin/delete/<%= exp.xpName %>" method="post">
 					<button class="button" type="submit">Delete</button>
 				</form>
-				<form action="/admin/stop/<%= exp.expName %>" method="post">
+				<form action="/admin/stop/<%= exp.xpName %>" method="post">
 					<button class="button" type="submit">Stop XP</button>
 				</form>
-				<form action="/admin/write/<%= exp.expName %>" method="post">
+				<form action="/admin/write/<%= exp.xpName %>" method="post">
 					<button class="button" type="submit"> Write XP Results</button>
 				</form>
 			</section>
@@ -39,18 +42,21 @@
 		<% exps.forEach(function(exp, index){ if(!exp.isRunning){ %>
 			
 			<section class="experiment">
-				<p>Name: <%= exp.expName %></p>
-				<p>Type: <%= exp.expType %></p>
+				<p>Name: <%= exp.xpName %></p>
+				<p>Type: <%= exp.xpType %></p>
+				<p>Game: <%= exp.xpGame %></p>
+				<p>Link: <script>window.location.href.protocol</script>  <%= exp.xpLink %></p>
+				<p>Iterations: <%= exp.xpMaxIter %></p>
 				<p>Is Running : <%= exp.isRunning %></p>
-				<p>Start Date : <%= exp.startTime %></p>
+				<p>Start Date : <%= exp.launchDate %></p>
 			
-				<form action="/admin/delete/<%= exp.expName %>" method="post">
+				<form action="/admin/delete/<%= exp.xpName %>" method="post">
 					<button class="button" type="submit">Delete</button>
 				</form>
-				<form action="/admin/start/<%= exp.expName %>" method="post">
+				<form action="/admin/start/<%= exp.xpName %>" method="post">
 					<button class="button" type="submit">Start XP</button>
 				</form>
-				<form action="/admin/write/<%= exp.expName %>" method="post">
+				<form action="/admin/write/<%= exp.xpName %>" method="post">
 					<button class="button" type="submit"> Write XP Results</button>
 				</form>
 			</section>
@@ -67,11 +73,20 @@
 				<label for="xpName">Experiment Name</label>
                 <input type="text" name="xpName" id="xpName"/>
                 <br>
+                <label for="xpName">Iterations</label>
+                <input type="number" name="Iter" id="Iter"/>
+                <br>
                 <label for="xpName">Type</label>
                 <select name="xpType">
-				<option value="WEB">WEB</option>
-				<option value="LOCAL">LOCAL</option>
-				<option value="AMAZON">AMAZON</option>
+					<option value="web">web</option>
+					<option value="local">local</option>
+					<option value="amazon">amazon</option>
+				</select>
+				<br>
+				<label for="xpName">Game</label>
+				<select name="xpGame">
+					<option value="space_coop">Space Coop</option>
+					<option value="rabbits">Rabbits</option>
 				</select>
                 <br>
                 <input class="button" type="submit" />

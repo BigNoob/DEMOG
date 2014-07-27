@@ -83,13 +83,13 @@ function Main(loginQuery,xpQuery) {
       xp = xpQuery;
       console.log(login+" , "+xp); 
 
-      canvas = document.getElementById("demoCanvas");
+      canvas = document.getElementById("viewport");
       stage = new createjs.Stage(canvas);
 
       stagewidth = stage.canvas.width;
       stageheight = stage.canvas.height;
 
-      state = firstState;
+      //state = firstState;
 
 
 
@@ -98,7 +98,7 @@ function Main(loginQuery,xpQuery) {
       stage.update();
 
       //Game Loop Listener
-      createjs.Ticker.setFPS(30);
+      createjs.Ticker.setFPS(60);
       createjs.Ticker.on("tick", tick); 
 
 
@@ -114,8 +114,8 @@ function Main(loginQuery,xpQuery) {
 
 function StartLoading()
 {
-      lastState = state;
-      state = loadingState;
+      //lastState = state;
+      //state = loadingState;
       //Loading Progression text
       progressText = new createjs.Text("", "20px Arial", "#FFFFFF")
       progressText.y = 20;
@@ -178,8 +178,8 @@ function handleComplete (event)
 {
      console.log("Finished Loading Assets");
      //stage.addChild(background);
-     lastState = state;
-     state = waitAnotherState;
+     //lastState = state;
+     //state = waitAnotherState;
      InitWaitState();
      
      startServerListen(); 
@@ -204,6 +204,7 @@ function startServerListen()
             serverMessageParser(data);
       });
       socket.emit('ack',login+","+xp);
+      socket.emit("message",'UM,' + ship.x + ',' + ship.y + ',' + 0 + ',' + 0);
 }
 
 function serverMessageParser(data)

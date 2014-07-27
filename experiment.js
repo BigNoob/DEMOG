@@ -1,6 +1,4 @@
-var RoomMaker = require('../serverLibs/room');
-
-function Experiment (xpName, xpType, xpMaxIter,xpGame)
+var Experiment = function (xpName, xpType, xpMaxIter,xpGame)
 {
 	this.GAME_TYPES = ["space_coop","rabbits"];
 	this.TYPES = ["local","amazon","web"];
@@ -10,7 +8,8 @@ function Experiment (xpName, xpType, xpMaxIter,xpGame)
 	this.xpGame = undefined;
 	this.isRunning = false;
 	this.launchDate = undefined;
-	this.rooms = [];
+	this.xpLink = this.generateLink();
+	//this.rooms = [];
 
 	this.lobby = [];
 	this.players = [];
@@ -49,19 +48,15 @@ function Experiment (xpName, xpType, xpMaxIter,xpGame)
 	{
 		throw("Game unrecognized. Unable to create. \n Try with one of these games : " + this.GAME_TYPES.toString());
 	}
-	this.rooms = new RoomMaker.Room("rm1",null,null,xpGame);
+	//this.rooms = new RoomMaker.Room("rm1",null,null,xpGame);
 	
 }
 
-function XPResults(xpName, xpType, xpMaxIter, xpGame, xpDate)
+Experiment.prototype.generateLink = function ()
 {
-	this.xpName = xpName;
-	this.xpType = xpType;
-	this.xpGame = xpGame;
-	this.xpMaxIter = xpMaxIter;
-	this.beginDate = xpDate;
-	this.endDate = undefined;
-}
+
+	return ('/game');
+};
 
 Experiment.prototype.startXP = function()
 {
@@ -100,15 +95,17 @@ Experiment.prototype.exportResults = function()
 	
 };
 
-Experiment.prototype.fillRooms = function()
+function XPResults(xpName, xpType, xpMaxIter, xpGame, xpDate)
 {
+	this.xpName = xpName;
+	this.xpType = xpType;
+	this.xpGame = xpGame;
+	this.xpMaxIter = xpMaxIter;
+	this.beginDate = xpDate;
+	this.endDate = undefined;
+}
 
-};
 
-Experiment.prototype.kickPlayer = function(UID)
-{
-
-};
-
-exports.Experiment = Experiment;
-
+if( 'undefined' != typeof global ) {
+    module.exports = global.Experiment = Experiment;
+}

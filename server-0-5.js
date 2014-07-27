@@ -43,8 +43,7 @@ console.log(server.address().port);
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var xpGen = require('./serverLibs/experiment.js');
-var XPGenerator = xpGen.Experiment;
+var xpGen = require('./serverLibs/experiment');
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -52,24 +51,101 @@ var XPGenerator = xpGen.Experiment;
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var testXP = CreateExperiment("test","amazon",4,"space_coop");
+var testXP = CreateExperiment("testXP","amazon",4,"space_coop");
+var experimentsList = [];
 
-//DEBUG
-testXP.startXp();
-testXP.exportResults();
+
+//DEBUG LINES TO TEST THE EXPERIMENTS
+experimentsList.push(testXP);
+experimentsList[0].startXP();
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// 
-// Helpers Function
+//
+// Express Router
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function CreateExperiment(name,type,iter,game)
-{
-	try{
-		return(new xpGen.Experiment(name,type,iter,game));
-	}catch(err)
-	{
-		console.log(err);
-	}
-}
+app.get('/admin',function(req,res){
+    res.render('admin.ejs', {exps: experimentsList});
+});
+
+app.post('/admin/add/', function(req,res){
+    console.log("Admin 'addXp' Request recieved: " +req.param('xpName') +" -|- "+ req.param('xpType') +" -|- "+ req.param('Iter') +" -|- "+ req.param('xpGame'));
+    var xpName = req.param('xpName');
+    var xpType = req.param('xpType');
+    var xpGame = req.param('xpGame');
+    var Iter = req.param('Iter');
+    if(xpName != '')
+    {
+        experimentsList.push(CreateExperiment(xpName,xpType,Iter,xpGame));
+    }
+    res.redirect('/admin');
+});
+
+app.post('/admin/delete/:xpName', function(req, res) {
+    console.log("Admin 'deleteXp' Request recieved: " +xpName);
+    var xpName = req.param('xpName');
+    if (xpName != '') {
+        for(var i =0; i < experimentsList.length; i ++)
+        {
+            if(experimentsList[i].xpName == xpName)
+            {
+                experimentsList.splice(i,1);
+            }
+        }
+    }
+    res.redirect('/admin');
+});
+app.post('/admin/start/:xpName', function(req, res) {
+    console.log("Admin 'startXP' Request recieved: " +xpName);
+    var xpName = req.param('xpName');
+    if (xpName != '') {
+        for(var i =0; i < experimentsList.length; i ++)
+        {
+            if(experimentsList[i].xpName == xpName)
+            {
+                experimentsList[i].startXP();
+            }
+        }
+    }
+    res.redirect('/admin');
+});
+app.post('/admin/stop/:xpName', function(req, res) {
+    console.log("Admin 'stopXP' Request recieved: " +xpName);
+    var xpName = req.param('xpName');
+    if (xpName != '') {
+        for(var i =0; i < experimentsList.length; i ++)
+        {
+            if(experimentsList[i].xpName == xpName)
+            {
+                experimentsList[i].stopXP();
+            }
+        }
+    }
+    res.redirect('/admin');
+});
+app.post('/admin/write/:xpName', function(req, res) {
+    console.log("Admin 'writeXP' Request recieved: " +xpName);
+    var xpName = req.param('xpName');
+    if (xpName != '') {
+        for(var i =0; i < experimentsList.length; i ++)
+        {
+            if(experimentsList[i].xpName == xpName)
+            {
+                experimentsList[i].exportResults();
+            }
+        }
+    }
+    res.redirect('/admin');
+});
+app.get('/game',function(req,res){
+    res.render('client.ejs');
+});
+app.get('/gameAmazon/:xpName',function(req,res){
+    res.locals.query = req.param('xpName');
+    res.render('clientAmazon.ejs');
+});
