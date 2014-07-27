@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>SpaceCoopHTML5 prototype</title>
+    <link rel='stylesheet' href='/public/styles/styles.css' />
     <link href="/public/styles/styles.css" rel="stylesheet" type="text/css">
     <script src="/public/js/libs/socket.io.min.js"></script>
     <script src="/public/js/libs/easeljs-0.7.1.min.js"></script>
@@ -10,12 +11,40 @@
     <script src="/public/js/libs/soundjs-0.5.2.min.js"></script>
     <script src="/public/js/libs/movieclip-0.7.1.min.js"></script>
     <script src="/public/js/game/collision.js"></script>
-    <script src="/public/js/game/main.js">    </script>
+    <script src="/public/js/game/space_coop_client.js"></script>
+    <script src="/public/js/game/main3.0.js">    </script>
     
 </head>
-<body onLoad="Main('testXP','toto')">
-    <canvas id="demoCanvas" width="1000" height="800">
-        alternate content
-    </canvas>
+<body onLoad="Main()">
+    <header>
+        <h1>D.E.M.O.G.</h1>
+        <h3>Dictator Experiment through Multiplayer Online Game</h3>
+        
+    </header>
+    <div class="centerDiv">
+        <div class="infoHolder">
+            <figure class="playerStatusHolder">
+                <h3>Player Status</h3>
+                <p id="id">Player ID: </p>
+                <p id="repetition">Current Repetition: </p>
+                <p id="score">Total Score: </p>
+            </figure>
+            <figure class="xpStatusHolder">
+                <h3>Current Experiment</h3>
+                <p id="xpName">Experience Name : <%= exp.xpName%></p>
+                <p id="xpIter">Number of Repetition : <%= exp.xpMaxIter %></p>
+                <p id="xpGame">Game : <%= exp.xpGame%></p>
+            </figure>
+        </div>
+
+        <div class="canvasHolder">
+            <canvas id="viewport" width=800 height=600 class="viewport">
+                alternate content
+            </canvas>
+        </div>
+    </div>
+    <footer>
+        <p>Olivier Allouard 2014</p>
+    </footer>
 </body>
 </html>
