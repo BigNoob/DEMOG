@@ -63,8 +63,14 @@ var wheelCircleArray;
 var wheelInc = 0;
 
 var EnemiesCont = new createjs.Container();
+var enemiesY = 150;
+var enemiesX = 100;
+var enemiesX_spacing = 32;
+var enemiesY_spacing = 32;
 var lines = 3;
 var number = 10;
+
+
 //Constants
 var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;
@@ -164,8 +170,8 @@ function handleFileLoad (event)
                 for(var i = 0; i < number; i ++)
                 {
                   var tmpEnemy = new createjs.Bitmap(event.result);
-                  tmpEnemy.x = i * 50;
-                  tmpEnemy.y = j * 50;
+                  tmpEnemy.x = i * enemiesX_spacing;
+                  tmpEnemy.y = j * enemiesY_spacing;
                   EnemiesCont.addChild(tmpEnemy);
                 }
             } 
@@ -383,7 +389,7 @@ function ClearGameState()
   stage.removeChild(ship);
   stage.removeChild(EnemiesCont);
   stage.removeChild(mothership);
-  console.log(EnemiesCont.getNumChildren());
+  //console.log(EnemiesCont.getNumChildren());
   for(var i = 0 ; i < EnemiesCont.getNumChildren() ; i++)
   {
     EnemiesCont.getChildAt(i).alpha = 1;
@@ -527,12 +533,13 @@ function drawEnemies(data)
   EnemiesCont.x = splittedData[0];
   for(var i = 1; i < splittedData.length; i ++)
   {
-    if(splittedData[i] == 0)
+    if(splittedData[i] == '0')
     {
       if(EnemiesCont.getChildAt(i-1))
       {
         EnemiesCont.getChildAt(i-1).alpha = 0;
       }
+      
     }
   }
 }
@@ -568,7 +575,7 @@ function drawShots(data)
     tmpShot.uid = splittedData[i*4+3];
     tmpShot.isUpdated = true;
     bulletArray.push(tmpShot);
-    console.log(bulletArray);
+    //console.log(bulletArray);
     stage.addChild(bulletArray[bulletArray.length - 1]);  
   }
   for(var j = 0; j < bulletArray.length; j++)
@@ -583,10 +590,10 @@ function drawShots(data)
       bulletArray[j].isUpdated = false;
     }
   }   
-  console.log(bulletArray);
+  //console.log(bulletArray);
   stage.update();
 }
-
+/*
 var Enemies = function(x,lines,number)
 {
     this.x = x;
@@ -602,8 +609,8 @@ Enemies.prototype.Init = function()
     {
         for(var i = 0; i < this.number; i ++)
         {
-            this.tmpX = this.x + i * 50;
-            this.tmpY = j * 50;
+            this.tmpX = this.x + i * enemiesX_spacing;
+            this.tmpY = j * enemiesY_spacing;
             //console.log(this.tmpX+";"+this.tmpY);
             this.array.push(new Enemy(this.tmpX,this.tmpY));
         }
@@ -628,3 +635,4 @@ var Shot = function(x)
     this.x = x;
     this.y = 500;
 };
+*/

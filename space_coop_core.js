@@ -1,31 +1,35 @@
 require('./public/js/game/Player.js');
 var UUID        = require('node-uuid');
 //require('./public/js/game/Enemies.js');
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Varibles declaration
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 var frame_time = 15;
 var physic_time = 60;
 
 var ship_speed = 4;
-var enemy_speed = 3;
-var mother_speed = 5;
+var ship_width = 16;
+var ship_height = 16;
+
 var shot_speed = 6;
-
-var mothershipY = 20;
-var ship_width = 18;
-var enemy_width = 16;
-var mother_width = 64;
-var shot_width = 10;
-
-var ship_height = 33;
-var enemy_height = 16;
-var mother_height = 96;
+var shot_width = 8;
 var shot_height = 8;
 
+var mother_speed = 5;
+var mothershipY = 20;
+var mother_width = 64;
+var mother_height = 96;
+
+var enemy_speed = 3;
+var enemy_width = 16;
+var enemy_height = 16;
+var enemiesX_spacing = 32;
+var enemiesY_spacing = 32;
+var enemiesY = 150;
+var enemiesX = 100;
 var lines = 3;
 var number = 10;
 
@@ -47,8 +51,8 @@ var space_game_core = function()
         };
     this.p1 = undefined;
     this.p2 = undefined;
-    this.enemiesX = 100;
-    this.enemies = new Enemies(this.enemiesX,lines,number);
+    //this.enemiesX = 100;
+    this.enemies = new Enemies(enemiesX,lines,number);
     this.motherShip = undefined;
     this.score = 0;
     this.inputs = [];
@@ -68,7 +72,6 @@ var space_game_core = function()
 
 //This line is used to tell node.js that he can access the constructor
 module.exports = global.space_game_core = space_game_core;
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Game Objects constructors
@@ -77,6 +80,7 @@ module.exports = global.space_game_core = space_game_core;
 var Enemies = function(x,lines,number)
 {
     this.x = x;
+    this.y = enemiesY;
     this.array = [];
     this.lines = lines;
     this.number = number;
@@ -91,8 +95,8 @@ Enemies.prototype.Init = function()
     {
         for(var i = 0; i < this.number; i ++)
         {
-            this.tmpX = i * 50 + this.x;
-            this.tmpY = j * 50;
+            this.tmpX = i * enemiesX_spacing + enemiesX;
+            this.tmpY = j * enemiesY_spacing + enemiesY;
             //console.log(this.tmpX+";"+this.tmpY);
             this.array.push(new Enemy(this.tmpX,this.tmpY));
         }
@@ -101,9 +105,10 @@ Enemies.prototype.Init = function()
 };
 Enemies.prototype.Move = function(x)
 {
+    this.x += x;
     for(var i = 0 ; i < this.array.length; i ++)
     {
-        this.array[i].x += x;
+        this.array[i].rect.x += x;
     }
 };
 Enemies.prototype.KillEnemy = function(i)
@@ -192,7 +197,7 @@ space_game_core.prototype.physic_update = function()
         this.moveMother();
         this.moveShots(); 
         this.checkCollisions();
-        this.sendUpdate(); 
+        //this.sendUpdate(); 
     } 
 };
 
@@ -231,11 +236,13 @@ space_game_core.prototype.moveEnemies = function()
 {
     if(this.enemiesLeft)
     {
-        this.enemies.x -= enemy_speed;
+        //this.enemies.x -= enemy_speed;
+        this.enemies.Move(-enemy_speed);
     }
     else
     {
-        this.enemies.x += enemy_speed;
+        //this.enemies.x += enemy_speed;
+        this.enemies.Move(enemy_speed);
     }
 };
 //Move the mothership
@@ -261,6 +268,7 @@ space_game_core.prototype.moveShots = function()
 
 space_game_core.prototype.checkCollisions = function()
 {
+    console.log(this.enemies.array);
     for(var i = 0; i < this.shots.length; i ++)
     {
         if(this.shots[i].rect.y < shot_height )
@@ -283,24 +291,21 @@ space_game_core.prototype.checkCollisions = function()
 
         if(this.doCollide(this.shots[i].rect,new Rect(this.mothershipX,mothershipY,mother_width,mother_height)))
         {
+            this.shots[i].alive = false;
             if(this.enemies.numEnemies == 0)
             {
                 this.score+= 100;
                 this.debugEndGame();
             }
-            else
-            {
-                this.score+=100;
-            }
         }   
     }
     this.apuT = new Date().getMilliseconds();
-    console.log(this.apuT - this.bpuT); 
+    //console.log(this.apuT - this.bpuT); 
+    this.sendUpdate();
 };
 
 space_game_core.prototype.doCollide = function(rect1,rect2)
 {
-    //return (!((rect1.y + rect1.h < rect2.y)||(rect1.y>rect2.y+rect2.h)||(rect1.x>rect2.x+rect2.w)||(rect1.x+rect1.w < rect2.x) ));
     return(!((rect1.x > rect2.x + rect2.w) || (rect1.x + rect1.w < rect2.x) || (rect1.y > rect2.y + rect2.h) || (rect1.y + rect1.h < rect2.h)));
 };
 
@@ -347,7 +352,7 @@ space_game_core.prototype.generateShotsString = function()
             tmpString+=this.shots[i].rect.x+'#'+this.shots[i].rect.y+'#'+this.shots[i].alive+'#'+this.shots[i].id+'#';
         }
     }
-    console.log(tmpString);
+    //console.log(tmpString);
     return tmpString;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
