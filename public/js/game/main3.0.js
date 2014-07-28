@@ -10,6 +10,7 @@ var stage;
 var stagewidth;
 var stageheight;
 //Proto FSM
+/*
 var lastState;
 var state;
 //Proto States
@@ -18,7 +19,7 @@ var loadingState = "state_loading";
 var waitAnotherState = "state_another";
 var gameState = "state_game";
 var shareState = "state_share";
-
+*/
 
 //IO Socket
 var socket;
@@ -36,9 +37,8 @@ var progressText ;
 var score;
 
 var canfire = true;
-var invaderArray = [];
 var bulletArray = [];
-
+/*
 var xSpeed = 5;
 var shotSpeed = 10;
 var invaderWidth = 32;
@@ -47,7 +47,7 @@ var rightBounds = 575;
 var invaderSpeed = 6;
 var changeDirection = false;
 var alphaThreshold = 0.75;
-
+*/
 //Preloader
 var preloader;
 var manifest;
@@ -63,6 +63,8 @@ var wheelCircleArray;
 var wheelInc = 0;
 
 var EnemiesCont = new createjs.Container();
+var lines = 3;
+var number = 10;
 //Constants
 var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;
@@ -85,15 +87,15 @@ function Main() {
 
       //state = firstState;
 
-      startServerListen(); 
+      
 
       background = new createjs.Bitmap("/public/images/SpaceBackground.png");
       stage.addChild(background);
       stage.update();
 
       //Game Loop Listener
-      createjs.Ticker.setFPS(60);
-      createjs.Ticker.on("tick", tick); 
+      //createjs.Ticker.setFPS(60);
+      //createjs.Ticker.on("tick", tick); 
 
 
       window.addEventListener("keydown", function(e) {
@@ -157,13 +159,18 @@ function handleFileLoad (event)
       }
       if(event.item.id == "enemy"){
             enemy = new createjs.Bitmap(event.result);
-             for(var i = 0 ; i < 10 ; i ++)
-              {
-                var tmpEnemy = new createjs.Bitmap(event.result);
-                tmpEnemy.x = EnemiesCont.x + 50 * i;
-                tmpEnemy.y = EnemiesCont.y;
-                EnemiesCont.addChild(tmpEnemy);
-              }
+            for(var j = 0; j < lines; j++)
+            {
+                for(var i = 0; i < number; i ++)
+                {
+                  var tmpEnemy = new createjs.Bitmap(event.result);
+                  tmpEnemy.x = i * 50;
+                  tmpEnemy.y = j * 50;
+                  EnemiesCont.addChild(tmpEnemy);
+                }
+            } 
+
+
       }
       if(event.item.id == "shot"){
             shot = new createjs.Bitmap(event.result);
@@ -184,7 +191,7 @@ function handleComplete (event)
      //stage.addChild(background);
      //lastState = state;
      //state = waitAnotherState;
-     
+     startServerListen(); 
      InitLobbyState();
      
 }
@@ -216,10 +223,11 @@ function startServerListen()
 function serverMessageParser(data)
 {
       var splittedData = data.split(',');
-      console.log('message recieved from server : '+ data);
+      //console.log('message recieved from server : '+ data);
       switch (splittedData[0])
       {
         case 'UPDATE':
+          //console.log(splittedData);
           updateScreen(splittedData);
         break;
         case 'INFO':
@@ -282,6 +290,9 @@ function InitGameState()
   mothership.x = 100;
   mothership.y = 20;
   stage.addChild(mothership);
+
+
+
   stage.addChild(EnemiesCont);
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
@@ -371,6 +382,13 @@ function ClearGameState()
   stage.removeChild(progressText);
   stage.removeChild(ship);
   stage.removeChild(EnemiesCont);
+  stage.removeChild(mothership);
+  console.log(EnemiesCont.getNumChildren());
+  for(var i = 0 ; i < EnemiesCont.getNumChildren() ; i++)
+  {
+    EnemiesCont.getChildAt(i).alpha = 1;
+  }
+
   stage.update();
 }
 
@@ -385,40 +403,12 @@ function ClearLobbyState()
 //    Game Loop
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 function tick(event) {
-      switch (state)
-      {
-            case firstState:
-                  firstStateUpdate();
-            break;
-            case waitAnotherState:
-                  waitStateUpdate();
-            break;
-            case gameState:
-                  gameStateUpdate();
-            break;
-            case shareState:
-                  shareStateUpdate();
-            break;
-      }
+
       stage.update(event);
 }
-
-function firstStateUpdate()
-{
-
-}
-
-function waitStateUpdate()
-{
-
-}
-
-function gameStateUpdate()
-{
-
-}
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -442,16 +432,14 @@ function handleKeyDown(e)
     case 68:  // D
       sendInputs(0,1,0);
         break;
-  }
-  
-}
-
-function handleKeyUp(e)
-{
-  
-  switch (e.keyCode) {
     case KEYCODE_SPACE:
-      sendInputs(0,0,1);
+      if(canfire)
+      {
+        sendInputs(0,0,1);
+        canfire = false;
+        setTimeout(function(){canfire = true},120);
+      }
+
     break;
     case 69:
       debugAddScore();
@@ -462,6 +450,15 @@ function handleKeyUp(e)
     case 71:
       debugEnd();
     break;
+  }
+  
+}
+
+function handleKeyUp(e)
+{
+  
+  switch (e.keyCode) {
+    
   }  
   
 }
@@ -499,9 +496,9 @@ function sendInputs(left,right,shoot)
 //      Element 0 = 'UPDATE'
 //      Element 1 = own ship x
 //      Element 2 = ally ship x
-//      Element 3 = enemy pack x
+//      Element 3 = enemy pack data (x position then 1 if alive 0 else)
 //      Element 4 = mothership x
-//      Element 5 --> End = shots
+//      Element 5 = shots
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function updateScreen(data)
@@ -510,7 +507,8 @@ function updateScreen(data)
   drawAllyShip(data[2]);
   drawEnemies(data[3]);
   drawMothership(data[4]);
-  drawShots(data);
+  //console.log(data[5]);
+  drawShots(data[5]);
 }
 
 function drawOwnShip(data)
@@ -525,7 +523,18 @@ function drawAllyShip(data)
 
 function drawEnemies(data)
 {
-  EnemiesCont.x = data;
+  var splittedData = data.split('#');
+  EnemiesCont.x = splittedData[0];
+  for(var i = 1; i < splittedData.length; i ++)
+  {
+    if(splittedData[i] == 0)
+    {
+      if(EnemiesCont.getChildAt(i-1))
+      {
+        EnemiesCont.getChildAt(i-1).alpha = 0;
+      }
+    }
+  }
 }
 function drawMothership(data)
 {
@@ -533,5 +542,89 @@ function drawMothership(data)
 }
 function drawShots(data)
 {
+  var splittedData = data.split('#');
+  //console.log(splittedData);
+  for(var i = 0; i < splittedData.length / 4; i++)
+  {
 
+    for(var j = 0; j < bulletArray.length; j++)
+    {
+      if(bulletArray[j].uid == splittedData[i*4+3])
+      {
+        bulletArray[j].x = splittedData[i*4];
+        bulletArray[j].y = splittedData[i*4+1];
+        bulletArray[j].isUpdated = true;
+        //bulletArray[j].alpha = splittedData[i*4+2];
+
+        splittedData.splice(i*4,4);
+      }
+    }    
+  }
+  for(var i = 0; i < (splittedData.length / 4); i++)
+  {
+    var tmpShot = shot.clone();
+    tmpShot.x = splittedData[i*4];
+    tmpShot.y = splittedData[i*4+1];
+    tmpShot.uid = splittedData[i*4+3];
+    tmpShot.isUpdated = true;
+    bulletArray.push(tmpShot);
+    console.log(bulletArray);
+    stage.addChild(bulletArray[bulletArray.length - 1]);  
+  }
+  for(var j = 0; j < bulletArray.length; j++)
+  {
+    if(!bulletArray[j].isUpdated)
+    {
+      stage.removeChild(bulletArray[j]);
+      bulletArray.splice(j,1);
+    }
+    else
+    {
+      bulletArray[j].isUpdated = false;
+    }
+  }   
+  console.log(bulletArray);
+  stage.update();
 }
+
+var Enemies = function(x,lines,number)
+{
+    this.x = x;
+    this.array = [];
+    this.lines = lines;
+    this.number = number;
+    this.tmpX;
+    this.tmpY;
+};
+Enemies.prototype.Init = function()
+{
+    for(var j = 0; j < this.lines; j++)
+    {
+        for(var i = 0; i < this.number; i ++)
+        {
+            this.tmpX = this.x + i * 50;
+            this.tmpY = j * 50;
+            //console.log(this.tmpX+";"+this.tmpY);
+            this.array.push(new Enemy(this.tmpX,this.tmpY));
+        }
+    } 
+    //console.log(this.array);
+};
+Enemies.prototype.Move = function(x)
+{
+    for(var i = 0 ; i < this.array.length; i ++)
+    {
+        this.array[i].x += x;
+    }
+};
+var Enemy = function(x,y)
+{
+    this.x = x;
+    this.y = y;
+    this.alive = true;
+};
+var Shot = function(x)
+{
+    this.x = x;
+    this.y = 500;
+};

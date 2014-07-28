@@ -39,7 +39,14 @@ game_server.prototype.update = function()
 	{
 		this.games[i].update();
 	}
-}
+};
+game_server.prototype.physic_update = function()
+{
+	for(var i = 0 ; i < this.games.length; i ++)
+	{
+		this.games[i].physic_update();
+	}
+};
 //this function stop the socket server
 game_server.prototype.stopServer = function()
 {
@@ -221,7 +228,9 @@ game_server.prototype.endGame = function(game)
 
 	this.sendClientToLobby(this.games[this.getGameIndex(game)].p1);
 	this.sendClientToLobby(this.games[this.getGameIndex(game)].p2);
+	console.log('players sent to lobby : '+ this.games[this.getGameIndex(game)].p1.userid + ' with : '+ this.games[this.getGameIndex(game)].p1.player.score);
 	this.games.splice(this.getGameIndex(game),1);
+	this.updateClient('ALL');
 
 };
 
@@ -275,6 +284,17 @@ game_server.prototype.matchClients = function()
 		
 		
 	}	
+};
+
+game_server.prototype.checkEndedGames = function()
+{
+	for(var i = 0; i < this.games.length; i ++)
+	{
+		if(this.games[i].isEnded)
+		{
+			this.endGame(this.games[i]);
+		}
+	}
 };
 
 

@@ -248,6 +248,7 @@ setInterval(function(){
     if(wrap_server != undefined && wrap_server.experiment.isRunning)
     {
         wrap_server.matchClients();
+        
     }
     else if(!wrap_server.experiment.isRunning)
     {
@@ -257,5 +258,10 @@ setInterval(function(){
 
 setInterval(function(){
    wrap_server.update();
+   wrap_server.checkEndedGames();
 }, 60);
+
+setInterval(function(){
+   wrap_server.physic_update();
+}, 20);
 
