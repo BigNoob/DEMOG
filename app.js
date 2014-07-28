@@ -18,7 +18,8 @@
 require('./public/js/game/Player.js');
 require('./public/js/game/Enemies.js');
 require('./experiment');
-require('./sioserver.js')
+require('./sioserver.js');
+require('newrelic');
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
