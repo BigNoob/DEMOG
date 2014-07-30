@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<LANG>
+	<model>
+		<str_lobby>
+
+		</str_lobby>
+		<str_noxp>
+
+		</str_noxp>
+		<str_waitShare>
+
+		</str_waitShare>
+		<str_doShare>
+
+		</str_doShare>
+		<str_playerId>
+
+		</str_playerId>
+		<str_playerRep>
+
+		</str_playerRep>
+		<str_playerScore>
+
+		</str_playerScore>
+		<str_xpName>
+
+		</str_xpName>
+		<str_xpRep>
+
+		</str_xpRep>
+		<str_xpGame>
+
+		</str_xpGame>
+		<str_score>
+
+		</str_score>
+	</model>
+	<fr>
+		
+	</fr>
+	<en>
+		<str_lobby>
+
+		</str_lobby>
+		<str_noxp>
+
+		</str_noxp>
+		<str_waitShare>
+
+		</str_waitShare>
+		<str_doShare>
+
+		</str_doShare>
+		<str_playerId>
+			Player ID: 
+		</str_playerId>
+		<str_playerRep>
+			Current Repetition: 
+		</str_playerRep>
+		<str_playerScore>
+			Total Score: 
+		</str_playerScore>
+		<str_xpName>
+			Experience Name : 
+		</str_xpName>
+		<str_xpRep>
+			Number of Repetition : 
+		</str_xpRep>
+		<str_xpGame>
+			Game : 
+		</str_xpGame>
+		<str_score>
+
+		</str_score>		
+	</en>
+</LANG>

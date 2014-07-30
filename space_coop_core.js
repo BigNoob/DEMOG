@@ -33,16 +33,22 @@ var enemiesX = 100;
 var lines = 3;
 var number = 10;
 
+
+var state_game = 'STATE_GAME';
+var state_endAnim = 'STATE_ENDANIM';
+var state_share = 'STATE_SHARE';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Space Invaders Game Core Constructor
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var space_game_core = function()
+var space_game_core = function(maxIter)
 {
     this.id =undefined;
 	this.viewport;
+    this.state = state_game;
+    this.maxIter = maxIter;
     this.isEnded = false;
 	this.world = 
 		{
@@ -60,14 +66,12 @@ var space_game_core = function()
     this.p2ShipX = 400;
     
     this.mothershipX = 100;
+    this.mothershipY = 20;
     this.motherShipAlive = true;
     this.enemiesLeft = false;
     this.mothershipLeft = false;
     this.shots = [];
     this.shotNum = 0;
-
-    this.bpuT = new Date();
-    this.apuT = new Date();
 };
 
 //This line is used to tell node.js that he can access the constructor
@@ -188,27 +192,85 @@ space_game_core.prototype.beginShare = function(client)
 
 space_game_core.prototype.physic_update = function()
 {
-    if(!this.isEnded)
+    switch (this.state)
     {
-        this.bpuT = new Date().getMilliseconds();
-        
-        this.setDirections();
-        this.moveEnemies();
-        this.moveMother();
-        this.moveShots(); 
-        this.checkCollisions();
-        //this.sendUpdate(); 
+        case state_game:
+            this.setDirections();
+            this.moveEnemies();
+            this.moveMother();
+            this.moveShots(); 
+            this.checkCollisions();
+            this.sendUpdate();
+        break;
+        case state_endAnim:
+            this.animMotherFall();
+            this.sendUpdate();
+        break;
+        case state_share:
+            this.sendUpdate();
+        break;
     } 
 };
 
 space_game_core.prototype.update = function(t) {
-    //this.sendUpdate();  
 }; //game_core.update
 
+//This function send the updates messages to the players
+space_game_core.prototype.sendUpdate = function()
+{
+    var p1string = this.p1ShipX+',';
+    var p2string = this.p2ShipX+',';
+
+    var enemiesString = this.generateEnemyString()+',';
+    var motherString = this.mothershipX+'#'+this.mothershipY+',';
+
+    var shotString = this.generateShotsString()+',';
+    var scoreString = this.score;
+    this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString+scoreString);
+    this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
+};
+
+space_game_core.prototype.generateEnemyString = function()
+{
+    var tmpString ='';
+    tmpString += (this.enemies.x+'#');
+    for(var i = 0; i < this.enemies.array.length; i ++)
+    {
+        if(this.enemies.array[i].alive)
+        {
+            tmpString += '1#';
+        }
+        else
+        {
+            tmpString += '0#';
+        }
+    }
+    //console.log(tmpString);
+    return tmpString;
+};
+space_game_core.prototype.generateShotsString = function()
+{
+    var tmpString = '';
+    for(var i = 0; i < this.shots.length; i ++)
+    {
+        if(this.shots[i].alive)
+        {
+            tmpString+=this.shots[i].rect.x+'#'+this.shots[i].rect.y+'#'+this.shots[i].alive+'#'+this.shots[i].id+'#';
+        }
+    }
+    //console.log(tmpString);
+    return tmpString;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//    World Computing functions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Set the directions of the enemy lines, to avoid colliding with the wall
 space_game_core.prototype.setDirections = function()
 {
-    if(this.enemies.x > 250 && !this.enemiesLeft)
+    if(this.enemies.x > (this.world.width - 50 - enemiesX_spacing * number) && !this.enemiesLeft)
     {
         this.enemiesLeft = true;
     }
@@ -222,7 +284,7 @@ space_game_core.prototype.setDirections = function()
         this.mothershipLeft = !this.mothershipLeft;
     }
 
-    if(this.mothershipX > 650 && !this.mothershipLeft)
+    if(this.mothershipX > (this.world.width - 50 - mother_width) && !this.mothershipLeft)
     {
         this.mothershipLeft = true;
     }
@@ -257,6 +319,51 @@ space_game_core.prototype.moveMother = function()
         this.mothershipX += mother_speed;
     }
 };
+
+space_game_core.prototype.animMotherFall = function()
+{
+    if( Math.random() > 0.95)
+    {
+        this.mothershipLeft = !this.mothershipLeft;
+    }
+
+    if(this.mothershipX > (this.world.width - 50 - mother_width) && !this.mothershipLeft)
+    {
+        this.mothershipLeft = true;
+    }
+    if(this.mothershipX < 50 && this.mothershipLeft)
+    {
+        this.mothershipLeft = false;
+    }
+
+    if (this.mothershipY > 600)
+    {
+        this.state = state_share;
+        if(Math.abs(this.p2ShipX - this.mothershipX) > Math.abs(this.p1ShipX - this.mothershipX))
+        {
+            this.p1.emit('message','SHARE_STATE');
+            this.p2.emit('message','SHARE_WAIT');
+        }
+        else
+        {
+            this.p2.emit('message','SHARE_STATE');
+            this.p1.emit('message','SHARE_WAIT');
+        }
+    }
+    else
+    {
+        this.mothershipY += mother_speed;
+    }
+    if(this.mothershipLeft)
+    {
+        this.mothershipX -= mother_speed;
+    }
+    else
+    {
+        this.mothershipX += mother_speed;
+    }
+};    
+
 //Move the shots
 space_game_core.prototype.moveShots = function()
 {
@@ -268,7 +375,7 @@ space_game_core.prototype.moveShots = function()
 
 space_game_core.prototype.checkCollisions = function()
 {
-    console.log(this.enemies.array);
+    //console.log(this.enemies.array);
     for(var i = 0; i < this.shots.length; i ++)
     {
         if(this.shots[i].rect.y < shot_height )
@@ -295,13 +402,10 @@ space_game_core.prototype.checkCollisions = function()
             if(this.enemies.numEnemies == 0)
             {
                 this.score+= 100;
-                this.debugEndGame();
+                this.state = state_endAnim;
             }
         }   
-    }
-    this.apuT = new Date().getMilliseconds();
-    //console.log(this.apuT - this.bpuT); 
-    this.sendUpdate();
+    }  
 };
 
 space_game_core.prototype.doCollide = function(rect1,rect2)
@@ -309,52 +413,7 @@ space_game_core.prototype.doCollide = function(rect1,rect2)
     return(!((rect1.x > rect2.x + rect2.w) || (rect1.x + rect1.w < rect2.x) || (rect1.y > rect2.y + rect2.h) || (rect1.y + rect1.h < rect2.h)));
 };
 
-//This function send the updates messages to the players
-space_game_core.prototype.sendUpdate = function()
-{
-    var p1string = this.p1ShipX+',';
-    var p2string = this.p2ShipX+',';
 
-    var enemiesString = this.generateEnemyString()+',';
-    var motherString = this.mothershipX+',';
-
-    var shotString = this.generateShotsString()+',';
-
-    this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString);
-    this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString);
-};
-
-space_game_core.prototype.generateEnemyString = function()
-{
-    var tmpString ='';
-    tmpString += (this.enemies.x+'#');
-    for(var i = 0; i < this.enemies.array.length; i ++)
-    {
-        if(this.enemies.array[i].alive)
-        {
-            tmpString += '1#';
-        }
-        else
-        {
-            tmpString += '0#';
-        }
-    }
-    //console.log(tmpString);
-    return tmpString;
-};
-space_game_core.prototype.generateShotsString = function()
-{
-    var tmpString = '';
-    for(var i = 0; i < this.shots.length; i ++)
-    {
-        if(this.shots[i].alive)
-        {
-            tmpString+=this.shots[i].rect.x+'#'+this.shots[i].rect.y+'#'+this.shots[i].alive+'#'+this.shots[i].id+'#';
-        }
-    }
-    //console.log(tmpString);
-    return tmpString;
-};
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Input functions
@@ -362,38 +421,94 @@ space_game_core.prototype.generateShotsString = function()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 space_game_core.prototype.onInput = function(client, data){
     
-    if(client.userid == this.p1.userid)
+    if(this.state == state_game)
     {
-        //console.log('p1');
-        if(data[1] == '1')
+        if(client.userid == this.p1.userid)
         {
-            //console.log('left');
-            this.p1ShipX -= ship_speed;
+            //console.log('p1');
+            if(data[1] == '1')
+            {
+                //console.log('left');
+                if(this.p1ShipX > 0)
+                {
+                  this.p1ShipX -= ship_speed;  
+                }
+                
+            }
+            if(data[2] == '1')
+            {
+                if(this.p1ShipX < this.world.width - ship_width)
+                {
+                    this.p1ShipX += ship_speed;
+                } 
+            }
+            if(data[3] == '1')
+            {
+                this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2);
+            }
         }
-        if(data[2] == '1')
+        else
         {
-            //console.log('right');
-           this.p1ShipX += ship_speed; 
-        }
-        if(data[3] == '1')
-        {
-            this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2);
+            //console.log('p2');
+            if(data[1] == '1')
+            {
+                if(this.p2ShipX > 0)
+                {
+                    this.p2ShipX -= ship_speed;
+                }
+            }
+            if(data[2] == '1')
+            {
+                if(this.p2ShipX < this.world.width - ship_width)
+                {
+                    this.p2ShipX += ship_speed; 
+                }
+            }
+            if(data[3] == '1')
+            {
+                this.shoot(this.p2ShipX + ship_width / 2 - shot_width/2);
+            }
         }
     }
-    else
+    else if(this.state == state_share)
     {
-        //console.log('p2');
-        if(data[1] == '1')
+        if(client.userid == this.p1.userid)
         {
-            this.p2ShipX -= ship_speed;
+            //console.log('p1');
+            if(data[1] == '1')
+            {
+                //console.log('left');
+                if(this.p1ShipX > 100)
+                {
+                  this.p1ShipX -= ship_speed;  
+                }
+                
+            }
+            if(data[2] == '1')
+            {
+                if(this.p1ShipX < this.world.width - ship_width - 100)
+                {
+                    this.p1ShipX += ship_speed;
+                } 
+            }
         }
-        if(data[2] == '1')
+        else
         {
-           this.p2ShipX += ship_speed; 
-        }
-        if(data[3] == '1')
-        {
-            this.shoot(this.p2ShipX + ship_width / 2 - shot_width/2);
+            //console.log('p2');
+            if(data[1] == '1')
+            {
+                if(this.p2ShipX > 100)
+                {
+                    this.p2ShipX -= ship_speed;
+                }
+            }
+            if(data[2] == '1')
+            {
+                if(this.p2ShipX < this.world.width - ship_width - 100)
+                {
+                    this.p2ShipX += ship_speed; 
+                }
+            }
         }
     }
 };
@@ -411,6 +526,7 @@ space_game_core.prototype.shoot = function(x)
 //    Debug functions (only used to test game states)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 space_game_core.prototype.debugScore = function()
 {
     this.score += 1000;
@@ -430,12 +546,55 @@ space_game_core.prototype.debugEndGame = function()
     this.p1.player.currentRepetition ++;
     this.p2.player.currentRepetition ++;
 
-
+    if(this.p1.player.currentRepetition > this.maxIter)
+    {
+        this.p1.emit('message','REDIRECT');
+    }
+    if(this.p2.player.currentRepetition > this.maxIter)
+    {
+        this.p2.emit('message','REDIRECT');
+    }
     //this.p1.emit('message', 'LOBBY');
     //this.p2.emit('message', 'LOBBY');
+  
+    this.isEnded = true;
+};
+*/
+space_game_core.prototype.EndGame = function()
+{
+    this.p1.player.currentRepetition ++;
+    this.p2.player.currentRepetition ++;
+
+    if(this.p1.player.currentRepetition > this.maxIter)
+    {
+        this.p1.emit('message','REDIRECT');
+    }
+    if(this.p2.player.currentRepetition > this.maxIter)
+    {
+        this.p2.emit('message','REDIRECT');
+    }
 
     this.isEnded = true;
 };
+space_game_core.prototype.Share = function(client, data)
+{
+    console.log(client.userid + data);
+    if(client.userid == this.p1.userid)
+    {
+        console.log('plop p1');
+        this.p1.player.score += this.score - parseInt(data[1]);
+        this.p2.player.score += parseInt(data[1]);
+    }
+    else
+    {
+        console.log('plop p2');
+        this.p2.player.score += this.score - parseInt(data[1]);
+        this.p1.player.score += parseInt(data[1]);
+    }
+
+    this.EndGame();
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Client Messages handler
@@ -445,7 +604,7 @@ space_game_core.prototype.onMessage = function(client, data){
     //console.log('message recieved by game : '+ this.id);
 
     var splittedData = data.split(',');
-    //console.log('message '+ splittedData);
+    console.log('message '+ splittedData);
     switch (splittedData[0])
     {
         case 'INPUT':
@@ -454,11 +613,14 @@ space_game_core.prototype.onMessage = function(client, data){
         case 'SCORE':
             //this.debugScore();
         break;
+        case 'ANIM_END':
+
+        break;
         case 'SHARE':
-            //this.debugShare(client);
+            this.Share(client,splittedData);
         break;
         case 'END':
-            this.debugEndGame();
+            //this.debugEndGame();
         break;
     }
 };

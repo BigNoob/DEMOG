@@ -52,8 +52,8 @@ game_server.prototype.stopServer = function()
 {
 	//sio = undefined;
     console.log('SIOServer is stopped');
-    console.log(this.clients);
-    console.log(this.clientsinLobby);
+    //console.log(this.clients);
+    //console.log(this.clientsinLobby);
     for(var i = 0 ; i < this.clients.length; i ++)
 	{
 		console.log('Client forced to lobby : '+ this.clients[i].userid);
@@ -67,6 +67,7 @@ game_server.prototype.stopServer = function()
 	}
 
 	this.games.splice(0,this.games.length-1);
+	this.clientsinLobby.splice(0,this.clientsinLobby.length - 1);
     this.experiment.isRunning = false;
 };
 
@@ -112,7 +113,18 @@ game_server.prototype.isClientInLobby = function(client)
 		}
 	}
 	return false;
-}
+};
+game_server.prototype.isClientInGame = function(client)
+{
+	for(var i =0 ; i < this.clients.length; i ++)
+	{
+		if(client.userid == this.clients[i].userid)
+		{
+			return true;
+		}
+	}
+	return false;
+};
 game_server.prototype.getClientIndexFromGame = function(client)
 {
 	for(var i =0 ; i < this.clients.length; i ++)
@@ -147,9 +159,17 @@ game_server.prototype.removeCientFromLobby = function(client)
 //this function adds a client to the server
 game_server.prototype.addClient = function(client)
 {
-	this.clientsinLobby.push(client);
-	//this.sendClientToLobby(client);
-	console.log(client.userid + " has been sent to the lobby");
+	if(this.experiment.isRunning)
+	{
+		this.clientsinLobby.push(client);
+		//this.sendClientToLobby(client);
+		console.log(client.userid + " has been sent to the lobby");
+		this.updateClient(client);
+	}
+	else
+	{
+		client.emit("message",'NO_XP');
+	}
 };
 
 //this function removes a client from the server
@@ -170,13 +190,19 @@ game_server.prototype.updateClient = function(client)
 	{
 		for(var i = 0 ; i < this.clientsinLobby.length; i ++)
 		{
-			client = this.clientsinLobby[i];
-			client.emit('message', 'INFO,'+client.userid+','+client.player.currentRepetition+','+client.player.score+','+this.experiment.xpName+','+this.experiment.xpMaxIter+','+this.experiment.xpGame);
+			if(this.clientsinLobby[i] != undefined)
+			{
+				client = this.clientsinLobby[i];
+				client.emit('message', 'INFO,'+client.userid+','+client.player.currentRepetition+','+client.player.score+','+this.experiment.xpName+','+this.experiment.xpMaxIter+','+this.experiment.xpGame);
+			}
 		}
 		for(var j = 0 ; j < this.clients.length; j ++)
 		{
-			client = this.clientsinLobby[j];
-			client.emit('message', 'INFO,'+client.userid+','+client.player.currentRepetition+','+client.player.score+','+this.experiment.xpName+','+this.experiment.xpMaxIter+','+this.experiment.xpGame);
+			if(this.clientsinLobby[i] != undefined)
+			{
+				client = this.clientsinLobby[j];
+				client.emit('message', 'INFO,'+client.userid+','+client.player.currentRepetition+','+client.player.score+','+this.experiment.xpName+','+this.experiment.xpMaxIter+','+this.experiment.xpGame);
+			}
 		}
 	}
 };
@@ -204,10 +230,10 @@ game_server.prototype.createGame = function(client1, client2)
 	switch(this.experiment.xpGame)
 	{
 		case "space_coop":
-			tmpGame = new space_game_core();
+			tmpGame = new space_game_core(this.experiment.xpMaxIter);
 		break;
 		case "rabbits":
-			tmpGame = new space_game_core();
+			tmpGame = new space_game_core(this.experiment.xpMaxIter);
 		break;
 	}
 
@@ -225,13 +251,11 @@ game_server.prototype.createGame = function(client1, client2)
 //this function stops a selected core game server instance
 game_server.prototype.endGame = function(game)
 {
-
+	this.updateClient('ALL');
 	this.sendClientToLobby(this.games[this.getGameIndex(game)].p1);
 	this.sendClientToLobby(this.games[this.getGameIndex(game)].p2);
 	console.log('players sent to lobby : '+ this.games[this.getGameIndex(game)].p1.userid + ' with : '+ this.games[this.getGameIndex(game)].p1.player.score);
 	this.games.splice(this.getGameIndex(game),1);
-	this.updateClient('ALL');
-
 };
 
 //this function starts a selected core game server instance
@@ -262,27 +286,20 @@ game_server.prototype.findGame = function(client)
 //This function is used to match clients in the lobby to create a new games
 game_server.prototype.matchClients = function()
 {
-	//console.log(parseInt(this.clientsinLobby.length / 2));
 	if(parseInt(this.clientsinLobby.length / 2) > 0)
 	{
 		for(var i = 0; i < parseInt(this.clientsinLobby.length / 2); i++)
+		{
+
+			this.createGame(this.clientsinLobby[i*2],this.clientsinLobby[(i*2)+1]);
+			for(var j = 0; j < this.games.length; j ++)
 			{
-
-				this.createGame(this.clientsinLobby[i*2],this.clientsinLobby[(i*2)+1]);
-				//this.removeCientFromLobby(this.clientsinLobby[(i*2)+1]);
-				//this.removeCientFromLobby(this.clientsinLobby[i*2]);
-
-				for(var j = 0; j < this.games.length; j ++)
-				{
-					console.log("game n°"+j);
-					console.log('\t' +this.games[j].id);
-					console.log('\t\t' +this.games[j].p1.userid);
-					console.log('\t\t' +this.games[j].p2.userid);
-				}
-
+				console.log("game n°"+j);
+				console.log('\t' +this.games[j].id);
+				console.log('\t\t' +this.games[j].p1.userid);
+				console.log('\t\t' +this.games[j].p2.userid);
 			}
-		
-		
+		}
 	}	
 };
 
@@ -292,7 +309,24 @@ game_server.prototype.checkEndedGames = function()
 	{
 		if(this.games[i].isEnded)
 		{
+			//console.log(this.games[i].p1.player);
+	        this.updateClient(this.games[i].p1);
+	        //console.log(this.games[i].p2.player);
+	        this.updateClient(this.games[i].p2);
+			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
+		    {
+		    	
+		        this.removeClient(this.games[i].p1);
+		        
+		    }
+		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
+		    {
+		    	
+		        this.removeClient(this.games[i].p2);
+
+		    }
 			this.endGame(this.games[i]);
+			
 		}
 	}
 };

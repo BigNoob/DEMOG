@@ -85,6 +85,7 @@ app.configure(function(){
 var server 		= http.createServer(app);					// Creation of the Express server
 
 
+
 server.listen(gameport);
 
 app.get('/admin',function(req,res){
@@ -193,7 +194,7 @@ function CreateSIOServer()
 
     wrap_server = new game_server();
     wrap_server.initServer(current_experiment);
-    console.log(wrap_server);
+    //console.log(wrap_server);
     console.log('SIOServer is created for experiment : '+current_experiment.xpName);
     //console.log(sio);
 }
@@ -216,7 +217,7 @@ if(sio != undefined)
         client.userid = UUID();
         client.player = new Player();
         wrap_server.addClient(client);
-        wrap_server.updateClient(client);
+        
 
         client.on('message', function (m){
             wrap_server.onMessage(client, m);
@@ -227,12 +228,15 @@ if(sio != undefined)
             {
                 wrap_server.removeCientFromLobby(client); 
             }
-            else
+            else if(wrap_server.isClientInGame(client))
             {
                 wrap_server.endGame(wrap_server.findGame(client));
-                wrap_server.removeCientFromLobby(client); 
+                wrap_server.removeCientFromLobby(client);
             }
-            
+            else
+            {
+                 
+            } 
         });
     }); 
 }

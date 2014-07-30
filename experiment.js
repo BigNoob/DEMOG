@@ -2,7 +2,7 @@ var Experiment = function (xpName, xpType, xpMaxIter,xpGame)
 {
 	this.GAME_TYPES = ["space_coop","rabbits"];
 	this.TYPES = ["local","amazon","web"];
-
+	this.LANG = ["fr","en"];
 	this.xpName = xpName;
 	this.xpType = undefined;
 	this.xpGame = undefined;
@@ -10,7 +10,7 @@ var Experiment = function (xpName, xpType, xpMaxIter,xpGame)
 	this.launchDate = undefined;
 	this.xpLink = this.generateLink();
 	//this.rooms = [];
-
+	this.language = this.LANG[1];
 	this.lobby = [];
 	this.players = [];
 	//this.result = undefined;
