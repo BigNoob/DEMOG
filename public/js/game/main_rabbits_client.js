@@ -84,9 +84,9 @@ var wheelInc = 0;
 var EnemiesCont = new createjs.Container();
 var enemiesY = 150;
 var enemiesX = 100;
-var enemiesX_spacing = 32;
-var enemiesY_spacing = 32;
-var lines = 3;
+var enemiesX_spacing = 60;
+var enemiesY_spacing = 60;
+var lines = 4;
 var number = 10;
 
 
@@ -98,10 +98,10 @@ var KEYCODE_SPACE = 32;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//    Entry Point (Function called by the HTML canvas element)
+//    Entry Point of Space Coop (Function called by main.jst)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function Main() {
+function Main_Rabbits() {
       canvas = document.getElementById("viewport");
       stage = new createjs.Stage(canvas);
 
@@ -131,7 +131,7 @@ function StartLoading()
   state = state_load;
   LoadStrings();
 
-  background = new createjs.Bitmap("/public/images/SpaceBackground.png");
+  background = new createjs.Bitmap("/public/images/RabbitBackground.png");
   stage.addChild(background);
   stage.update();
 
@@ -150,12 +150,12 @@ function StartLoading()
   stage.update();
   //Loading Manifest
   manifest = [
-                {src:"/public/images/SpaceBackground.png", id:"background"},
-                {src:"/public/images/Ship.png", id:"ship"},
-                {src:"/public/images/AllyShip.png", id:"allyShip"},
-                {src:"/public/images/Enemy.png", id:"enemy"},
-                {src:"/public/images/ShootGradius.png", id:"shot"},
-                {src:"/public/images/Boss.png", id:"mother"},
+                {src:"/public/images/RabbitBackground.png", id:"background"},
+                {src:"/public/images/RabbitRight.png", id:"ship"},
+                {src:"/public/images/RabbitRight.png", id:"allyShip"},
+                {src:"/public/images/RedBalloon.png", id:"enemy"},
+                {src:"/public/images/FlyingRabbit.png", id:"shot"},
+                {src:"/public/images/GoalBalloon.png", id:"mother"},
               ];
   //loading Events and Callbacks
   preloader = new createjs.LoadQueue(true)

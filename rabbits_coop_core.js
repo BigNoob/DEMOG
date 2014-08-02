@@ -1,37 +1,36 @@
 require('./public/js/game/Player.js');
 var UUID        = require('node-uuid');
-//require('./public/js/game/Enemies.js');
+//require('./public/js/game/Balloons.js');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Varibles declaration
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var frame_time = 15;
-var physic_time = 60;
-
-var ship_speed = 4;
-var ship_width = 16;
-var ship_height = 16;
+var balloon_speed = 4;
+var balloon_width = 16;
+var balloon_height = 16;
 
 var shot_speed = 6;
 var shot_width = 8;
 var shot_height = 8;
 
-var mother_speed = 5;
-var mothershipY = 20;
-var mother_width = 64;
-var mother_height = 96;
+var goal_speed = 5;
+var goalballoonY = 20;
+var goal_width = 39;
+var goal_height = 56;
 
-var enemy_speed = 3;
-var enemy_width = 16;
-var enemy_height = 16;
-var enemiesX_spacing = 32;
-var enemiesY_spacing = 32;
-var enemiesY = 150;
-var enemiesX = 100;
-var lines = 3;
+var balloon_speed = 3;
+var balloon_width = 39;
+var balloon_height = 56;
+var balloonsX_spacing = 60;
+var balloonsY_spacing = 60;
+var balloonsY = 150;
+var balloonsX = 100;
+var lines = 4;
 var number = 10;
+
+var gravity = 9.8;
 
 var state_game = 'STATE_GAME';
 var state_endAnim = 'STATE_ENDANIM';
@@ -42,7 +41,7 @@ var state_share = 'STATE_SHARE';
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var space_game_core = function(maxIter)
+var rabbits_game_core = function(maxIter)
 {
     this.id =undefined;
 	this.viewport;
@@ -56,57 +55,61 @@ var space_game_core = function(maxIter)
         };
     this.p1 = undefined;
     this.p2 = undefined;
-    //this.enemiesX = 100;
-    this.enemies = new Enemies(enemiesX,lines,number);
-    this.motherShip = undefined;
+    //this.balloonsX = 100;
+    this.balloons = new Balloons(balloonsX,lines,number);
+    this.goalShip = undefined;
     this.score = 0;
     this.inputs = [];
     this.p1ShipX = 400;
     this.p2ShipX = 400;
     
-    this.mothershipX = 100;
-    this.mothershipY = 20;
-    this.motherShipAlive = true;
-    this.enemiesLeft = false;
-    this.mothershipLeft = false;
-    this.shots = [];
-    this.shotNum = 0;
+    this.goalballoonX = 100;
+    this.goalballoonY = 20;
+    this.goalShipAlive = true;
+    this.balloonsLeft = false;
+    this.goalballoonLeft = false;
+
+    this.flyer = new Rect(380,350,40,46);
+    this.launcher = new Rect(350,400,126,69);
+
+    this.init_speed = 10;
+    this.init_angle = 80;
 };
 
 //This line is used to tell node.js that he can access the constructor
-module.exports = global.space_game_core = space_game_core;
+module.exports = global.rabbits_game_core = rabbits_game_core;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Game Objects constructors
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var Enemies = function(x,lines,number)
+var Balloons = function(x,lines,number)
 {
     this.x = x;
-    this.y = enemiesY;
+    this.y = balloonsY;
     this.array = [];
     this.lines = lines;
     this.number = number;
     this.tmpX;
     this.tmpY;
     this.alive = true;
-    this.numEnemies = this.lines * this.number;
+    this.numBalloons = this.lines * this.number;
 };
-Enemies.prototype.Init = function()
+Balloons.prototype.Init = function()
 {
     for(var j = 0; j < this.lines; j++)
     {
         for(var i = 0; i < this.number; i ++)
         {
-            this.tmpX = i * enemiesX_spacing + enemiesX;
-            this.tmpY = j * enemiesY_spacing + enemiesY;
+            this.tmpX = i * balloonsX_spacing + balloonsX;
+            this.tmpY = j * balloonsY_spacing + balloonsY;
             //console.log(this.tmpX+";"+this.tmpY);
-            this.array.push(new Enemy(this.tmpX,this.tmpY));
+            this.array.push(new Balloon(this.tmpX,this.tmpY));
         }
     } 
     //console.log(this.array);
 };
-Enemies.prototype.Move = function(x)
+Balloons.prototype.Move = function(x)
 {
     this.x += x;
     for(var i = 0 ; i < this.array.length; i ++)
@@ -114,14 +117,14 @@ Enemies.prototype.Move = function(x)
         this.array[i].rect.x += x;
     }
 };
-Enemies.prototype.KillEnemy = function(i)
+Balloons.prototype.KillBalloon = function(i)
 {
     this.array[i].alive = false;
-    this.numEnemies --;
+    this.numBalloons --;
 };
-var Enemy = function(x,y)
+var Balloon = function(x,y)
 {
-    this.rect = new Rect(x,y,enemy_width,enemy_height);
+    this.rect = new Rect(x,y,balloon_width,balloon_height);
     this.alive = true;
 };
 var Shot = function(x)
@@ -145,17 +148,17 @@ var Rect = function(x,y,w,h)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-space_game_core.prototype.beginInit = function()
+rabbits_game_core.prototype.beginInit = function()
 {
-    this.enemies.Init();
+    this.balloons.Init();
     this.beginGame();
 };
-space_game_core.prototype.beginGame = function()
+rabbits_game_core.prototype.beginGame = function()
 {
     this.p1.emit('message', 'GAME_START');
     this.p2.emit('message', 'GAME_START'); 
 };
-space_game_core.prototype.beginShare = function(client)
+rabbits_game_core.prototype.beginShare = function(client)
 {
     if(client.userid == this.p1.userid)
     {
@@ -178,26 +181,27 @@ space_game_core.prototype.beginShare = function(client)
 //
 //   Update Message Anatomy
 //      Element 0 = 'UPDATE'
-//      Element 1 = own ship x
-//      Element 2 = ally ship x
-//      Element 3 = enemy pack x
-//      Element 4 = mothership x
-//      Element 5 --> End = shots
+//      Element 1 = groundRabbit x
+//      Element 2 = Flyrabbit x & y
+//      Element 3 = can move?
+//      Element 4 = baloons pack x
+//      Element 5 = end baloon x
+//      
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Main Update function (will call all the other functions)
 //This function is called by sioserver.js
 
-space_game_core.prototype.physic_update = function(deltaT)
+rabbits_game_core.prototype.physic_update = function(deltaT)
 {
     switch (this.state)
     {
         case state_game:
             this.setDirections();
-            this.moveEnemies();
+            this.moveBalloons();
             this.moveMother();
-            this.moveShots(); 
+            this.moveFlyer(deltaT); 
             this.checkCollisions();
             this.sendUpdate();
         break;
@@ -211,31 +215,30 @@ space_game_core.prototype.physic_update = function(deltaT)
     } 
 };
 
-space_game_core.prototype.update = function(deltaT) {
+rabbits_game_core.prototype.update = function(deltaT) {
 }; //game_core.update
 
 //This function send the updates messages to the players
-space_game_core.prototype.sendUpdate = function()
+rabbits_game_core.prototype.sendUpdate = function()
 {
     var p1string = this.p1ShipX+',';
     var p2string = this.p2ShipX+',';
 
-    var enemiesString = this.generateEnemyString()+',';
-    var motherString = this.mothershipX+'#'+this.mothershipY+',';
+    var balloonsString = this.generateBalloonString()+',';
+    var goalString = this.goalballoonX+'#'+this.goalballoonY+',';
 
-    var shotString = this.generateShotsString()+',';
     var scoreString = this.score;
-    this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString+scoreString);
-    this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
+    this.p1.emit("message",'UPDATE,'+p1string+p2string+balloonsString+goalString+scoreString);
+    this.p2.emit("message",'UPDATE,'+p2string+p1string+balloonsString+goalString+scoreString);
 };
 
-space_game_core.prototype.generateEnemyString = function()
+rabbits_game_core.prototype.generateBalloonString = function()
 {
     var tmpString ='';
-    tmpString += (this.enemies.x+'#');
-    for(var i = 0; i < this.enemies.array.length; i ++)
+    tmpString += (this.balloons.x+'#');
+    for(var i = 0; i < this.balloons.array.length; i ++)
     {
-        if(this.enemies.array[i].alive)
+        if(this.balloons.array[i].alive)
         {
             tmpString += '1#';
         }
@@ -247,98 +250,86 @@ space_game_core.prototype.generateEnemyString = function()
     //console.log(tmpString);
     return tmpString;
 };
-space_game_core.prototype.generateShotsString = function()
-{
-    var tmpString = '';
-    for(var i = 0; i < this.shots.length; i ++)
-    {
-        if(this.shots[i].alive)
-        {
-            tmpString+=this.shots[i].rect.x+'#'+this.shots[i].rect.y+'#'+this.shots[i].alive+'#'+this.shots[i].id+'#';
-        }
-    }
-    //console.log(tmpString);
-    return tmpString;
-};
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    World Computing functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Set the directions of the enemy lines, to avoid colliding with the wall
-space_game_core.prototype.setDirections = function()
+//Set the directions of the balloon lines, to avoid colliding with the wall
+rabbits_game_core.prototype.setDirections = function()
 {
-    if(this.enemies.x > (this.world.width - 50 - enemiesX_spacing * number) && !this.enemiesLeft)
+    if(this.balloons.x > (this.world.width - 50 - balloonsX_spacing * number) && !this.balloonsLeft)
     {
-        this.enemiesLeft = true;
+        this.balloonsLeft = true;
     }
-    if(this.enemies.x < 50 && this.enemiesLeft)
+    if(this.balloons.x < 50 && this.balloonsLeft)
     {
-        this.enemiesLeft = false;
+        this.balloonsLeft = false;
     }
 
     if( Math.random() > 0.95)
     {
-        this.mothershipLeft = !this.mothershipLeft;
+        this.goalballoonLeft = !this.goalballoonLeft;
     }
 
-    if(this.mothershipX > (this.world.width - 50 - mother_width) && !this.mothershipLeft)
+    if(this.goalballoonX > (this.world.width - 50 - goal_width) && !this.goalballoonLeft)
     {
-        this.mothershipLeft = true;
+        this.goalballoonLeft = true;
     }
-    if(this.mothershipX < 50 && this.mothershipLeft)
+    if(this.goalballoonX < 50 && this.goalballoonLeft)
     {
-        this.mothershipLeft = false;
+        this.goalballoonLeft = false;
     }
 };
-//Move the enemy lines
-space_game_core.prototype.moveEnemies = function()
+//Move the balloon lines
+rabbits_game_core.prototype.moveBalloons = function()
 {
-    if(this.enemiesLeft)
+    if(this.balloonsLeft)
     {
-        //this.enemies.x -= enemy_speed;
-        this.enemies.Move(-enemy_speed);
+        //this.balloons.x -= balloon_speed;
+        this.balloons.Move(-balloon_speed);
     }
     else
     {
-        //this.enemies.x += enemy_speed;
-        this.enemies.Move(enemy_speed);
+        //this.balloons.x += balloon_speed;
+        this.balloons.Move(balloon_speed);
     }
 };
-//Move the mothership
-space_game_core.prototype.moveMother = function()
+//Move the goalballoon
+rabbits_game_core.prototype.moveMother = function()
 {
-    if(this.mothershipLeft)
+    if(this.goalballoonLeft)
     {
-        this.mothershipX -= mother_speed;
+        this.goalballoonX -= goal_speed;
     }
     else
     {
-        this.mothershipX += mother_speed;
+        this.goalballoonX += goal_speed;
     }
 };
 
-space_game_core.prototype.animMotherFall = function()
+rabbits_game_core.prototype.animMotherFall = function()
 {
     if( Math.random() > 0.95)
     {
-        this.mothershipLeft = !this.mothershipLeft;
+        this.goalballoonLeft = !this.goalballoonLeft;
     }
 
-    if(this.mothershipX > (this.world.width - 50 - mother_width) && !this.mothershipLeft)
+    if(this.goalballoonX > (this.world.width - 50 - goal_width) && !this.goalballoonLeft)
     {
-        this.mothershipLeft = true;
+        this.goalballoonLeft = true;
     }
-    if(this.mothershipX < 50 && this.mothershipLeft)
+    if(this.goalballoonX < 50 && this.goalballoonLeft)
     {
-        this.mothershipLeft = false;
+        this.goalballoonLeft = false;
     }
 
-    if (this.mothershipY > 600)
+    if (this.goalballoonY > 600)
     {
         this.state = state_share;
-        if(Math.abs(this.p2ShipX - this.mothershipX) > Math.abs(this.p1ShipX - this.mothershipX))
+        if(Math.abs(this.p2ShipX - this.goalballoonX) > Math.abs(this.p1ShipX - this.goalballoonX))
         {
             this.p1.emit('message','SHARE_STATE');
             this.p2.emit('message','SHARE_WAIT');
@@ -351,63 +342,74 @@ space_game_core.prototype.animMotherFall = function()
     }
     else
     {
-        this.mothershipY += mother_speed;
+        this.goalballoonY += goal_speed;
     }
-    if(this.mothershipLeft)
+    if(this.goalballoonLeft)
     {
-        this.mothershipX -= mother_speed;
+        this.goalballoonX -= goal_speed;
     }
     else
     {
-        this.mothershipX += mother_speed;
+        this.goalballoonX += goal_speed;
     }
 };    
 
-//Move the shots
-space_game_core.prototype.moveShots = function()
+
+rabbits_game_core.prototype.moveFlyer = function(deltaT)
 {
-    for(var i = 0 ; i < this.shots.length; i ++)
+    if(this.flyer.y < 500)
     {
-        this.shots[i].rect.y -= shot_speed;
+        var deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2);
+        if(deltaX < this.launcher.w/2)
+        {
+            this.calculateTrajectory(deltaX);
+        }
+        else
+        {
+            //TODO relaunch the Game
+        }      
+    }
+    else
+    {
+
     }
 };
 
-space_game_core.prototype.checkCollisions = function()
+rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
-    //console.log(this.enemies.array);
-    for(var i = 0; i < this.shots.length; i ++)
-    {
-        if(this.shots[i].rect.y < shot_height )
-        {
-            this.shots[i].alive = false;
-        }
 
-        for(var j = 0; j < this.enemies.array.length; j++)
+};
+
+rabbits_game_core.prototype.checkCollisions = function()
+{
+    //console.log(this.balloons.array);
+
+
+
+        for(var j = 0; j < this.balloons.array.length; j++)
         {
-            if(this.shots[i].alive && this.enemies.array[j].alive)
+            if(this.flyer.alive && this.balloons.array[j].alive)
             {
-                if(this.doCollide(this.shots[i].rect,this.enemies.array[j].rect))
+                if(this.doCollide(this.flyer,this.balloons.array[j].rect))
                 {
-                    this.shots[i].alive = false;
-                    this.enemies.KillEnemy(j);
+                    this.balloons.KillBalloon(j);
                     this.score += 100;
                 }
             }
         }
 
-        if(this.doCollide(this.shots[i].rect,new Rect(this.mothershipX,mothershipY,mother_width,mother_height)))
+        if(this.doCollide(this.flyer,new Rect(this.goalballoonX,goalballoonY,goal_width,goal_height)))
         {
-            this.shots[i].alive = false;
-            if(this.enemies.numEnemies == 0)
+            if(this.balloons.numBalloons == 0)
             {
                 this.score+= 100;
                 this.state = state_endAnim;
             }
         }   
-    }  
+    
 };
 
-space_game_core.prototype.doCollide = function(rect1,rect2)
+rabbits_game_core.prototype.doCollide = function(rect1,rect2)
 {
     return(!((rect1.x > rect2.x + rect2.w) || (rect1.x + rect1.w < rect2.x) || (rect1.y > rect2.y + rect2.h) || (rect1.y + rect1.h < rect2.h)));
 };
@@ -418,7 +420,7 @@ space_game_core.prototype.doCollide = function(rect1,rect2)
 //    Input functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-space_game_core.prototype.onInput = function(client, data){
+rabbits_game_core.prototype.onInput = function(client, data){
     
     if(this.state == state_game)
     {
@@ -430,20 +432,20 @@ space_game_core.prototype.onInput = function(client, data){
                 //console.log('left');
                 if(this.p1ShipX > 0)
                 {
-                  this.p1ShipX -= ship_speed;  
+                  this.p1ShipX -= balloon_speed;  
                 }
                 
             }
             if(data[2] == '1')
             {
-                if(this.p1ShipX < this.world.width - ship_width)
+                if(this.p1ShipX < this.world.width - balloon_width)
                 {
-                    this.p1ShipX += ship_speed;
+                    this.p1ShipX += balloon_speed;
                 } 
             }
             if(data[3] == '1')
             {
-                this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2);
+                this.shoot(this.p1ShipX + balloon_width / 2 - shot_width/2);
             }
         }
         else
@@ -453,19 +455,19 @@ space_game_core.prototype.onInput = function(client, data){
             {
                 if(this.p2ShipX > 0)
                 {
-                    this.p2ShipX -= ship_speed;
+                    this.p2ShipX -= balloon_speed;
                 }
             }
             if(data[2] == '1')
             {
-                if(this.p2ShipX < this.world.width - ship_width)
+                if(this.p2ShipX < this.world.width - balloon_width)
                 {
-                    this.p2ShipX += ship_speed; 
+                    this.p2ShipX += balloon_speed; 
                 }
             }
             if(data[3] == '1')
             {
-                this.shoot(this.p2ShipX + ship_width / 2 - shot_width/2);
+                this.shoot(this.p2ShipX + balloon_width / 2 - shot_width/2);
             }
         }
     }
@@ -479,15 +481,15 @@ space_game_core.prototype.onInput = function(client, data){
                 //console.log('left');
                 if(this.p1ShipX > 100)
                 {
-                  this.p1ShipX -= ship_speed;  
+                  this.p1ShipX -= balloon_speed;  
                 }
                 
             }
             if(data[2] == '1')
             {
-                if(this.p1ShipX < this.world.width - ship_width - 100)
+                if(this.p1ShipX < this.world.width - balloon_width - 100)
                 {
-                    this.p1ShipX += ship_speed;
+                    this.p1ShipX += balloon_speed;
                 } 
             }
         }
@@ -498,26 +500,23 @@ space_game_core.prototype.onInput = function(client, data){
             {
                 if(this.p2ShipX > 100)
                 {
-                    this.p2ShipX -= ship_speed;
+                    this.p2ShipX -= balloon_speed;
                 }
             }
             if(data[2] == '1')
             {
-                if(this.p2ShipX < this.world.width - ship_width - 100)
+                if(this.p2ShipX < this.world.width - balloon_width - 100)
                 {
-                    this.p2ShipX += ship_speed; 
+                    this.p2ShipX += balloon_speed; 
                 }
             }
         }
     }
 };
 
-space_game_core.prototype.shoot = function(x)
+rabbits_game_core.prototype.shoot = function(x)
 {
-    var tmpShot = new Shot(x);
-    tmpShot.id = this.shotNum;
-    this.shotNum ++;
-    this.shots.push(tmpShot);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -526,7 +525,7 @@ space_game_core.prototype.shoot = function(x)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-space_game_core.prototype.EndGame = function()
+rabbits_game_core.prototype.EndGame = function()
 {
     this.p1.player.currentRepetition ++;
     this.p2.player.currentRepetition ++;
@@ -542,7 +541,7 @@ space_game_core.prototype.EndGame = function()
 
     this.isEnded = true;
 };
-space_game_core.prototype.Share = function(client, data)
+rabbits_game_core.prototype.Share = function(client, data)
 {
     console.log(client.userid + data);
     if(client.userid == this.p1.userid)
@@ -564,7 +563,7 @@ space_game_core.prototype.Share = function(client, data)
 
     this.EndGame();
 };
-space_game_core.prototype.GetResult = function()
+rabbits_game_core.prototype.GetResult = function()
 {
 
     return('Game ID : '+ this.id+'\nTotal Score : '+ this.score+'\n'+this.p1.userid+'\n'+this.p2.userid);
@@ -575,7 +574,7 @@ space_game_core.prototype.GetResult = function()
 //    Client Messages handler
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-space_game_core.prototype.onMessage = function(client, data){
+rabbits_game_core.prototype.onMessage = function(client, data){
     //console.log('message recieved by game : '+ this.id);
 
     var splittedData = data.split(',');

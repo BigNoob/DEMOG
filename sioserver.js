@@ -3,6 +3,7 @@ var
 	io 			= require("socket.io");
 
 require('./space_coop_core.js');
+require('./rabbits_coop_core.js');
 global.window = global.document = global;
 
 var game_server = function()
@@ -233,12 +234,12 @@ game_server.prototype.createGame = function(client1, client2)
 			tmpGame = new space_game_core(this.experiment.xpMaxIter);
 		break;
 		case "rabbits":
-			tmpGame = new space_game_core(this.experiment.xpMaxIter);
+			tmpGame = new rabbits_game_core(this.experiment.xpMaxIter);
 		break;
 	}
 
 	this.games.push(tmpGame);
-	this.games[this.games.length - 1].id = new UUID();
+	this.games[this.games.length - 1].id = UUID();
 	this.games[this.games.length - 1].p1 = client1;
 	this.games[this.games.length - 1].p2 = client2;
 	this.games[this.games.length - 1].beginInit();
@@ -315,16 +316,17 @@ game_server.prototype.checkEndedGames = function()
 	        this.updateClient(this.games[i].p2);
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
-		    	
+		    	console.log(this.games[i].p1.player.GetResult());
 		        this.removeClient(this.games[i].p1);
 		        
 		    }
 		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
-		    	
+		    	console.log(this.games[i].p2.player.GetResult());
 		        this.removeClient(this.games[i].p2);
 
 		    }
+		    console.log(this.games[i].GetResult());
 			this.endGame(this.games[i]);
 			
 		}

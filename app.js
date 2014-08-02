@@ -5,7 +5,7 @@
 // Date: 2014/06/18
 // Version: 0.5
 // Author: Olivier Allouard
-// Website: running-pande.fr
+// Website: running-panda.fr
 // Contact: olivier.allouard@gmail.com
 // Description:
 //					The Express server handles passing the content to the browser. It's the router
@@ -39,7 +39,8 @@ var
     sio         = undefined,
     wrap_server = undefined;
 
-
+var frame_time = 60;
+var physic_time = 15;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -49,7 +50,7 @@ var
 
     
 var 
-    current_experiment = CreateExperiment('test',"web",5,"space_coop"),
+    current_experiment = CreateExperiment('test',"web",5,"rabbits"),
     experimentsList = [current_experiment],
     experiment_link= current_experiment.generateLink();
 
@@ -216,6 +217,7 @@ if(sio != undefined)
         //console.log('plop');
         client.userid = UUID();
         client.player = new Player();
+        client.player.InitResult(client.userid);
         wrap_server.addClient(client);
         
 
@@ -262,11 +264,11 @@ setInterval(function(){
 }, 5000);
 
 setInterval(function(){
-   wrap_server.update();
+   wrap_server.update(frame_time);
    wrap_server.checkEndedGames();
-}, 60);
+}, frame_time);
 
 setInterval(function(){
-   wrap_server.physic_update();
-}, 20);
+   wrap_server.physic_update(physic_time);
+}, physic_time);
 
