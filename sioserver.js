@@ -234,7 +234,8 @@ game_server.prototype.createGame = function(client1, client2)
 			tmpGame = new space_game_core(this.experiment.xpMaxIter);
 		break;
 		case "rabbits":
-			tmpGame = new rabbits_game_core(this.experiment.xpMaxIter);
+			//tmpGame = new rabbits_game_core(this.experiment.xpMaxIter);
+			tmpGame = new space_game_core(this.experiment.xpMaxIter); // DEBUG LINE TO TEST ONLY SPACE COOP
 		break;
 	}
 

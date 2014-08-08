@@ -582,7 +582,7 @@ function handleKeyDown_Space(e)
 
 function UpdateShareAmmount_Space()
 {
-  share = parseInt(score_value * (ship.x-100)/700);
+  share = parseInt(score_value * (ship.x -100)/(700- 18));
   console.log(share);
   maxAmmount.text = score_value;
   minAmmount.text = 0;

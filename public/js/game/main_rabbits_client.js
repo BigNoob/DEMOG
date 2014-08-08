@@ -47,7 +47,7 @@ var score_value = 0;
 var socket;
 
 //Views
-var ship;
+var launcherRight;
 var allyShip;
 var background;
 var enemy;
@@ -151,11 +151,11 @@ function StartLoading()
   //Loading Manifest
   manifest = [
                 {src:"/public/images/RabbitBackground.png", id:"background"},
-                {src:"/public/images/RabbitRight.png", id:"ship"},
-                {src:"/public/images/RabbitRight.png", id:"allyShip"},
-                {src:"/public/images/RedBalloon.png", id:"enemy"},
-                {src:"/public/images/FlyingRabbit.png", id:"shot"},
-                {src:"/public/images/GoalBalloon.png", id:"mother"},
+                {src:"/public/images/RabbitRight.png", id:"launcherRight"},
+                {src:"/public/images/RabbitLeft.png", id:"launcherLeft"},
+                {src:"/public/images/RedBalloon.png", id:"balloon"},
+                {src:"/public/images/FlyingRabbit.png", id:"flyer"},
+                {src:"/public/images/GoalBalloon.png", id:"goal"},
               ];
   //loading Events and Callbacks
   preloader = new createjs.LoadQueue(true)
@@ -201,16 +201,16 @@ function handleFileLoad (event)
       if(event.item.id == "background"){
             background = new createjs.Bitmap(event.result);
       }
-      if(event.item.id == "ship"){
-            ship = new createjs.Bitmap(event.result);
+      if(event.item.id == "launcherRight"){
+            launcherRight = new createjs.Bitmap(event.result);
       }
-      if(event.item.id == "allyShip"){
+      if(event.item.id == "launcherLeft"){
             allyShip = new createjs.Bitmap(event.result);
       }
-      if(event.item.id == "mother"){
+      if(event.item.id == "goal"){
             mothership = new createjs.Bitmap(event.result);
       }
-      if(event.item.id == "enemy"){
+      if(event.item.id == "balloon"){
             enemy = new createjs.Bitmap(event.result);
             for(var j = 0; j < lines; j++)
             {
@@ -225,7 +225,7 @@ function handleFileLoad (event)
 
 
       }
-      if(event.item.id == "shot"){
+      if(event.item.id == "flyer"){
             shot = new createjs.Bitmap(event.result);
       }
 }
@@ -329,8 +329,8 @@ function InitGameState()
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
-  ship.x = 400;
-  ship.y = 550;
+  launcherRight.x = 400;
+  launcherRight.y = 550;
   
   allyShip.x = 400;
   allyShip.y = 550;
@@ -342,7 +342,7 @@ function InitGameState()
   mothership.y = 20;
 
   stage.addChild(progressText);
-  stage.addChild(ship);
+  stage.addChild(launcherRight);
   stage.addChild(allyShip);
   stage.addChild(mothership);
   stage.addChild(score);
@@ -445,12 +445,12 @@ function InitShareState()
 
   slider = new createjs.Shape();
   slider.graphics.beginFill("white").drawRect(100,400,600,20);
-  ship.x = 100;
-  ship.y = 390;
+  launcherRight.x = 100;
+  launcherRight.y = 390;
 
   
   stage.addChild(slider);
-  stage.addChild(ship);
+  stage.addChild(launcherRight);
   stage.addChild(maxAmmount);
   stage.addChild(minAmmount);
   stage.addChild(givenAmmount);
@@ -478,7 +478,7 @@ function InitShareWait()
 function ClearGameState()
 {
   stage.removeChild(progressText);
-  stage.removeChild(ship);
+  stage.removeChild(launcherRight);
   stage.removeChild(allyShip);
   stage.removeChild(EnemiesCont);
   stage.removeChild(mothership);
@@ -503,7 +503,7 @@ function ClearLobbyState()
 function ClearShareState()
 {
   stage.removeChild(slider);
-  stage.removeChild(ship);
+  stage.removeChild(launcherRight);
   stage.removeChild(maxAmmount);
   stage.removeChild(minAmmount);
   stage.removeChild(givenAmmount);
@@ -579,7 +579,7 @@ function handleKeyDown(e)
 
 function UpdateShareAmmount()
 {
-  share = parseInt(score_value * (ship.x-100)/700);
+  share = parseInt(score_value * (launcherRight.x-100)/700);
   console.log(share);
   maxAmmount.text = score_value;
   minAmmount.text = 0;
@@ -640,7 +640,7 @@ function updateScreen(data)
 
 function drawOwnShip(data)
 {
-  ship.x = data;
+  launcherRight.x = data;
 }
 
 function drawAllyShip(data)

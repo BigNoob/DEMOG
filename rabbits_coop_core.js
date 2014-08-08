@@ -74,6 +74,8 @@ var rabbits_game_core = function(maxIter)
 
     this.init_speed = 10;
     this.init_angle = 80;
+    this.init_abs = 350;
+    this.inAirTime = 0.0;
 };
 
 //This line is used to tell node.js that he can access the constructor
@@ -357,8 +359,9 @@ rabbits_game_core.prototype.animMotherFall = function()
 
 rabbits_game_core.prototype.moveFlyer = function(deltaT)
 {
-    if(this.flyer.y < 500)
+    if(this.flyer.y < 550)
     {
+        this.inAirTime = 0;
         var deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2);
         if(deltaX < this.launcher.w/2)
         {
@@ -366,25 +369,27 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
         }
         else
         {
-            //TODO relaunch the Game
+            this.calculateTrajectory(this.launcher.w / 4);
         }      
+        this.flyer.y = 551;
     }
     else
     {
-
+        this.inAirTime += deltaT;
+        this.flyer.x = init_speed * Math.cos(init_angle) * this.inAirTime + this.init_abs;
+        this.flyer.y = init_speed * Math.sin(init_angle) * this.inAirTime - (gravity * this.inAirTime * this.inAirTime) / 2
     }
 };
 
 rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
-
+    this.init_speed = 20 * deltax / this.launcher.w / 2;
+    this.init_angle = 70 + 10*(deltax / this.launcher.w / 2);
+    this.init_abs = this.flyer.x;
 };
 
 rabbits_game_core.prototype.checkCollisions = function()
 {
-    //console.log(this.balloons.array);
-
-
 
         for(var j = 0; j < this.balloons.array.length; j++)
         {
