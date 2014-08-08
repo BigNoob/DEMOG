@@ -11,6 +11,7 @@ INSTALLATION:
 1) Download Node.js at http://nodejs.org/
 2) Install Node.js
 3) Clone this repository (if not done yet)
+4) Execute "npm install" to install the modules
 ===================================================================================================================
 HOW DOES IT WORK:
 The server contains a current experiment which is the only active experiment. This experiment can be tweaked from

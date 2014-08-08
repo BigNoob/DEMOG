@@ -1,22 +1,42 @@
 {
-  "name": "server-0-3",
-  "version": "0.0.3",
-  "description": "experiment server",
-  "main": "server-0-3.js",
+  "name": "DEMOG",
+  "version": "0.1.0",
+  "description": "DIctator Game Experiment through multiplayer online games",
+  "main": "app.js",
   "dependencies": {
     "body-parser": "~1.0.2",
-    "ejs": "~1.0.0",
-    "express": "^3.2.6",
     "json": "~0.0.14",
-    "socket.io": "~0.9.6",
-    "urlencode": "~0.2.0",
+    "express": "~3.2.6",
+    "newrelic": "~1.9.0",
+    "node-uuid": "~1.4.1",
+    "node-inspector": "~0.7.4",
+    "ejs": "~1.0.0",
+    "nodemailer": "~0.6.5",
+    "logfmt": "~1.1.2",
     "routes": "~1.1.0",
-    "logfmt": "^1.1.2"
+    "socket.io": "~0.9.6",
+    "urlencode": "~0.2.0"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node app.js"
   },
-  "author": "",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/Noxeangel/DEMOG.git"
+  },
+  "keywords": [
+    "game",
+    "multiplayer",
+    "experiment",
+    "dictator",
+    "invaders",
+    "rabbit"
+  ],
+  "author": "Olivier Allouard",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Noxeangel/DEMOG/issues"
+  },
+  "homepage": "https://github.com/Noxeangel/DEMOG"
 }
