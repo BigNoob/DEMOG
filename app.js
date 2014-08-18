@@ -50,6 +50,7 @@ var
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
     nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
+    smtpTransport = require('nodemailer-smtp-transport'),
     sio         = undefined,
     wrap_server = undefined;
     
@@ -98,7 +99,7 @@ var experiment_link = current_experiment.generateLink();
 // Mail sender set up
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var smtpTransport = nodeMailer.createTransport("SMTP",{
+var LocalTransport = nodeMailer.createTransport("SMTP",{
    service: "Gmail",
    auth: {
        user: mailSenderLogin,
@@ -106,7 +107,16 @@ var smtpTransport = nodeMailer.createTransport("SMTP",{
    }
 });
 
-
+var SendGridTransport = nodeMailer.createTransport(smtpTransport({
+    host: 'smtp.sendgrid.net',
+    port: 587,
+    authentication: 'plain',
+    auth: {
+        user: process.env.SENDGRID_USERNAME,
+        pass: process.env.SENDGRID_PASSWORD
+    },
+    domain: 'heroku.com'
+}));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -198,34 +208,41 @@ app.post('/admin/write/:xpName', function(req, res) {
         {
             if(experimentsList[i].xpName == xpName)
             {
-                
-                fs.writeFile('./log/result.json', JSON.stringify(experimentsList[i], null, 4), function(err){
-                    if(err) {
-                        console.log(err);
-                    } else {
-                        console.log("The file was saved!");
-                    }
-                });
-
                 var mailOptions = {
                     from: 'DEMOG RESULTS SERVICE', // sender address
                     to: resultMailAdress, // list of receivers
                     subject: 'Results from exp', // Subject line
-                    text: JSON.stringify(experimentsList[i], null, 4), // plaintext body
-                    html: JSON.stringify(experimentsList[i], null, 4) ,// html body
+                    text: 'Results of the experiment : '+current_experiment.xpName, // plaintext body
+                    html: 'Results of the experiment : '+current_experiment.xpName ,// html body
                     attachments : 
                         [{      filename: 'result.json',
-                                path: './log/result.json' // stream this file
+                                contents: JSON.stringify(experimentsList[i], null, 4)
 
                         }]
                 };
-                smtpTransport.sendMail(mailOptions, function(error, info){
-                    if(error){
-                        console.log(error);
-                    }else{
-                        console.log('Message sent: ' + info.response);
-                    }
-                });
+
+                if(gameport == 8099)
+                {
+                    LocalTransport.sendMail(mailOptions, function(error, info){
+                        if(error){
+                            console.log(error);
+                        }else{
+                            console.log('Message sent: ' + info.response);
+                        }
+                    });
+                }
+                else
+                {
+                    SendGridTransport.sendMail(mailOptions, function(error, info){
+                        if(error){
+                            console.log(error);
+                        }else{
+                            console.log('Message sent: ' + info.response);
+                        }
+                    });
+                }
+
+                
             }
         }
     }

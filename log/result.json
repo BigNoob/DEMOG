@@ -18,77 +18,9 @@
     "isRunning": true,
     "language": "en",
     "result": {
-        "playerResults": [
-            {
-                "gameLog": [
-                    {
-                        "gameid": "e4faf862-7436-4242-a2ae-879b05f71709",
-                        "repetition": 1,
-                        "gameScore": 3100,
-                        "isSharer": true,
-                        "given": 1309,
-                        "kept": 1791,
-                        "presentScore": 1791
-                    }
-                ],
-                "userid": "f050ff74-d231-4f11-9442-6cc0655a5155",
-                "amazonId": "sdsds",
-                "totalScore": 1791,
-                "status": "wating for games"
-            },
-            {
-                "gameLog": [
-                    {
-                        "gameid": "e4faf862-7436-4242-a2ae-879b05f71709",
-                        "repetition": 1,
-                        "gameScore": 3100,
-                        "isSharer": false,
-                        "given": 1309,
-                        "kept": 1791,
-                        "presentScore": 1309
-                    }
-                ],
-                "userid": "18fa5ecc-45ed-4b2e-aaeb-6c1bbceaf7aa",
-                "amazonId": "fgfgfg",
-                "totalScore": 1309,
-                "status": "wating for games"
-            },
-            {
-                "gameLog": [
-                    {
-                        "gameid": "dab4be56-0049-444d-a0a1-d4ab1734a77a",
-                        "repetition": 1,
-                        "gameScore": 3100,
-                        "isSharer": false,
-                        "given": 709,
-                        "kept": 2391,
-                        "presentScore": 709
-                    }
-                ],
-                "userid": "5f5884f4-1749-458d-b143-b703eb3521d1",
-                "amazonId": "mlmlml",
-                "totalScore": 709,
-                "status": "wating for games"
-            },
-            {
-                "gameLog": [
-                    {
-                        "gameid": "dab4be56-0049-444d-a0a1-d4ab1734a77a",
-                        "repetition": 1,
-                        "gameScore": 3100,
-                        "isSharer": true,
-                        "given": 709,
-                        "kept": 2391,
-                        "presentScore": 2391
-                    }
-                ],
-                "userid": "3c705977-0d32-4f45-b07d-8b194319f668",
-                "amazonId": "yhyhyhy",
-                "totalScore": 2391,
-                "status": "wating for games"
-            }
-        ]
+        "playerResults": [],
+        "gameResults": []
     },
-    "xpMaxIter": 1,
+    "xpMaxIter": 2,
     "xpLink": "/home"
 }
