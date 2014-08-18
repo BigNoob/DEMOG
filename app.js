@@ -109,14 +109,10 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
 });
 
 var SendGridTransport = nodeMailer.createTransport(sgTransport({
-    host: 'smtp.sendgrid.net',
-    port: 587,
-    authentication: 'plain',
     auth: {
         user: process.env.SENDGRID_USERNAME,
         pass: process.env.SENDGRID_PASSWORD
     },
-    domain: 'heroku.com'
 }));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
