@@ -52,6 +52,7 @@ var
     nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
     sgTransport = require('nodemailer-sendgrid-transport'),
+    sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD),
     sio         = undefined,
     wrap_server = undefined;
     
@@ -108,12 +109,6 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
    }
 });
 
-var SendGridTransport = nodeMailer.createTransport(sgTransport({
-    auth: {
-        user: process.env.SENDGRID_USERNAME,
-        pass: process.env.SENDGRID_PASSWORD
-    },
-}));
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -230,13 +225,26 @@ app.post('/admin/write/:xpName', function(req, res) {
                 }
                 else
                 {
-                    SendGridTransport.sendMail(mailOptions, function(error, info){
-                        if(error){
-                            console.log(error);
-                        }else{
-                            console.log('Message sent: ' + info.response);
+
+
+                    var payload   = 
+                    {
+                        to      : resultMailAdress,
+                        from    : mailSenderLogin,
+                        subject : 'Saying Hi',
+                        text    : 'This is my first email through SendGrid'
+                    }
+
+                    sendgrid.send(
+                        payload,
+                        function(error, json){
+                            if(error){
+                                console.log(error);
+                            }else{
+                                console.log('Message sent: ' + json);
                         }
-                    });
+                    }
+                    );
                 }
 
                 
