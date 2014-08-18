@@ -51,6 +51,7 @@ var
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
     nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
+    sgTransport = require('nodemailer-sendgrid-transport'),
     sio         = undefined,
     wrap_server = undefined;
     
@@ -107,7 +108,7 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
    }
 });
 
-var SendGridTransport = nodeMailer.createTransport(smtpTransport({
+var SendGridTransport = nodeMailer.createTransport(sgTransport({
     host: 'smtp.sendgrid.net',
     port: 587,
     authentication: 'plain',
