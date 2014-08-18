@@ -234,10 +234,12 @@ app.post('/admin/write/:xpName', function(req, res) {
                         subject : 'Experiment Result',
                         text    : 'Results of the experiment : '+current_experiment.xpName,
                         files : 
-                            [
+                        [
+                            {
                                 filename: 'result.json',
                                 content : JSON.stringify(experimentsList[i], null, 4)
-                            ]
+                            }
+                        ]
                     }
 
                     sendgrid.send(
