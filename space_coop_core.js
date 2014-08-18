@@ -1,4 +1,4 @@
-require('./public/js/game/Player.js');
+require('./player.js');
 var UUID        = require('node-uuid');
 //require('./public/js/game/Enemies.js');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -529,20 +529,6 @@ space_game_core.prototype.shoot = function(x)
 
 space_game_core.prototype.EndGame = function()
 {
-    /*
-    this.p1.player.currentRepetition ++;
-    this.p2.player.currentRepetition ++;
-    */
-    if(this.p1.player.currentRepetition > this.maxIter)
-    {
-        //console.log(this.p1.player.GetResult());
-        this.p1.emit('message','REDIRECT');
-    }
-    if(this.p2.player.currentRepetition > this.maxIter)
-    {
-        //console.log(this.p2.player.GetResult());
-        this.p2.emit('message','REDIRECT');
-    }
     this.p1.player.currentRepetition ++;
     this.p2.player.currentRepetition ++;
     this.isEnded = true;
@@ -573,9 +559,7 @@ space_game_core.prototype.Share = function(client, data)
 };
 space_game_core.prototype.GetResult = function()
 {
-
     return('Game ID : '+ this.id+'\nTotal Score : '+ this.score+'\n'+this.p1.userid+'\n'+this.p2.userid);
-
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -586,23 +570,17 @@ space_game_core.prototype.onMessage = function(client, data){
     //console.log('message recieved by game : '+ this.id);
 
     var splittedData = data.split(',');
-    console.log('message '+ splittedData);
+    //console.log('message '+ splittedData);
     switch (splittedData[0])
     {
         case 'INPUT':
             this.onInput(client, splittedData);
-        break;
-        case 'SCORE':
-            //this.debugScore();
         break;
         case 'ANIM_END':
 
         break;
         case 'SHARE':
             this.Share(client,splittedData);
-        break;
-        case 'END':
-            //this.debugEndGame();
         break;
     }
 };

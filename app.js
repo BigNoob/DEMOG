@@ -28,8 +28,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-require('./public/js/game/Player.js');
-require('./public/js/game/Enemies.js');
+require('./player.js');
+//require('./public/js/game/Enemies.js');
 require('./experiment');
 require('./sioserver.js');
 require('newrelic');
@@ -42,18 +42,29 @@ require('newrelic');
 
 var 
 	gameport 	= process.env.PORT || 8099,					// Listen port of the server (8099 or a specific port declared by the host machine)
-	io             = require("socket.io"),                     //
+	io          = require("socket.io"),                     //
 	express 	= require('express'),						//
 	UUID		= require('node-uuid'),						//
 	routes 		= require('routes'),						//
-	verbose 	= true,									// For debug purpose, if true, more debug logs will print
 	http 		= require('http'),							//
 	app 		= express(),								//
+    fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
+    nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     sio         = undefined,
     wrap_server = undefined;
+    
 
 var frame_time = 60;
 var physic_time = 15;
+
+var adminLogin = 'debove';                                  //Login of the admin page
+var adminPassw = 'wivyxuvo';                                //password of the admin page
+
+var resultMailAdress = 'running.panda.website@gmail.com';   //mail adress where the results will be send
+
+var mailSenderLogin = 'olivier.allouard@gmail.com';         //login of the gmail account used to send results
+var mailSenderPassw = 'wivyxuvo';                           //password of the gmail account used to send results
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
@@ -64,8 +75,9 @@ var physic_time = 15;
     
 var 
     current_experiment = CreateExperiment('test',"web",2,"space_coop"),
-    experimentsList = [current_experiment],
-    experiment_link= current_experiment.generateLink();
+    experimentsList = [current_experiment];
+
+
 
 
 function CreateExperiment(name,type,iter,game)
@@ -79,6 +91,23 @@ function CreateExperiment(name,type,iter,game)
     }
 }
 
+var experiment_link = current_experiment.generateLink();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Mail sender set up
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var smtpTransport = nodeMailer.createTransport("SMTP",{
+   service: "Gmail",
+   auth: {
+       user: mailSenderLogin,
+       pass: mailSenderPassw
+   }
+});
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Express server set up
@@ -88,7 +117,7 @@ function CreateExperiment(name,type,iter,game)
 app.configure(function(){
     app.set('views', __dirname + '/views');
     app.use(express.favicon());
-    app.use(express.logger('dev'));
+    //app.use(express.logger('dev'));
     app.use(express.static(__dirname + '/public'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -98,16 +127,13 @@ app.configure(function(){
 
 var server 		= http.createServer(app);					// Creation of the Express server
 
-
-
 server.listen(gameport);
 
 app.get('/admin',function(req,res){
-    res.render('admin.ejs', {exps: experimentsList});
+    res.render('admin.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length});
 });
 
 app.post('/admin/add/', function(req,res){
-    //console.log("Admin 'addXp' Request recieved: " +req.param('xpName') +" -|- "+ req.param('xpType') +" -|- "+ req.param('Iter') +" -|- "+ req.param('xpGame'));
     var xpName = req.param('xpName');
     var xpType = req.param('xpType');
     var xpGame = req.param('xpGame');
@@ -120,7 +146,6 @@ app.post('/admin/add/', function(req,res){
 });
 
 app.post('/admin/delete/:xpName', function(req, res) {
-    //console.log("Admin 'deleteXp' Request recieved: " +xpName);
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
@@ -134,7 +159,6 @@ app.post('/admin/delete/:xpName', function(req, res) {
     res.redirect('/admin');
 });
 app.post('/admin/start/:xpName', function(req, res) {
-    //console.log("Admin 'startXP' Request recieved: " +xpName);
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
@@ -154,7 +178,6 @@ app.post('/admin/start/:xpName', function(req, res) {
     res.redirect('/admin');
 });
 app.post('/admin/stop/:xpName', function(req, res) {
-    //console.log("Admin 'stopXP' Request recieved: " +xpName);
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
@@ -169,22 +192,44 @@ app.post('/admin/stop/:xpName', function(req, res) {
     res.redirect('/admin');
 });
 app.post('/admin/write/:xpName', function(req, res) {
-    //console.log("Admin 'writeXP' Request recieved: " +xpName);
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
         {
             if(experimentsList[i].xpName == xpName)
             {
-                experimentsList[i].exportResults();
+                
+                fs.writeFile('./log/result.json', JSON.stringify(experimentsList[i], null, 4), function(err){
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        console.log("The file was saved!");
+                    }
+                });
+
+                var mailOptions = {
+                    from: 'DEMOG RESULTS SERVICE', // sender address
+                    to: resultMailAdress, // list of receivers
+                    subject: 'Results from exp', // Subject line
+                    text: JSON.stringify(experimentsList[i], null, 4), // plaintext body
+                    html: JSON.stringify(experimentsList[i], null, 4) ,// html body
+                    attachments : 
+                        [{      filename: 'result.json',
+                                path: './log/result.json' // stream this file
+
+                        }]
+                };
+                smtpTransport.sendMail(mailOptions, function(error, info){
+                    if(error){
+                        console.log(error);
+                    }else{
+                        console.log('Message sent: ' + info.response);
+                    }
+                });
             }
         }
     }
     res.redirect('/admin');
-});
-
-app.get('/home', function(req,res){
-    res.render('home.ejs');
 });
 
 app.get('/game', function(req, res){
@@ -196,7 +241,7 @@ app.get('/end', function(req,res){
 });
 
 app.get(experiment_link,function (req,res){
-    res.render('client.ejs', {exp: current_experiment});
+    res.render('home.ejs', {exp: current_experiment});
 });
 
 
@@ -241,13 +286,16 @@ if(sio != undefined)
         var tmpClient = client;
         //console.log('plop');
         client.userid = UUID();
-        client.player = new Player();
+        client.player = new player();
         //client.player.InitResult(client.userid);
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("wating for games");
         wrap_server.addClient(client);
         
-
+        client.on('playerLogin', function (m){
+            console.log(m);
+            client.player.result.amazonId = m;
+        });
         client.on('message', function (m){
             wrap_server.onMessage(client, m);
         });

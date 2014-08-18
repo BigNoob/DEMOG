@@ -8,12 +8,7 @@ global.window = global.document = global;
 
 var game_server = function()
 {
-	
 	this.experiment = undefined;
-	this.local_time = 0;
-	this._dt = new Date().getTime();
-	this._dte = new Date().getTime();
-	this.messages = [];
 	this.games = [];
 	this.clients = [];
 	this.clientsinLobby = [];
@@ -32,6 +27,7 @@ module.exports = global.game_server = game_server;
 game_server.prototype.initServer = function(xp)
 {
 	this.experiment = xp;
+	this.experiment.initResults();
 	this.updateClient('ALL');
 };
 game_server.prototype.update = function()
@@ -60,18 +56,12 @@ game_server.prototype.stopServer = function()
 	}
 
 
-	for(var j = 0 ; j < this.clientsinLobby.length; j ++)
+	for(var j = this.clientsinLobby.length - 1 ; j >= 0; j --)
 	{
 		console.log('NO_XP sent to : '+ this.clientsinLobby[j].userid);
 		this.clientsinLobby[j].emit("message",'NO_XP');
 	}
-	console.log(this.clients);
-    console.log(this.clientsinLobby);
-	/*
-	this.games.splice(0,this.games.length-1);
-	this.clients.splice(0,this.clients.length - 1);
-	this.clientsinLobby.splice(0,this.clientsinLobby.length - 1);
-	*/
+
 	this.games = [];
 	this.clients = [];
 	this.clientsinLobby = [];
@@ -88,8 +78,6 @@ game_server.prototype.stopServer = function()
 //This function send a recieved message to the on Message function of the core game server selected for the experience
 game_server.prototype.onMessage = function(client, message)
 {
-	this.messages.push(message);
-	//this.findGame(client).onMessage(message, client);
 	if(!this.isClientInLobby(client))
 	{
 		this.games[this.getGameIndex(this.findGame(client))].onMessage(client, message);
@@ -170,7 +158,6 @@ game_server.prototype.addClient = function(client)
 	if(this.experiment.isRunning)
 	{
 		this.clientsinLobby.push(client);
-		//this.sendClientToLobby(client);
 		console.log(client.userid + " has been sent to the lobby");
 		this.updateClient(client);
 	}
@@ -242,7 +229,6 @@ game_server.prototype.createGame = function(client1, client2)
 		break;
 		case "rabbits":
 			tmpGame = new rabbits_game_core(this.experiment.xpMaxIter);
-			//tmpGame = new space_game_core(this.experiment.xpMaxIter); // DEBUG LINE TO TEST ONLY SPACE COOP
 		break;
 	}
 
@@ -261,9 +247,16 @@ game_server.prototype.createGame = function(client1, client2)
 game_server.prototype.endGame = function(game)
 {
 	this.updateClient('ALL');
-	this.sendClientToLobby(this.games[this.getGameIndex(game)].p1);
-	this.sendClientToLobby(this.games[this.getGameIndex(game)].p2);
-	console.log('players sent to lobby : '+ this.games[this.getGameIndex(game)].p1.userid + ' with : '+ this.games[this.getGameIndex(game)].p1.player.score);
+
+	if(this.games[this.getGameIndex(game)].p1 != null)
+	{
+		this.sendClientToLobby(this.games[this.getGameIndex(game)].p1);
+	}
+	if(this.games[this.getGameIndex(game)].p2 != null)
+	{
+		this.sendClientToLobby(this.games[this.getGameIndex(game)].p2);
+	}
+	
 	this.games.splice(this.getGameIndex(game),1);
 };
 
@@ -303,6 +296,7 @@ game_server.prototype.matchClients = function()
 			this.createGame(this.clientsinLobby[i*2],this.clientsinLobby[(i*2)+1]);
 			for(var j = 0; j < this.games.length; j ++)
 			{
+				console.log("//////MATCHING FUNCTION////////");
 				console.log("game n°"+j);
 				console.log('\t' +this.games[j].id);
 				console.log('\t\t' +this.games[j].p1.userid);
@@ -318,27 +312,26 @@ game_server.prototype.checkEndedGames = function()
 	{
 		if(this.games[i].isEnded)
 		{
-			//console.log(this.games[i].p1.player);
 	        this.updateClient(this.games[i].p1);
-	        //console.log(this.games[i].p2.player);
 	        this.updateClient(this.games[i].p2);
+	        console.log(this.games[i].GetResult());
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 		    	console.log(this.games[i].p1.player.GetResult());
 		    	this.experiment.addPlayerResults(this.games[i].p1.player.GetResult());
+		    	this.games[i].p1.emit('message','REDIRECT');
 		        this.removeClient(this.games[i].p1);
-		        
+		        this.games[i].p1 = null;
 		    }
 		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 		    	console.log(this.games[i].p2.player.GetResult());
 		    	this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
+		    	this.games[i].p2.emit('message','REDIRECT');
 		        this.removeClient(this.games[i].p2);
-
+		        this.games[i].p2 = null;
 		    }
-		    console.log(this.games[i].GetResult());
 			this.endGame(this.games[i]);
-			
 		}
 	}
 };

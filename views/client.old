@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SpaceCoopHTML5 prototype</title>
+    <link rel='stylesheet' href='/public/styles/styles.css' />
+    <link href="/public/styles/styles.css" rel="stylesheet" type="text/css">
+
+    <xml id="langXML"src="/public/localization/lang.xml"></xml>
+    
+    <script src="/public/js/libs/socket.io.min.js"></script>
+    <script src="/public/js/libs/easeljs-0.7.1.min.js"></script>
+    <script src="/public/js/libs/preloadjs-0.4.1.min.js"></script>
+    <script src="/public/js/libs/tweenjs-0.5.1.min.js"></script>
+    <script src="/public/js/libs/soundjs-0.5.2.min.js"></script>
+    <script src="/public/js/libs/movieclip-0.7.1.min.js"></script>
+    <script src="/public/js/game/main.js">    </script>
+    <script>
+        <!--
+        if('<%= exp.xpGame%>' == 'space_coop')
+        {
+            document.write("<script type=\"text\/javascript\" src=\"/public/js/game/main_space_client.js\"><\/script>");
+        }
+        else
+        {
+           document.write("<script type=\"text\/javascript\" src=\"/public/js/game/main_rabbits_client.js\"><\/script>");
+        }
+        //-->   
+    </script>
+    
+</head>
+<body onLoad="Main('<%= exp.xpGame%>')">
+    <header>
+        <h1>D.E.M.O.G.</h1>
+        <h3>Dictator Experiment through Multiplayer Online Game</h3>
+        
+    </header>
+    <div class="centerDiv">
+        <div class="infoHolder">
+            <figure class="playerStatusHolder">
+                <h3>Player Status</h3>
+                <p id="id">Player ID: </p>
+                <p id="repetition">Current Repetition: </p>
+                <p id="score">Total Score: </p>
+            </figure>
+            <figure class="xpStatusHolder">
+                <h3>Current Experiment</h3>
+                <p id="xpName">Experience Name : <%= exp.xpName%></p>
+                <p id="xpIter">Number of Repetition : <%= exp.xpMaxIter %></p>
+                <p id="xpGame">Game : <%= exp.xpGame%></p>
+            </figure>
+        </div>
+
+        <div class="canvasHolder">
+            <canvas id="viewport" width=800 height=600 class="viewport">
+                alternate content
+            </canvas>
+        </div>
+    </div>
+    <footer>
+        <p>Olivier Allouard 2014</p>
+    </footer>
+</body>
+</html>

@@ -9,7 +9,7 @@ FIxed
 4) Admin page log connected clients (real time => socket.io of AJAX)
 
 5) Dom over html5 canvas for sharing input and mekturk id
-
+DONE
 6) results output
 Fixed and done
 7) AI for lonely gamers

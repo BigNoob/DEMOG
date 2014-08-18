@@ -9,6 +9,7 @@ var canvas;
 var stage;
 var stagewidth;
 var stageheight;
+var loginPrompt;
 
 var state;
 var state_load = 'STATE_LOAD';
@@ -109,8 +110,8 @@ function Main_Space() {
       stageheight = stage.canvas.height;
 
       //Game Loop Listener
-      createjs.Ticker.setFPS(60);
-      createjs.Ticker.on("tick_Space", tick_Space); 
+      //createjs.Ticker.setFPS(60);
+      //createjs.Ticker.on("tick_Space", tick_Space); 
 
       window.addEventListener("keydown", function(e) {
       // space and arrow keys
@@ -257,6 +258,11 @@ function startServerListen_Space()
       var tmpAddress = document.URL;
       var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
       socket = io.connect(serverAddress);
+      loginPrompt  = prompt("Entrez un login (mechanical turk)");
+      if(loginPrompt != null)
+      {
+        socket.emit('playerLogin',loginPrompt);
+      }
       console.log('connection message sent to : '+serverAddress);
       //Socket Server Listener
       socket.on("message",function(data){
