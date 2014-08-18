@@ -313,7 +313,7 @@ function serverMessageParser_Space(data)
         break;
         case 'REDIRECT':
  
-          window.location.replace('/');
+          window.location.replace('/end');
         break;
       }
 }

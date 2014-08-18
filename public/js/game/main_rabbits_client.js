@@ -47,11 +47,14 @@ var score_value = 0;
 var socket;
 
 //Views
-var launcherRight;
-var allyShip;
+var launcherSpriteSheet;
+var launcher;
+var flyerSpriteSheet;
+var flyer;
+
+
 var background;
 var enemy;
-var shot;
 var mothership;
 
 var progressText ;
@@ -63,9 +66,14 @@ var givenAmmount;
 var slider;
 //Game Variables
 
+var ownNumber;
+var launcherNumber;
+
 var share = 0;
 var canfire = true;
-var bulletArray = [];
+
+var isFlyer;
+
 
 //Preloader
 var preloader;
@@ -151,10 +159,7 @@ function StartLoading()
   //Loading Manifest
   manifest = [
                 {src:"/public/images/RabbitBackground.png", id:"background"},
-                {src:"/public/images/RabbitRight.png", id:"launcherRight"},
-                {src:"/public/images/RabbitLeft.png", id:"launcherLeft"},
                 {src:"/public/images/RedBalloon.png", id:"balloon"},
-                {src:"/public/images/FlyingRabbit.png", id:"flyer"},
                 {src:"/public/images/GoalBalloon.png", id:"goal"},
               ];
   //loading Events and Callbacks
@@ -201,12 +206,6 @@ function handleFileLoad (event)
       if(event.item.id == "background"){
             background = new createjs.Bitmap(event.result);
       }
-      if(event.item.id == "launcherRight"){
-            launcherRight = new createjs.Bitmap(event.result);
-      }
-      if(event.item.id == "launcherLeft"){
-            allyShip = new createjs.Bitmap(event.result);
-      }
       if(event.item.id == "goal"){
             mothership = new createjs.Bitmap(event.result);
       }
@@ -222,11 +221,6 @@ function handleFileLoad (event)
                   EnemiesCont.addChild(tmpEnemy);
                 }
             } 
-
-
-      }
-      if(event.item.id == "flyer"){
-            shot = new createjs.Bitmap(event.result);
       }
 }
 function loadError (event)
@@ -240,6 +234,21 @@ function handleProgress (event)
 }
 function handleComplete (event)
 {
+      launcherSpriteSheet = new createjs.SpriteSheet(
+        {
+        images: ["/public/images/LauncherSheet.png"],
+        frames: {width:96, height:53},
+        }
+      );
+
+      flyerSpriteSheet = new createjs.SpriteSheet(
+        {
+        images: ["/public/images/FlyerSheet.png"],
+        frames: {width:40, height:46},
+        }
+      );
+      launcher = new createjs.Sprite(launcherSpriteSheet);
+      flyer = new createjs.Sprite(flyerSpriteSheet);
      startServerListen();  //We start listening to the server after the loading of all the assets
      InitLobbyState(); 
 }
@@ -312,7 +321,7 @@ function serverMessageParser(data)
         break;
         case 'REDIRECT':
  
-          window.location.replace('/');
+          window.location.replace('/end');
         break;
       }
 }
@@ -329,11 +338,11 @@ function InitGameState()
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
-  launcherRight.x = 400;
-  launcherRight.y = 550;
-  
-  allyShip.x = 400;
-  allyShip.y = 550;
+  launcher.x = 400;
+  launcher.y = 550;
+
+  flyer.x = 380;
+  flyer.y = 350;
 
   EnemiesCont.x = 100;
   EnemiesCont.y = 150;
@@ -342,8 +351,8 @@ function InitGameState()
   mothership.y = 20;
 
   stage.addChild(progressText);
-  stage.addChild(launcherRight);
-  stage.addChild(allyShip);
+  stage.addChild(launcher);
+  stage.addChild(flyer);
   stage.addChild(mothership);
   stage.addChild(score);
   stage.addChild(EnemiesCont);
@@ -445,12 +454,13 @@ function InitShareState()
 
   slider = new createjs.Shape();
   slider.graphics.beginFill("white").drawRect(100,400,600,20);
-  launcherRight.x = 100;
-  launcherRight.y = 390;
+  launcher.x = 100;
+  launcher.y = 390;
 
   
   stage.addChild(slider);
-  stage.addChild(launcherRight);
+
+  stage.addChild(launcher);
   stage.addChild(maxAmmount);
   stage.addChild(minAmmount);
   stage.addChild(givenAmmount);
@@ -478,8 +488,7 @@ function InitShareWait()
 function ClearGameState()
 {
   stage.removeChild(progressText);
-  stage.removeChild(launcherRight);
-  stage.removeChild(allyShip);
+  stage.removeChild(launcher);
   stage.removeChild(EnemiesCont);
   stage.removeChild(mothership);
   stage.removeChild(score);
@@ -503,7 +512,7 @@ function ClearLobbyState()
 function ClearShareState()
 {
   stage.removeChild(slider);
-  stage.removeChild(launcherRight);
+  stage.removeChild(launcher);
   stage.removeChild(maxAmmount);
   stage.removeChild(minAmmount);
   stage.removeChild(givenAmmount);
@@ -579,7 +588,7 @@ function handleKeyDown(e)
 
 function UpdateShareAmmount()
 {
-  share = parseInt(score_value * (launcherRight.x-100)/700);
+  share = parseInt(score_value * (launcher.x-100)/700);
   console.log(share);
   maxAmmount.text = score_value;
   minAmmount.text = 0;
@@ -607,7 +616,7 @@ function debugEnd()
 
 function sendInputs(left,right,shoot)
 {
-  if(isXPRunning)
+  if(isXPRunning && ownNumber == launcherNumber)
   {
     socket.emit("message",'INPUT,'+left+','+right+','+shoot);
   }
@@ -621,31 +630,61 @@ function sendInputs(left,right,shoot)
 //
 //   Update Message Anatomy
 //      Element 0 = 'UPDATE'
-//      Element 1 = own ship x
-//      Element 2 = ally ship x
-//      Element 3 = enemy pack data (x position then 1 if alive 0 else)
-//      Element 4 = mothership x
-//      Element 5 = shots
-//      Element 6 = score
+//      Element 1 = launcherRabbit x
+//      Element 2 = Flyrabbit x & y
+//      Element 3 = launcherString
+//      Element 4 = baloons pack x
+//      Element 5 = goalString
+//      Element 6 = scoreString
+//      
+//
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function updateScreen(data)
 {
-  drawOwnShip(data[1]);
-  drawAllyShip(data[2]);
-  drawEnemies(data[3]);
-  drawMothership(data[4]);
-  drawShots(data[5]);
+  //console.log(data);
+  drawLauncher(data[1]);
+  drawFlyer(data[2]);
+  launcherNumber = parseInt(data[3]);
+  if(launcherNumber == 1)
+  {
+    launcher.gotoAndStop(0);
+    flyer.gotoAndStop(1);
+    launcherNumber = 1;
+  }
+  else
+  {
+    launcher.gotoAndStop(1);
+    flyer.gotoAndStop(0);
+    launcherNumber = 2;
+  }
+  drawEnemies(data[4]);
+  drawMothership(data[5]);
   drawScore(data[6]);
+  ownNumber = parseInt(data[7]);
+  console.log(ownNumber +'/'+launcherNumber);
 }
 
-function drawOwnShip(data)
+function drawLauncher(data)
 {
-  launcherRight.x = data;
+  launcher.x = data;
 }
 
-function drawAllyShip(data)
+function drawFlyer(data)
 {
-  allyShip.x = data;
+  var splittedData = data.split('#');
+  if(splittedData[0]==NaN || splittedData[1]==NaN)
+  {
+    console.log('flyer Position : '+flyer.x+':'+flyer.y)
+    flyer.x = 400;
+    flyer.y = 400;
+  }
+  else
+  {
+    flyer.x = splittedData[0];
+    flyer.y = splittedData[1];
+  }
+  
+  stage.update();
 }
 
 function drawEnemies(data)
@@ -670,49 +709,6 @@ function drawMothership(data)
   var splittedData = data.split('#');
   mothership.x = splittedData[0];
   mothership.y = splittedData[1];
-}
-
-function drawShots(data)
-{
-  var splittedData = data.split('#');
-
-  for(var i = 0; i < splittedData.length / 4; i++)
-  {
-
-    for(var j = 0; j < bulletArray.length; j++)
-    {
-      if(bulletArray[j].uid == splittedData[i*4+3])
-      {
-        bulletArray[j].x = splittedData[i*4];
-        bulletArray[j].y = splittedData[i*4+1];
-        bulletArray[j].isUpdated = true;
-        splittedData.splice(i*4,4);
-      }
-    }    
-  }
-  for(var i = 0; i < (splittedData.length / 4); i++)
-  {
-    var tmpShot = shot.clone();
-    tmpShot.x = splittedData[i*4];
-    tmpShot.y = splittedData[i*4+1];
-    tmpShot.uid = splittedData[i*4+3];
-    tmpShot.isUpdated = true;
-    bulletArray.push(tmpShot);
-    stage.addChild(bulletArray[bulletArray.length - 1]);  
-  }
-  for(var j = 0; j < bulletArray.length; j++)
-  {
-    if(!bulletArray[j].isUpdated)
-    {
-      stage.removeChild(bulletArray[j]);
-      bulletArray.splice(j,1);
-    }
-    else
-    {
-      bulletArray[j].isUpdated = false;
-    }
-  }   
-  stage.update();
 }
 
 function drawScore(data)

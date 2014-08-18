@@ -46,7 +46,7 @@ var
 	express 	= require('express'),						//
 	UUID		= require('node-uuid'),						//
 	routes 		= require('routes'),						//
-	verbose 	= false,									// For debug purpose, if true, more debug logs will print
+	verbose 	= true,									// For debug purpose, if true, more debug logs will print
 	http 		= require('http'),							//
 	app 		= express(),								//
     sio         = undefined,
@@ -63,7 +63,7 @@ var physic_time = 15;
 
     
 var 
-    current_experiment = CreateExperiment('test',"web",5,"rabbits"),
+    current_experiment = CreateExperiment('test',"web",2,"space_coop"),
     experimentsList = [current_experiment],
     experiment_link= current_experiment.generateLink();
 
@@ -88,7 +88,7 @@ function CreateExperiment(name,type,iter,game)
 app.configure(function(){
     app.set('views', __dirname + '/views');
     app.use(express.favicon());
-    //app.use(express.logger('dev'));
+    app.use(express.logger('dev'));
     app.use(express.static(__dirname + '/public'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -183,6 +183,18 @@ app.post('/admin/write/:xpName', function(req, res) {
     res.redirect('/admin');
 });
 
+app.get('/home', function(req,res){
+    res.render('home.ejs');
+});
+
+app.get('/game', function(req, res){
+    res.render('client.ejs', {exp: current_experiment});
+});
+
+app.get('/end', function(req,res){
+    res.render('end.ejs');
+});
+
 app.get(experiment_link,function (req,res){
     res.render('client.ejs', {exp: current_experiment});
 });
@@ -230,7 +242,9 @@ if(sio != undefined)
         //console.log('plop');
         client.userid = UUID();
         client.player = new Player();
-        client.player.InitResult(client.userid);
+        //client.player.InitResult(client.userid);
+        client.player.InitResult(client.userid,undefined);
+        client.player.result.updateStatus("wating for games");
         wrap_server.addClient(client);
         
 

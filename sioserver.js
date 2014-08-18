@@ -41,34 +41,41 @@ game_server.prototype.update = function()
 		this.games[i].update();
 	}
 };
-game_server.prototype.physic_update = function()
+game_server.prototype.physic_update = function(physic_time)
 {
 	for(var i = 0 ; i < this.games.length; i ++)
 	{
-		this.games[i].physic_update();
+		this.games[i].physic_update(physic_time);
 	}
 };
 //this function stop the socket server
 game_server.prototype.stopServer = function()
 {
-	//sio = undefined;
     console.log('SIOServer is stopped');
-    //console.log(this.clients);
-    //console.log(this.clientsinLobby);
-    for(var i = 0 ; i < this.clients.length; i ++)
+
+	for(var i = this.clients.length-1 ; i >= 0; i --)
 	{
 		console.log('Client forced to lobby : '+ this.clients[i].userid);
 		this.sendClientToLobby(this.clients[i]);
 	}
-	
+
+
 	for(var j = 0 ; j < this.clientsinLobby.length; j ++)
 	{
 		console.log('NO_XP sent to : '+ this.clientsinLobby[j].userid);
 		this.clientsinLobby[j].emit("message",'NO_XP');
 	}
-
+	console.log(this.clients);
+    console.log(this.clientsinLobby);
+	/*
 	this.games.splice(0,this.games.length-1);
+	this.clients.splice(0,this.clients.length - 1);
 	this.clientsinLobby.splice(0,this.clientsinLobby.length - 1);
+	*/
+	this.games = [];
+	this.clients = [];
+	this.clientsinLobby = [];
+	console.log(this.experiment.exportResults());
     this.experiment.isRunning = false;
 };
 
@@ -234,8 +241,8 @@ game_server.prototype.createGame = function(client1, client2)
 			tmpGame = new space_game_core(this.experiment.xpMaxIter);
 		break;
 		case "rabbits":
-			//tmpGame = new rabbits_game_core(this.experiment.xpMaxIter);
-			tmpGame = new space_game_core(this.experiment.xpMaxIter); // DEBUG LINE TO TEST ONLY SPACE COOP
+			tmpGame = new rabbits_game_core(this.experiment.xpMaxIter);
+			//tmpGame = new space_game_core(this.experiment.xpMaxIter); // DEBUG LINE TO TEST ONLY SPACE COOP
 		break;
 	}
 
@@ -318,12 +325,14 @@ game_server.prototype.checkEndedGames = function()
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 		    	console.log(this.games[i].p1.player.GetResult());
+		    	this.experiment.addPlayerResults(this.games[i].p1.player.GetResult());
 		        this.removeClient(this.games[i].p1);
 		        
 		    }
 		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 		    	console.log(this.games[i].p2.player.GetResult());
+		    	this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
 		        this.removeClient(this.games[i].p2);
 
 		    }

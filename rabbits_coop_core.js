@@ -55,13 +55,14 @@ var rabbits_game_core = function(maxIter)
         };
     this.p1 = undefined;
     this.p2 = undefined;
+    this.launcherNumber = 1;
     //this.balloonsX = 100;
     this.balloons = new Balloons(balloonsX,lines,number);
     this.goalShip = undefined;
     this.score = 0;
     this.inputs = [];
-    this.p1ShipX = 400;
-    this.p2ShipX = 400;
+    //this.launcher.x = 400;
+    //this.p2ShipX = 400;
     
     this.goalballoonX = 100;
     this.goalballoonY = 20;
@@ -70,12 +71,14 @@ var rabbits_game_core = function(maxIter)
     this.goalballoonLeft = false;
 
     this.flyer = new Rect(380,350,40,46);
-    this.launcher = new Rect(350,400,126,69);
+    this.launcher = new Rect(350,549,126,69);
 
-    this.init_speed = 10;
-    this.init_angle = 80;
+    this.init_speed = 63;
+    this.init_angle = Math.PI * 70 / 180;
     this.init_abs = 350;
     this.inAirTime = 0.0;
+    this.timeScale = 10;
+    this.angleDirection = -1;
 };
 
 //This line is used to tell node.js that he can access the constructor
@@ -129,13 +132,6 @@ var Balloon = function(x,y)
     this.rect = new Rect(x,y,balloon_width,balloon_height);
     this.alive = true;
 };
-var Shot = function(x)
-{
-    this.id = undefined;
-    this.rect = new Rect(x, 550, shot_width, shot_height);
-    this.alive = true;
-
-};
 
 var Rect = function(x,y,w,h)
 {
@@ -183,12 +179,13 @@ rabbits_game_core.prototype.beginShare = function(client)
 //
 //   Update Message Anatomy
 //      Element 0 = 'UPDATE'
-//      Element 1 = groundRabbit x
+//      Element 1 = launcherRabbit x
 //      Element 2 = Flyrabbit x & y
-//      Element 3 = can move?
+//      Element 3 = launcherNumber
 //      Element 4 = baloons pack x
-//      Element 5 = end baloon x
-//      
+//      Element 5 = goalString
+//      Element 6 = scoreString
+//      Element 7 = ownNumber
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -223,15 +220,15 @@ rabbits_game_core.prototype.update = function(deltaT) {
 //This function send the updates messages to the players
 rabbits_game_core.prototype.sendUpdate = function()
 {
-    var p1string = this.p1ShipX+',';
-    var p2string = this.p2ShipX+',';
-
+    var p1string = this.launcher.x+',';
+    var flyerString = this.generateFlyerString();
+    var launcherString = this.launcherNumber+',';
     var balloonsString = this.generateBalloonString()+',';
     var goalString = this.goalballoonX+'#'+this.goalballoonY+',';
 
     var scoreString = this.score;
-    this.p1.emit("message",'UPDATE,'+p1string+p2string+balloonsString+goalString+scoreString);
-    this.p2.emit("message",'UPDATE,'+p2string+p1string+balloonsString+goalString+scoreString);
+    this.p1.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',1');
+    this.p2.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',2');
 };
 
 rabbits_game_core.prototype.generateBalloonString = function()
@@ -253,6 +250,13 @@ rabbits_game_core.prototype.generateBalloonString = function()
     return tmpString;
 };
 
+rabbits_game_core.prototype.generateFlyerString = function()
+{
+    var tmpString = '';
+    tmpString += (this.flyer.x+'#'+this.flyer.y+',');
+    //console.log(tmpString);
+    return tmpString;
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -331,7 +335,7 @@ rabbits_game_core.prototype.animMotherFall = function()
     if (this.goalballoonY > 600)
     {
         this.state = state_share;
-        if(Math.abs(this.p2ShipX - this.goalballoonX) > Math.abs(this.p1ShipX - this.goalballoonX))
+        if(Math.random()*800 > Math.abs(this.launcher.x - this.goalballoonX))
         {
             this.p1.emit('message','SHARE_STATE');
             this.p2.emit('message','SHARE_WAIT');
@@ -359,11 +363,30 @@ rabbits_game_core.prototype.animMotherFall = function()
 
 rabbits_game_core.prototype.moveFlyer = function(deltaT)
 {
-    if(this.flyer.y < 550)
+    var deltaX;
+    if(this.flyer.x < 0 )
     {
+        //this.angleDirection = -this.angleDirection + Math.PI;
+        this.angleDirection = 1;
+        this.init_abs = - this.launcher.x;
+        this.flyer.x = 50;
+    }
+    if ( this.flyer.x > 800 - this.flyer.w)
+    {
+        //this.angleDirection = Math.PI - this.angleDirection;
+        this.angleDirection = -1;
+        this.init_abs = 800 + this.launcher.x;
+        this.flyer.x = 750;
+    }
+    if(this.flyer.y > 550)
+    {
+        //this.launcherNumber = ((this.launcherNumber == 1)? 2 : 1);
+        this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
+        console.log(this.launcherNumber);
         this.inAirTime = 0;
-        var deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2);
-        if(deltaX < this.launcher.w/2)
+        deltaX = Math.abs((this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2));
+        //console.log(deltaX);
+        if(deltaX < (this.launcher.w/2))
         {
             this.calculateTrajectory(deltaX);
         }
@@ -371,21 +394,29 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
         {
             this.calculateTrajectory(this.launcher.w / 4);
         }      
-        this.flyer.y = 551;
+        this.flyer.y = 549;
     }
     else
     {
+        
         this.inAirTime += deltaT;
-        this.flyer.x = init_speed * Math.cos(init_angle) * this.inAirTime + this.init_abs;
-        this.flyer.y = init_speed * Math.sin(init_angle) * this.inAirTime - (gravity * this.inAirTime * this.inAirTime) / 2
+        //console.log(this.inAirTime);
+        //this.flyer.x =  Math.round(this.init_speed * Math.cos(this.angleDirection) * this.inAirTime / this.timeScale + this.init_abs);
+        this.flyer.x =  Math.round(this.angleDirection * this.inAirTime / this.timeScale + this.init_abs);
+        //this.flyer.y =500 - Math.round( (this.init_speed * Math.sin(this.angleDirection)) * this.inAirTime / this.timeScale - (gravity * this.inAirTime/ this.timeScale * this.inAirTime/ this.timeScale) / 2);
+        this.flyer.y =450 - Math.round(  4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime / this.timeScale,2)) / 100);
+        //console.log(this.flyer.x +' ; '+this.flyer.y);
     }
+    
 };
 
 rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
-    this.init_speed = 20 * deltax / this.launcher.w / 2;
-    this.init_angle = 70 + 10*(deltax / this.launcher.w / 2);
-    this.init_abs = this.flyer.x;
+    
+    //this.init_speed = 350 * (deltaX / this.launcher.w / 2) + 100;
+    //this.init_angle = Math.PI * (45 + 25*(deltaX / this.launcher.w / 2))/180;
+    this.angleDirection = (this.launcherNumber == 1)? -1 : 1;
+    this.init_abs = this.launcher.x + this.launcher.w / 2;
 };
 
 rabbits_game_core.prototype.checkCollisions = function()
@@ -393,7 +424,7 @@ rabbits_game_core.prototype.checkCollisions = function()
 
         for(var j = 0; j < this.balloons.array.length; j++)
         {
-            if(this.flyer.alive && this.balloons.array[j].alive)
+            if(this.balloons.array[j].alive)
             {
                 if(this.doCollide(this.flyer,this.balloons.array[j].rect))
                 {
@@ -402,7 +433,7 @@ rabbits_game_core.prototype.checkCollisions = function()
                 }
             }
         }
-
+        /*
         if(this.doCollide(this.flyer,new Rect(this.goalballoonX,goalballoonY,goal_width,goal_height)))
         {
             if(this.balloons.numBalloons == 0)
@@ -410,7 +441,8 @@ rabbits_game_core.prototype.checkCollisions = function()
                 this.score+= 100;
                 this.state = state_endAnim;
             }
-        }   
+        } 
+        */  
     
 };
 
@@ -429,92 +461,47 @@ rabbits_game_core.prototype.onInput = function(client, data){
     
     if(this.state == state_game)
     {
-        if(client.userid == this.p1.userid)
+
+        if(data[1] == '1')
         {
-            //console.log('p1');
-            if(data[1] == '1')
+            //console.log('left');
+            if(this.launcher.x > 0)
             {
-                //console.log('left');
-                if(this.p1ShipX > 0)
-                {
-                  this.p1ShipX -= balloon_speed;  
-                }
-                
+              this.launcher.x -= balloon_speed;  
             }
-            if(data[2] == '1')
-            {
-                if(this.p1ShipX < this.world.width - balloon_width)
-                {
-                    this.p1ShipX += balloon_speed;
-                } 
-            }
-            if(data[3] == '1')
-            {
-                this.shoot(this.p1ShipX + balloon_width / 2 - shot_width/2);
-            }
+            
         }
-        else
+        if(data[2] == '1')
         {
-            //console.log('p2');
-            if(data[1] == '1')
+            if(this.launcher.x < this.world.width - balloon_width)
             {
-                if(this.p2ShipX > 0)
-                {
-                    this.p2ShipX -= balloon_speed;
-                }
-            }
-            if(data[2] == '1')
-            {
-                if(this.p2ShipX < this.world.width - balloon_width)
-                {
-                    this.p2ShipX += balloon_speed; 
-                }
-            }
-            if(data[3] == '1')
-            {
-                this.shoot(this.p2ShipX + balloon_width / 2 - shot_width/2);
-            }
+                this.launcher.x += balloon_speed;
+            } 
         }
+        if(data[3] == '1')
+        {
+            this.shoot(this.launcher.x + balloon_width / 2 - shot_width/2);
+        }
+
     }
     else if(this.state == state_share)
     {
-        if(client.userid == this.p1.userid)
+
+        if(data[1] == '1')
         {
-            //console.log('p1');
-            if(data[1] == '1')
+            //console.log('left');
+            if(this.launcher.x > 100)
             {
-                //console.log('left');
-                if(this.p1ShipX > 100)
-                {
-                  this.p1ShipX -= balloon_speed;  
-                }
-                
+              this.launcher.x -= balloon_speed;  
             }
-            if(data[2] == '1')
-            {
-                if(this.p1ShipX < this.world.width - balloon_width - 100)
-                {
-                    this.p1ShipX += balloon_speed;
-                } 
-            }
+            
         }
-        else
+        if(data[2] == '1')
         {
-            //console.log('p2');
-            if(data[1] == '1')
+            if(this.launcher.x < this.world.width - balloon_width - 100)
             {
-                if(this.p2ShipX > 100)
-                {
-                    this.p2ShipX -= balloon_speed;
-                }
-            }
-            if(data[2] == '1')
-            {
-                if(this.p2ShipX < this.world.width - balloon_width - 100)
-                {
-                    this.p2ShipX += balloon_speed; 
-                }
-            }
+                this.launcher.x += balloon_speed;
+            } 
         }
     }
 };
@@ -551,7 +538,7 @@ rabbits_game_core.prototype.Share = function(client, data)
     console.log(client.userid + data);
     if(client.userid == this.p1.userid)
     {
-        console.log('plop p1');
+        //console.log('plop p1');
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
@@ -559,7 +546,7 @@ rabbits_game_core.prototype.Share = function(client, data)
     }
     else
     {
-        console.log('plop p2');
+        //console.log('plop p2');
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
@@ -583,7 +570,7 @@ rabbits_game_core.prototype.onMessage = function(client, data){
     //console.log('message recieved by game : '+ this.id);
 
     var splittedData = data.split(',');
-    console.log('message '+ splittedData);
+    //console.log('message '+ splittedData);
     switch (splittedData[0])
     {
         case 'INPUT':

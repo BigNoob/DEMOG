@@ -13,10 +13,10 @@ function Main(xp_type) {
   }
   else
   {
-    //console.log("rabbits");
-    //Main_Rabbits();
-    console.log("space");
-    Main_Space();
+    console.log("rabbits");
+    Main_Rabbits();
+    //console.log("space");
+    //Main_Space();
   }    
 }
 

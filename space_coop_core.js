@@ -60,6 +60,7 @@ var space_game_core = function(maxIter)
     this.enemies = new Enemies(enemiesX,lines,number);
     this.motherShip = undefined;
     this.score = 0;
+    this.sharer = undefined;
     this.inputs = [];
     this.p1ShipX = 400;
     this.p2ShipX = 400;
@@ -528,18 +529,22 @@ space_game_core.prototype.shoot = function(x)
 
 space_game_core.prototype.EndGame = function()
 {
+    /*
     this.p1.player.currentRepetition ++;
     this.p2.player.currentRepetition ++;
-
+    */
     if(this.p1.player.currentRepetition > this.maxIter)
     {
+        //console.log(this.p1.player.GetResult());
         this.p1.emit('message','REDIRECT');
     }
     if(this.p2.player.currentRepetition > this.maxIter)
     {
+        //console.log(this.p2.player.GetResult());
         this.p2.emit('message','REDIRECT');
     }
-
+    this.p1.player.currentRepetition ++;
+    this.p2.player.currentRepetition ++;
     this.isEnded = true;
 };
 space_game_core.prototype.Share = function(client, data)
@@ -548,6 +553,7 @@ space_game_core.prototype.Share = function(client, data)
     if(client.userid == this.p1.userid)
     {
         console.log('plop p1');
+        this.sharer = this.p1;
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
@@ -556,6 +562,7 @@ space_game_core.prototype.Share = function(client, data)
     else
     {
         console.log('plop p2');
+        this.sharer = this.p2;
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));

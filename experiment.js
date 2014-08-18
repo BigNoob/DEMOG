@@ -9,11 +9,9 @@ var Experiment = function (xpName, xpType, xpMaxIter,xpGame)
 	this.isRunning = false;
 	this.launchDate = undefined;
 	this.xpLink = this.generateLink();
-	//this.rooms = [];
 	this.language = this.LANG[1];
-	this.lobby = [];
+	//this.lobby = [];
 	this.players = [];
-	//this.result = undefined;
 	this.result = new XPResults(this.xpName, this.xpType, this.xpMaxIter, this.xpGame, this.launchDate);
 
 	for(var i = 0 ; i < this.TYPES.length ; i++)
@@ -82,19 +80,20 @@ Experiment.prototype.exportResults = function()
 		console.log("// THIS EXPERIMENT IS STILL RUNNING !!")
 		console.log("/////////////////////WARNING//////////////////////");
 		console.log(this.result);
-		console.log(this.rooms);
 		console.log("////////////////////////END///////////////////////");
 	}
 	else
 	{
 		console.log("////////////////////XP RESULTS////////////////////");
 		console.log(this.result);
-		console.log(this.rooms);
 		console.log("////////////////////////END///////////////////////");
 	}
 	
 };
-
+Experiment.prototype.addPlayerResults = function(playerResults)
+{
+	this.result.playerResults.push(playerResults);
+}
 function XPResults(xpName, xpType, xpMaxIter, xpGame, xpDate)
 {
 	this.xpName = xpName;
@@ -103,6 +102,7 @@ function XPResults(xpName, xpType, xpMaxIter, xpGame, xpDate)
 	this.xpMaxIter = xpMaxIter;
 	this.beginDate = xpDate;
 	this.endDate = undefined;
+	this.playerResults = []
 }
 
 
