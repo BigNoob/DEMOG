@@ -40,6 +40,11 @@ var str_xpRep = 8;
 var str_xpGame = 9;
 
 var str_score = 10;
+var str_given = 11;
+var str_loginPrompt = 12;
+var str_gameTuto = 13;
+var str_loading = 14;
+
 //Strings Array
 var stringsArray = [];
 var score_value = 0;
@@ -110,15 +115,10 @@ function Main_Space() {
       stageheight = stage.canvas.height;
 
       //Game Loop Listener
-      //createjs.Ticker.setFPS(60);
-      //createjs.Ticker.on("tick_Space", tick_Space); 
-
-      window.addEventListener("keydown", function(e) {
-      // space and arrow keys
-      if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-            e.preventDefault();
-      }
-      }, false);
+      createjs.Ticker.setFPS(60);
+      createjs.Ticker.on("tick_Space", tick_Space); 
+      window.addEventListener('keydown', function(event) { handleKeyDown_Space(event); }, false);
+      canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
 
       StartLoading_Space();
 }
@@ -188,10 +188,12 @@ function LoadStrings_Space()
 
   XMLNode = XMLStrings.getElementsByTagName(language)
   console.log(XMLNode);
+
   for(var i = 0; i < XMLNode[0].children.length ; i++)
   {
     stringsArray.push(XMLNode[0].children[i].innerHTML)
   }
+  console.log(stringsArray);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -237,7 +239,7 @@ function loadError_Space (event)
 }
 function handleProgress_Space (event)
 {
-     progressText.text = (preloader.progress*100|0) + " % Loaded";
+     progressText.text = (preloader.progress*100|0) + stringsArray[str_loading];
      stage.update(); 
 }
 function handleComplete_Space (event)
@@ -258,12 +260,12 @@ function startServerListen_Space()
       var tmpAddress = document.URL;
       var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
       socket = io.connect(serverAddress);
-      loginPrompt  = prompt("Entrez un login (mechanical turk)");
+      loginPrompt  = prompt(stringsArray[str_loginPrompt]);
       if(loginPrompt != null)
       {
         socket.emit('playerLogin',loginPrompt);
       }
-      console.log('connection message sent to : '+serverAddress);
+      //console.log('connection message sent to : '+serverAddress);
       //Socket Server Listener
       socket.on("message",function(data){
             serverMessageParser_Space(data);
@@ -287,6 +289,9 @@ function serverMessageParser_Space(data)
           document.getElementById("xpName").innerHTML = stringsArray[str_xpName]+splittedData[4];
           document.getElementById("xpIter").innerHTML = stringsArray[str_xpRep]+splittedData[5];
           document.getElementById("xpGame").innerHTML = stringsArray[str_xpGame]+splittedData[6];
+        break;
+        case 'GIVEN_AMMOUNT':
+          DrawGivenAmmount(splittedData[1]);
         break;
         case 'GAME_START':
           isXPRunning = true;
@@ -331,7 +336,7 @@ function serverMessageParser_Space(data)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function InitGameState_Space()
 {
-  progressText.text = "Use Arrow Keys to Move and Space key to shoot"; 
+  progressText.text = stringsArray[str_gameTuto]; 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -354,14 +359,13 @@ function InitGameState_Space()
   stage.addChild(mothership);
   stage.addChild(score);
   stage.addChild(EnemiesCont);
-  //document.onkeydown = handleKeyDown_Space;
-  window.addEventListener('keydown', function(event) { handleKeyDown_Space(event); }, false);
+
   state = state_game;  
 }
 
 function InitLobbyState_Space()
 {
-  progressText.text = "You are now in Lobby\n Waiting For another Player to join";
+  progressText.text = stringsArray[str_lobby];
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -373,6 +377,7 @@ function InitLobbyState_Space()
   var stageCenterY = stageheight / 2;
   var angle = 2*Math.PI / elemNum;
 
+  WaitWheel = null;
   WaitWheel = new createjs.Container();
 
   for(var i = 0 ; i < elemNum ; i++)
@@ -419,7 +424,7 @@ function InitLobbyState_Space()
 
 function InitNoXP_Space()
 {
-  progressText.text = "You are now in Lobby \n No XP is currently running \n Please come again later or contact the administrator : johndoe@fake.com ";  
+  progressText.text = stringsArray[str_noxp];  
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -431,7 +436,7 @@ function InitNoXP_Space()
 
 function InitShareState_Space()
 {
-  progressText.text = "You can now share the points with the other player \n Use the arrow keys to move your ship and select the ammount of point given \n then hit space key to send"; 
+  progressText.text = stringsArray[str_doShare]; 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -439,23 +444,24 @@ function InitShareState_Space()
   maxAmmount.x = 700;
   maxAmmount.y = 400;
   maxAmmount.width = 100;
-  maxAmmount.text = "Max Ammount"
+  maxAmmount.text = score;
 
   minAmmount.x = 0;
   minAmmount.y = 400;
   minAmmount.width = 100;
-  minAmmount.text = "0"
+  minAmmount.text = "0";
+  minAmmount.textAlign = "right";
 
   givenAmmount.x = 350;
   givenAmmount.y = 350;
   givenAmmount.width = 100;
-  givenAmmount.text = "Given Ammount : "
+  givenAmmount.text = "";
 
   slider = new createjs.Shape();
   slider.graphics.beginFill("white").drawRect(100,400,600,20);
   ship.x = 100;
   ship.y = 390;
-
+  ship.alpha = 0.0;
   
   stage.addChild(slider);
   stage.addChild(ship);
@@ -469,14 +475,21 @@ function InitShareState_Space()
 
 function InitShareWait_Space()
 {
-  progressText.text = "The other player will now share a fraction of the points with you.\nWait until he is done";  
+  progressText.text = stringsArray[str_waitShare];  
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
+  
+
   stage.addChild(progressText);
   stage.update();
   state = state_wait; 
+}
+
+function DrawGivenAmmount(data)
+{
+  alert("The Other Player gave you : "+data+"points" );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -530,7 +543,6 @@ function tick_Space(event) {
   stage.update(event);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Input Callbacks
@@ -576,14 +588,21 @@ function handleKeyDown_Space(e)
         break;
 
       case KEYCODE_SPACE:
-        if(canfire)
+        if(share)
         {
           SendShareAmmount_Space();
         }
       break;
-
     }
   }
+}
+
+function handleClick(e)
+{
+  if(state == state_share)
+  {
+    sendMouseInput(e.offsetX);
+  } 
 }
 
 function UpdateShareAmmount_Space()
@@ -592,26 +611,12 @@ function UpdateShareAmmount_Space()
   console.log(share);
   maxAmmount.text = score_value;
   minAmmount.text = 0;
-  givenAmmount.text = 'You will give : '+share+' points';
+  givenAmmount.text = share;
 
 }
 function SendShareAmmount_Space()
 {
   socket.emit("message",'SHARE,'+ share);
-}
-function debugAddScore_Space()
-{
-  socket.emit("message",'SCORE');
-}
-
-function debugShare_Space()
-{
-  socket.emit("message",'SHARE');
-}
-
-function debugEnd_Space()
-{
-  socket.emit("message",'END');
 }
 
 function sendInputs_Space(left,right,shoot)
@@ -619,6 +624,18 @@ function sendInputs_Space(left,right,shoot)
   if(isXPRunning)
   {
     socket.emit("message",'INPUT,'+left+','+right+','+shoot);
+  }
+}
+function sendMouseInput(x)
+{
+  var X = x;
+  if(X < 100){X = 100;}
+  if(X > 700-18){X = 700-18;}
+  socket.emit("message",'MOUSE_INPUT,'+ X);
+  UpdateShareAmmount_Space();
+  if(ship.alpha == 0.0)
+  {
+    ship.alpha = 1.0;
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -726,7 +743,7 @@ function drawShots_Space(data)
 
 function drawScore_Space(data)
 {
-  score.text = "Score : "+ data;
+  score.text =stringsArray[str_score] + data;
   score_value = data;
   stage.update();
 }

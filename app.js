@@ -5,7 +5,7 @@
 // Date: 2014/06/18
 // Version: 0.5
 // Author: Olivier Allouard
-// Website: running-panda.fr
+// Website: http://running-panda.fr
 // Contact: olivier.allouard@gmail.com
 // Description:
 //					The Express server handles passing the content to the browser. It's the router
@@ -29,7 +29,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 require('./player.js');
-//require('./public/js/game/Enemies.js');
 require('./experiment');
 require('./sioserver.js');
 require('newrelic');
@@ -77,7 +76,7 @@ var mailSenderPassw = 'wivyxuvo';                           //password of the gm
 
     
 var 
-    current_experiment = CreateExperiment('test',"web",2,"space_coop"),
+    current_experiment = CreateExperiment('test',"web",1,"space_coop"),
     experimentsList = [current_experiment];
 
 
@@ -86,7 +85,6 @@ var
 function CreateExperiment(name,type,iter,game)
 {
     try{
-        //console.log(new Experiment(name,type,iter,game));
         return(new Experiment(name,type,iter,game));
     }catch(err)
     {
@@ -218,15 +216,11 @@ app.post('/admin/write/:xpName', function(req, res) {
                     LocalTransport.sendMail(mailOptions, function(error, info){
                         if(error){
                             console.log(error);
-                        }else{
-                            console.log('Message sent: ' + info.response);
                         }
                     });
                 }
                 else
                 {
-
-
                     var payload   = 
                     {
                         to      : resultMailAdress,
@@ -241,20 +235,15 @@ app.post('/admin/write/:xpName', function(req, res) {
                             }
                         ]
                     }
-
                     sendgrid.send(
                         payload,
                         function(error, json){
                             if(error){
                                 console.log(error);
-                            }else{
-                                console.log('Message sent: ' + json);
+                            }
                         }
-                    }
                     );
-                }
-
-                
+                }  
             }
         }
     }
@@ -294,16 +283,12 @@ function CreateSIOServer()
 
     wrap_server = new game_server();
     wrap_server.initServer(current_experiment);
-    //console.log(wrap_server);
-    console.log('SIOServer is created for experiment : '+current_experiment.xpName);
-    //console.log(sio);
 }
 
 function StopSIOServer()
 {
     wrap_server = undefined;
     sio = undefined;
-    console.log('SIOServer is closed');
 }
 
 current_experiment.isRunning = true;
@@ -313,16 +298,13 @@ if(sio != undefined)
 {
     sio.sockets.on('connection', function (client){
         var tmpClient = client;
-        //console.log('plop');
         client.userid = UUID();
         client.player = new player();
-        //client.player.InitResult(client.userid);
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("wating for games");
         wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){
-            console.log(m);
             client.player.result.amazonId = m;
         });
         client.on('message', function (m){
@@ -332,16 +314,18 @@ if(sio != undefined)
         client.on('disconnect', function (){
             if(wrap_server.isClientInLobby(client))
             {
-                wrap_server.removeCientFromLobby(client); 
+                wrap_server.removeCientFromLobby(client);
+                wrap_server.removeClient(client); 
             }
             else if(wrap_server.isClientInGame(client))
             {
                 wrap_server.endGame(wrap_server.findGame(client));
                 wrap_server.removeCientFromLobby(client);
+                wrap_server.removeClient(client);
             }
             else
             {
-                 
+               wrap_server.removeClient(client);   
             } 
         });
     }); 
@@ -355,7 +339,6 @@ if(sio != undefined)
 
 //Called every 5 seconds to match waiting players in the lobby
 setInterval(function(){
-    //console.log('interval');
     if(wrap_server != undefined && wrap_server.experiment.isRunning)
     {
         wrap_server.matchClients();
@@ -366,12 +349,12 @@ setInterval(function(){
 
     }
 }, 5000);
-
+//Check ended games in wrap_server
 setInterval(function(){
    wrap_server.update(frame_time);
    wrap_server.checkEndedGames();
 }, frame_time);
-
+//call update of the game server
 setInterval(function(){
    wrap_server.physic_update(physic_time);
 }, physic_time);

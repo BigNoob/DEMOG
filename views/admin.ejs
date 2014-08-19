@@ -3,6 +3,9 @@
 <head>
 	<title>administration page</title>
 	<link rel='stylesheet' href='/public/styles/styles.css' />
+	<script>
+		var localUrl = (window.location.toString()).substring(0,(window.location.toString()).length -6);
+	</script>
 </head>
 <body>
 	<h1> Experiments administration board</h1>
@@ -25,7 +28,7 @@
 				<p>Name: <%= exp.xpName %></p>
 				<p>Type: <%= exp.xpType %></p>
 				<p>Game: <%= exp.xpGame %></p>
-				<p>Link: <script>document.URL</script> <%=  exp.xpLink %></p>
+				<p>Link: <script>document.write(localUrl);</script><%=  exp.xpLink %></p>
 				<p>Iterations: <%= exp.xpMaxIter %></p>
 				<p>Is Running : <%= exp.isRunning %></p>
 				<p>Start Date : <%= exp.launchDate %></p>
@@ -53,7 +56,7 @@
 				<p>Name: <%= exp.xpName %></p>
 				<p>Type: <%= exp.xpType %></p>
 				<p>Game: <%= exp.xpGame %></p>
-				<p>Link: <script>window.location.href.protocol</script>  <%= exp.xpLink %></p>
+				<p>Link: <script>document.write(localUrl);</script><%= exp.xpLink %></p>
 				<p>Iterations: <%= exp.xpMaxIter %></p>
 				<p>Is Running : <%= exp.isRunning %></p>
 				<p>Start Date : <%= exp.launchDate %></p>

@@ -89,7 +89,10 @@ Experiment.prototype.addPlayerResults = function(playerResults)
 {
 	this.result.playerResults.push(playerResults);
 };
-
+Experiment.prototype.addGameResults = function(gameId, gamescore, player1, player2, sharer, given, kept)
+{
+	this.result.gameResults.push(new gameResult(gameId, gamescore, player1, player2, sharer, given, kept));
+};
 function XPResults()
 {
 	this.xpName ;
@@ -102,6 +105,16 @@ function XPResults()
 	this.gameResults;
 }
 
+var gameResult = function(gameId, gameScore, player1, player2, sharer, given, kept)
+{
+	this.gameId = gameId;
+	this.gameScore = gameScore;
+	this.player1 = player1;
+	this.player2 = player2;
+	this.sharer = sharer;
+	this.given = given;
+	this.kept = kept;
+};
 
 if( 'undefined' != typeof global ) {
     module.exports = global.Experiment = Experiment;

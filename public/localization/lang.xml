@@ -1,55 +1,112 @@
 <?xml version="1.0" ?>
+<!-- All the strings of the client pages are stored here -->
 <LANG>
-	<model>
+	<model><!-- Model of the hierarchy of a language node (never laoded) -->
 		<str_lobby>
-
+			<!-- -->
 		</str_lobby>
 		<str_noxp>
-
+			<!-- -->
 		</str_noxp>
 		<str_waitShare>
-
+			<!-- -->
 		</str_waitShare>
 		<str_doShare>
-
+			<!-- -->
 		</str_doShare>
 		<str_playerId>
-
+			<!-- -->
 		</str_playerId>
 		<str_playerRep>
-
+			<!-- -->
 		</str_playerRep>
 		<str_playerScore>
-
+			<!-- -->
 		</str_playerScore>
 		<str_xpName>
-
+			<!-- -->
 		</str_xpName>
 		<str_xpRep>
-
+			<!-- -->
 		</str_xpRep>
 		<str_xpGame>
-
+			<!-- -->
 		</str_xpGame>
 		<str_score>
-
-		</str_score>
+			<!-- -->
+		</str_score>	
+		<str_given>
+			<!-- -->		
+		</str_given>	
+		<str_loginPrompt> 
+			<!-- -->
+		</str_loginPrompt>
+		<str_gameTuto> 
+			<!-- -->
+		</str_gameTuto>
+		<str_loading> 
+			<!-- -->		
+		</str_loading>
 	</model>
 	<fr>
-		
+		<str_lobby>
+			<!-- -->
+		</str_lobby>
+		<str_noxp>
+			<!-- -->
+		</str_noxp>
+		<str_waitShare>
+			<!-- -->
+		</str_waitShare>
+		<str_doShare>
+			<!-- -->
+		</str_doShare>
+		<str_playerId>
+			<!-- -->
+		</str_playerId>
+		<str_playerRep>
+			<!-- -->
+		</str_playerRep>
+		<str_playerScore>
+			<!-- -->
+		</str_playerScore>
+		<str_xpName>
+			<!-- -->
+		</str_xpName>
+		<str_xpRep>
+			<!-- -->
+		</str_xpRep>
+		<str_xpGame>
+			<!-- -->
+		</str_xpGame>
+		<str_score>
+			<!-- -->
+		</str_score>	
+		<str_given>
+			<!-- -->		
+		</str_given>	
+		<str_loginPrompt> 
+			<!-- -->
+		</str_loginPrompt>
+		<str_gameTuto> 
+			<!-- -->
+		</str_gameTuto>
+		<str_loading> 
+			<!-- -->		
+		</str_loading>
 	</fr>
 	<en>
 		<str_lobby>
-
+			You are now in Lobby &#xD; Waiting For another Player to join
 		</str_lobby>
 		<str_noxp>
-
+			You are now in Lobby &#xD; No XP is currently running \n Please come again later or contact the administrator : johndoe@fake.com
 		</str_noxp>
 		<str_waitShare>
-
+			The other player will now share a fraction of the points with you.&#xD;Wait until he is done
 		</str_waitShare>
 		<str_doShare>
-
+			You can now share the points with the other player &#xD; Use the arrow keys to move your ship and select the ammount of point given &#xD; then hit space key to send
 		</str_doShare>
 		<str_playerId>
 			Player ID: 
@@ -70,7 +127,19 @@
 			Game : 
 		</str_xpGame>
 		<str_score>
-
-		</str_score>		
+			Score : 
+		</str_score>	
+		<str_given>
+			Given Ammount : 
+		</str_given>	
+		<str_loginPrompt> 
+			Enter your login(mechanical truk id if relevant)
+		</str_loginPrompt>
+		<str_gameTuto> 
+			Use Arrow Keys to Move and Space key to shoot
+		</str_gameTuto>
+		<str_loading> 
+			% loaded
+		</str_loading>
 	</en>
 </LANG>
