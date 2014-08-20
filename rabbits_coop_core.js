@@ -27,14 +27,16 @@ var balloonsX_spacing = 60;
 var balloonsY_spacing = 60;
 var balloonsY = 150;
 var balloonsX = 100;
-var lines = 4;
+var lines = 3;
 var number = 10;
 
-var gravity = 9.8;
+var launcherSpeed = 10;
 
 var state_game = 'STATE_GAME';
 var state_endAnim = 'STATE_ENDANIM';
 var state_share = 'STATE_SHARE';
+var state_reload = 'STATE_RELOAD';
+var state_fall = 'STATE_FALL';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Space Invaders Game Core Constructor
@@ -49,34 +51,32 @@ var rabbits_game_core = function(maxIter)
     this.maxIter = maxIter;
     this.isEnded = false;
 	this.world = 
-		{
-            width : 800,
-            height : 600
-        };
+	{
+        width : 800,
+        height : 600
+    };
     this.p1 = undefined;
     this.p2 = undefined;
     this.launcherNumber = 1;
-    //this.balloonsX = 100;
+
     this.balloons = new Balloons(balloonsX,lines,number);
     this.goalShip = undefined;
     this.score = 0;
-        this.given = 0;
+    this.given = 0;
     this.kept = 0;
-    this.inputs = [];
-    //this.launcher.x = 400;
-    //this.p2ShipX = 400;
+    //this.inputs = [];
     
     this.goalballoonX = 100;
-    this.goalballoonY = 20;
+    this.goalballoonY = 100;
     this.goalShipAlive = true;
     this.balloonsLeft = false;
     this.goalballoonLeft = false;
 
     this.flyer = new Rect(380,350,40,46);
-    this.launcher = new Rect(350,549,126,69);
+    this.launcher = new Rect(350,549,96,53);
 
-    this.init_speed = 63;
-    this.init_angle = Math.PI * 70 / 180;
+    this.init_speed = 0.5;
+    this.init_angle = 0.5;
     this.init_abs = 350;
     this.inAirTime = 0.0;
     this.timeScale = 10;
@@ -110,11 +110,10 @@ Balloons.prototype.Init = function()
         {
             this.tmpX = i * balloonsX_spacing + balloonsX;
             this.tmpY = j * balloonsY_spacing + balloonsY;
-            //console.log(this.tmpX+";"+this.tmpY);
+
             this.array.push(new Balloon(this.tmpX,this.tmpY));
         }
     } 
-    //console.log(this.array);
 };
 Balloons.prototype.Move = function(x)
 {
@@ -211,6 +210,14 @@ rabbits_game_core.prototype.physic_update = function(deltaT)
             this.sendUpdate();
         break;
         case state_share:
+            this.sendUpdate();
+        break;
+        default:
+            this.setDirections();
+            this.moveBalloons();
+            this.moveMother();
+            this.moveFlyer(deltaT); 
+            this.checkCollisions();
             this.sendUpdate();
         break;
     } 
@@ -320,20 +327,6 @@ rabbits_game_core.prototype.moveMother = function()
 
 rabbits_game_core.prototype.animMotherFall = function()
 {
-    if( Math.random() > 0.95)
-    {
-        this.goalballoonLeft = !this.goalballoonLeft;
-    }
-
-    if(this.goalballoonX > (this.world.width - 50 - goal_width) && !this.goalballoonLeft)
-    {
-        this.goalballoonLeft = true;
-    }
-    if(this.goalballoonX < 50 && this.goalballoonLeft)
-    {
-        this.goalballoonLeft = false;
-    }
-
     if (this.goalballoonY > 600)
     {
         this.state = state_share;
@@ -352,73 +345,81 @@ rabbits_game_core.prototype.animMotherFall = function()
     {
         this.goalballoonY += goal_speed;
     }
-    if(this.goalballoonLeft)
-    {
-        this.goalballoonX -= goal_speed;
-    }
-    else
-    {
-        this.goalballoonX += goal_speed;
-    }
 };    
-
 
 rabbits_game_core.prototype.moveFlyer = function(deltaT)
 {
     var deltaX;
-    if(this.flyer.x < 0 )
-    {
-        //this.angleDirection = -this.angleDirection + Math.PI;
-        this.angleDirection = 1;
-        this.init_abs = - this.launcher.x;
-        this.flyer.x = 50;
-    }
-    if ( this.flyer.x > 800 - this.flyer.w)
-    {
-        //this.angleDirection = Math.PI - this.angleDirection;
-        this.angleDirection = -1;
-        this.init_abs = 800 + this.launcher.x;
-        this.flyer.x = 750;
-    }
-    if(this.flyer.y > 550)
-    {
-        //this.launcherNumber = ((this.launcherNumber == 1)? 2 : 1);
-        this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
-        console.log(this.launcherNumber);
+
+    if(this.state == state_reload)
+    {   
+        this.flyer.x = 400 - this.flyer.w;
+        this.flyer.y = 400;
+        this.init_abs = 400 - this.flyer.w;
         this.inAirTime = 0;
-        deltaX = Math.abs((this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2));
-        //console.log(deltaX);
-        if(deltaX < (this.launcher.w/2))
+
+        //this.sendUpdate();
+        
+    }
+    else if(this.state == state_game)
+    {
+       if(this.flyer.x < 0 )
         {
-            this.calculateTrajectory(deltaX);
+            //this.angleDirection = -this.angleDirection + Math.PI;
+            this.angleDirection = 1;
+            this.init_abs = - this.launcher.x;
+            this.flyer.x = 0;
+        }
+        if ( this.flyer.x > 800 - 40)
+        {
+            //this.angleDirection = Math.PI - this.angleDirection;
+            this.angleDirection = -1;
+            this.init_abs = 800 + this.launcher.x;
+            this.flyer.x = 800 - 40;
+        }
+        if(this.flyer.y > 550)
+        {
+            this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
+            //console.log(this.launcherNumber);
+            this.inAirTime = 0;
+            deltaX = Math.abs((this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2));
+            console.log(deltaX);
+            if(deltaX < (this.launcher.w/2 + this.flyer.w/2))
+            {
+                //console.log("inside");
+                this.calculateTrajectory(deltaX);
+            }
+            else
+            {
+                //console.log("outside");
+                //this.calculateTrajectory(this.launcher.w / 4);
+                if(this.state == state_game)
+                {
+                    this.state = state_reload;
+                    this.p1.emit('message',state_reload);
+                    this.p2.emit('message',state_reload);
+                }
+            }      
+            this.flyer.y = 549;
         }
         else
         {
-            this.calculateTrajectory(this.launcher.w / 4);
-        }      
-        this.flyer.y = 549;
+            
+            this.inAirTime += deltaT;
+
+            this.flyer.x =   Math.round(this.init_angle * this.angleDirection * this.inAirTime / this.timeScale + this.init_abs);
+            this.flyer.y =450 -  Math.round( this.init_speed*( 4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime / this.timeScale,2)) / 100));
+        } 
     }
-    else
-    {
-        
-        this.inAirTime += deltaT;
-        //console.log(this.inAirTime);
-        //this.flyer.x =  Math.round(this.init_speed * Math.cos(this.angleDirection) * this.inAirTime / this.timeScale + this.init_abs);
-        this.flyer.x =  Math.round(this.angleDirection * this.inAirTime / this.timeScale + this.init_abs);
-        //this.flyer.y =500 - Math.round( (this.init_speed * Math.sin(this.angleDirection)) * this.inAirTime / this.timeScale - (gravity * this.inAirTime/ this.timeScale * this.inAirTime/ this.timeScale) / 2);
-        this.flyer.y =450 - Math.round(  4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime / this.timeScale,2)) / 100);
-        //console.log(this.flyer.x +' ; '+this.flyer.y);
-    }
-    
 };
 
 rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
     
-    //this.init_speed = 350 * (deltaX / this.launcher.w / 2) + 100;
-    //this.init_angle = Math.PI * (45 + 25*(deltaX / this.launcher.w / 2))/180;
+    this.init_speed = 0.2 * (deltaX / this.launcher.w / 2) + 0.8;
+    this.init_angle = 0.7 * (deltaX / this.launcher.w / 2)+ 0.3;
     this.angleDirection = (this.launcherNumber == 1)? -1 : 1;
-    this.init_abs = this.launcher.x + this.launcher.w / 2;
+    this.init_abs = this.launcher.x + this.angleDirection + this.launcher.w / 2;
 };
 
 rabbits_game_core.prototype.checkCollisions = function()
@@ -435,17 +436,17 @@ rabbits_game_core.prototype.checkCollisions = function()
                 }
             }
         }
-        /*
-        if(this.doCollide(this.flyer,new Rect(this.goalballoonX,goalballoonY,goal_width,goal_height)))
+        
+        if(this.doCollide(this.flyer,new Rect(this.goalballoonX,this.goalballoonY,goal_width,goal_height)))
         {
             if(this.balloons.numBalloons == 0)
             {
                 this.score+= 100;
                 this.state = state_endAnim;
+                this.p1.emit('message',"ANIM_STATE");
+                this.p2.emit('message',"ANIM_STATE");
             }
-        } 
-        */  
-    
+        }     
 };
 
 rabbits_game_core.prototype.doCollide = function(rect1,rect2)
@@ -461,58 +462,63 @@ rabbits_game_core.prototype.doCollide = function(rect1,rect2)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 rabbits_game_core.prototype.onInput = function(client, data){
     
-    if(this.state == state_game)
+    if(this.state == state_game || this.state == state_reload)
     {
 
         if(data[1] == '1')
         {
-            //console.log('left');
             if(this.launcher.x > 0)
             {
-              this.launcher.x -= balloon_speed;  
+              this.launcher.x -= launcherSpeed;  
             }
             
         }
         if(data[2] == '1')
         {
-            if(this.launcher.x < this.world.width - balloon_width)
+            if(this.launcher.x < this.world.width -96)
             {
-                this.launcher.x += balloon_speed;
+                this.launcher.x += launcherSpeed;
             } 
         }
-        if(data[3] == '1')
-        {
-            this.shoot(this.launcher.x + balloon_width / 2 - shot_width/2);
-        }
-
     }
     else if(this.state == state_share)
     {
 
         if(data[1] == '1')
         {
-            //console.log('left');
             if(this.launcher.x > 100)
             {
-              this.launcher.x -= balloon_speed;  
+              this.launcher.x -= launcherSpeed;  
             }
             
         }
         if(data[2] == '1')
         {
-            if(this.launcher.x < this.world.width - balloon_width - 100)
+            if(this.launcher.x < this.world.width - 96 - 100)
             {
-                this.launcher.x += balloon_speed;
+                this.launcher.x += launcherSpeed;
             } 
         }
     }
 };
 
+rabbits_game_core.prototype.shareInput = function(client,data)
+{
+    if(client.userid == this.p1.userid)
+    {
+        this.launcher.x = parseInt(data[1]);  
+    }
+    else
+    {
+        this.launcher.x = parseInt(data[1]); 
+    }
+};
+/*
 rabbits_game_core.prototype.shoot = function(x)
 {
 
 }
-
+*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Debug functions (only used to test game states)
@@ -523,16 +529,6 @@ rabbits_game_core.prototype.EndGame = function()
 {
     this.p1.player.currentRepetition ++;
     this.p2.player.currentRepetition ++;
-
-    if(this.p1.player.currentRepetition > this.maxIter)
-    {
-        this.p1.emit('message','REDIRECT');
-    }
-    if(this.p2.player.currentRepetition > this.maxIter)
-    {
-        this.p2.emit('message','REDIRECT');
-    }
-
     this.isEnded = true;
 };
 rabbits_game_core.prototype.Share = function(client, data)
@@ -540,19 +536,25 @@ rabbits_game_core.prototype.Share = function(client, data)
     console.log(client.userid + data);
     if(client.userid == this.p1.userid)
     {
-        //console.log('plop p1');
+        this.sharer = this.p1;
+        this.given = this.score - parseInt(data[1]);
+        this.kept = parseInt(data[1]);
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given);
     }
     else
     {
-        //console.log('plop p2');
+        this.sharer = this.p2;
+        this.given = this.score - parseInt(data[1]);
+        this.kept = parseInt(data[1]);
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given);
     }
 
     this.EndGame();
@@ -569,26 +571,24 @@ rabbits_game_core.prototype.GetResult = function()
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 rabbits_game_core.prototype.onMessage = function(client, data){
-    //console.log('message recieved by game : '+ this.id);
 
     var splittedData = data.split(',');
-    //console.log('message '+ splittedData);
     switch (splittedData[0])
     {
         case 'INPUT':
             this.onInput(client, splittedData);
         break;
-        case 'SCORE':
-            //this.debugScore();
-        break;
+        case 'MOUSE_INPUT':
+            this.shareInput(client, splittedData);
+        break;        
         case 'ANIM_END':
 
         break;
+        case 'STATE_GAME':
+            this.state = state_game;
+        break;
         case 'SHARE':
             this.Share(client,splittedData);
-        break;
-        case 'END':
-            //this.debugEndGame();
         break;
     }
 };

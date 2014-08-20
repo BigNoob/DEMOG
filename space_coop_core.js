@@ -7,9 +7,6 @@ var UUID        = require('node-uuid');
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var frame_time = 15;
-var physic_time = 60;
-
 var ship_speed = 4;
 var ship_width = 16;
 var ship_height = 16;
@@ -56,7 +53,7 @@ var space_game_core = function(maxIter)
         };
     this.p1 = undefined;
     this.p2 = undefined;
-    //this.enemiesX = 100;
+
     this.enemies = new Enemies(enemiesX,lines,number);
     this.motherShip = undefined;
     this.score = 0;

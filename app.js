@@ -73,14 +73,10 @@ var mailSenderPassw = 'wivyxuvo';                           //password of the gm
 // Experiment Functions and Variables
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    
+  
 var 
-    current_experiment = CreateExperiment('test',"web",1,"space_coop"),
+    current_experiment = CreateExperiment('test',"web",1,"rabbits"),
     experimentsList = [current_experiment];
-
-
-
 
 function CreateExperiment(name,type,iter,game)
 {
@@ -259,7 +255,9 @@ app.get('/end', function(req,res){
 });
 
 app.get(experiment_link,function (req,res){
-    res.render('home.ejs', {exp: current_experiment});
+    var getString =( experiment_link+'.ejs' ).substring(1,(experiment_link+'.ejs').length);
+    console.log(getString)
+    res.render(getString);
 });
 
 

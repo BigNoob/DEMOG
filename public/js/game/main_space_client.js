@@ -71,6 +71,7 @@ var slider;
 
 var share = 0;
 var canfire = true;
+var cooldown = 240;
 var bulletArray = [];
 
 //Preloader
@@ -116,7 +117,7 @@ function Main_Space() {
 
       //Game Loop Listener
       createjs.Ticker.setFPS(60);
-      createjs.Ticker.on("tick_Space", tick_Space); 
+      createjs.Ticker.on("tick", tick_Space); 
       window.addEventListener('keydown', function(event) { handleKeyDown_Space(event); }, false);
       canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
 
@@ -265,7 +266,6 @@ function startServerListen_Space()
       {
         socket.emit('playerLogin',loginPrompt);
       }
-      //console.log('connection message sent to : '+serverAddress);
       //Socket Server Listener
       socket.on("message",function(data){
             serverMessageParser_Space(data);
@@ -480,8 +480,6 @@ function InitShareWait_Space()
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
-  
-
   stage.addChild(progressText);
   stage.update();
   state = state_wait; 
@@ -569,7 +567,7 @@ function handleKeyDown_Space(e)
       {
         sendInputs_Space(0,0,1);
         canfire = false;
-        setTimeout(function(){canfire = true},120);
+        setTimeout(function(){canfire = true},cooldown);
       }
     }
 
@@ -607,7 +605,7 @@ function handleClick(e)
 
 function UpdateShareAmmount_Space()
 {
-  share = parseInt(score_value * (ship.x -100)/(700- 18));
+  share = parseInt(score_value * (ship.x -100)/(600- 18));
   console.log(share);
   maxAmmount.text = score_value;
   minAmmount.text = 0;

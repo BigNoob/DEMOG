@@ -35,7 +35,14 @@ var Experiment = function (xpName, xpType, xpMaxIter,xpGame)
 
 Experiment.prototype.generateLink = function ()
 {
-	return ('/home');
+	if(this.xpGame == "space_coop")
+	{
+		return ('/homespace');
+	}
+	else if(this.xpGame == "rabbits")
+	{
+		return ('/homerabbits');
+	}
 };
 
 Experiment.prototype.startXP = function()
