@@ -1,6 +1,6 @@
 
 
-var Experiment = function (xpName, xpType, xpMaxIter,xpGame)
+var Experiment = function (xpName, xpType, xpMaxIter,xpGame,lang)
 {
 	this.GAME_TYPES = ["space_coop","rabbits"];
 	this.TYPES = ["local","amazon","web"];
@@ -24,7 +24,10 @@ var Experiment = function (xpName, xpType, xpMaxIter,xpGame)
 	{
 		if(xpGame == this.GAME_TYPES[i]) { this.xpGame = xpGame; }	
 	}
-
+	for(var i = 0 ; i < this.LANG.length ; i++)
+	{
+		if(lang == this.LANG[i]) { this.language = lang; }	
+	}
 	if(xpMaxIter > 0) { this.xpMaxIter = xpMaxIter; }
 	else { this.xpMaxIter = 1; }
 	

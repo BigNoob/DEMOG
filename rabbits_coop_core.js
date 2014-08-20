@@ -365,14 +365,14 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
     {
        if(this.flyer.x < 0 )
         {
-            //this.angleDirection = -this.angleDirection + Math.PI;
+
             this.angleDirection = 1;
             this.init_abs = - this.launcher.x;
             this.flyer.x = 0;
         }
         if ( this.flyer.x > 800 - 40)
         {
-            //this.angleDirection = Math.PI - this.angleDirection;
+
             this.angleDirection = -1;
             this.init_abs = 800 + this.launcher.x;
             this.flyer.x = 800 - 40;
@@ -391,8 +391,6 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             }
             else
             {
-                //console.log("outside");
-                //this.calculateTrajectory(this.launcher.w / 4);
                 if(this.state == state_game)
                 {
                     this.state = state_reload;
@@ -425,28 +423,28 @@ rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 rabbits_game_core.prototype.checkCollisions = function()
 {
 
-        for(var j = 0; j < this.balloons.array.length; j++)
+    for(var j = 0; j < this.balloons.array.length; j++)
+    {
+        if(this.balloons.array[j].alive)
         {
-            if(this.balloons.array[j].alive)
+            if(this.doCollide(this.flyer,this.balloons.array[j].rect))
             {
-                if(this.doCollide(this.flyer,this.balloons.array[j].rect))
-                {
-                    this.balloons.KillBalloon(j);
-                    this.score += 100;
-                }
+                this.balloons.KillBalloon(j);
+                this.score += 100;
             }
         }
-        
-        if(this.doCollide(this.flyer,new Rect(this.goalballoonX,this.goalballoonY,goal_width,goal_height)))
+    }
+    
+    if(this.doCollide(this.flyer,new Rect(this.goalballoonX,this.goalballoonY,goal_width,goal_height)))
+    {
+        if(this.balloons.numBalloons == 0)
         {
-            if(this.balloons.numBalloons == 0)
-            {
-                this.score+= 100;
-                this.state = state_endAnim;
-                this.p1.emit('message',"ANIM_STATE");
-                this.p2.emit('message',"ANIM_STATE");
-            }
-        }     
+            this.score+= 100;
+            this.state = state_endAnim;
+            this.p1.emit('message',"ANIM_STATE");
+            this.p2.emit('message',"ANIM_STATE");
+        }
+    }     
 };
 
 rabbits_game_core.prototype.doCollide = function(rect1,rect2)
@@ -513,12 +511,6 @@ rabbits_game_core.prototype.shareInput = function(client,data)
         this.launcher.x = parseInt(data[1]); 
     }
 };
-/*
-rabbits_game_core.prototype.shoot = function(x)
-{
-
-}
-*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Debug functions (only used to test game states)

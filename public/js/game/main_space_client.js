@@ -444,9 +444,9 @@ function InitShareState_Space()
   maxAmmount.x = 700;
   maxAmmount.y = 400;
   maxAmmount.width = 100;
-  maxAmmount.text = score;
+  maxAmmount.text = score_value;
 
-  minAmmount.x = 0;
+  minAmmount.x = 100;
   minAmmount.y = 400;
   minAmmount.width = 100;
   minAmmount.text = "0";

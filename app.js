@@ -75,13 +75,13 @@ var mailSenderPassw = 'wivyxuvo';                           //password of the gm
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('test',"web",1,"rabbits"),
+    current_experiment = CreateExperiment('test',"web",1,"rabbits","en"),
     experimentsList = [current_experiment];
 
-function CreateExperiment(name,type,iter,game)
+function CreateExperiment(name,type,iter,game,lang)
 {
     try{
-        return(new Experiment(name,type,iter,game));
+        return(new Experiment(name,type,iter,game,lang));
     }catch(err)
     {
         console.log(err);
@@ -134,9 +134,10 @@ app.post('/admin/add/', function(req,res){
     var xpType = req.param('xpType');
     var xpGame = req.param('xpGame');
     var Iter = req.param('Iter');
+    var lang = req.param('lang');
     if(xpName != '')
     {
-        experimentsList.push(CreateExperiment(xpName,xpType,Iter,xpGame));
+        experimentsList.push(CreateExperiment(xpName,xpType,Iter,xpGame,lang));
     }
     res.redirect('/admin');
 });
@@ -164,6 +165,7 @@ app.post('/admin/start/:xpName', function(req, res) {
                 experimentsList[i].startXP();
                 current_experiment = experimentsList[i];
                 wrap_server.initServer(current_experiment, server);
+                experiment_link = current_experiment.generateLink();
             }
             else
             {
@@ -253,11 +255,11 @@ app.get('/game', function(req, res){
 app.get('/end', function(req,res){
     res.render('end.ejs');
 });
-
-app.get(experiment_link,function (req,res){
-    var getString =( experiment_link+'.ejs' ).substring(1,(experiment_link+'.ejs').length);
-    console.log(getString)
-    res.render(getString);
+app.get('/homespace', function(req,res){
+    res.render('homespace.ejs');
+});
+app.get('/homerabbits', function(req,res){
+    res.render('homerabbits.ejs');
 });
 
 

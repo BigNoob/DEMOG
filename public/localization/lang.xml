@@ -100,13 +100,13 @@
 			You are now in Lobby &#xD; Waiting For another Player to join
 		</str_lobby>
 		<str_noxp>
-			You are now in Lobby &#xD; No XP is currently running \n Please come again later or contact the administrator : johndoe@fake.com
+			You are now in Lobby &#xD; No XP is currently running &#xD; Please come again later or contact the administrator : johndoe@fake.com
 		</str_noxp>
 		<str_waitShare>
 			The other player will now share a fraction of the points with you.&#xD;Wait until he is done
 		</str_waitShare>
 		<str_doShare>
-			You can now share the points with the other player &#xD; Use the arrow keys to move your ship and select the ammount of point given &#xD; then hit space key to send
+			You can now share the points with the other player &#xD; Click the bar to set points &#xD; then hit space key to send
 		</str_doShare>
 		<str_playerId>
 			Player ID: 
