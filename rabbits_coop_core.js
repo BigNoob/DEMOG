@@ -430,7 +430,7 @@ rabbits_game_core.prototype.checkCollisions = function()
             if(this.doCollide(this.flyer,this.balloons.array[j].rect))
             {
                 this.balloons.KillBalloon(j);
-                this.score += 100;
+                //this.score += 100;
             }
         }
     }

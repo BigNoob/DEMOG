@@ -113,6 +113,7 @@ function XPResults()
 	this.endDate = undefined;
 	this.playerResults;
 	this.gameResults;
+	
 }
 
 var gameResult = function(gameId, gameScore, player1, player2, sharer, given, kept)

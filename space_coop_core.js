@@ -397,7 +397,7 @@ space_game_core.prototype.checkCollisions = function()
             this.shots[i].alive = false;
             if(this.enemies.numEnemies == 0)
             {
-                this.score+= 100;
+                //this.score+= 100;
                 this.state = state_endAnim;
             }
         }   
