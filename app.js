@@ -88,8 +88,6 @@ function CreateExperiment(name,type,iter,game,lang)
     }
 }
 
-var experiment_link = current_experiment.generateLink();
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Mail sender set up
@@ -165,7 +163,7 @@ app.post('/admin/start/:xpName', function(req, res) {
                 experimentsList[i].startXP();
                 current_experiment = experimentsList[i];
                 wrap_server.initServer(current_experiment, server);
-                experiment_link = current_experiment.generateLink();
+                
             }
             else
             {
@@ -348,7 +346,7 @@ setInterval(function(){
     {
 
     }
-}, 5000);
+}, 2000);
 //Check ended games in wrap_server
 setInterval(function(){
    wrap_server.update(frame_time);
