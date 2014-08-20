@@ -295,6 +295,7 @@ function serverMessageParser_Space(data)
         break;
         case 'GAME_START':
           isXPRunning = true;
+          console.log("gamestart");
           //ClearGameState_Space();
           ClearLobbyState_Space();
           InitGameState_Space();

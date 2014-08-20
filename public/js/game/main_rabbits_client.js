@@ -276,8 +276,7 @@ function startServerListen()
       }
       //Socket Server Listener
       socket.on("message",function(data){
-        console.log(data);
-            serverMessageParser(data);
+          serverMessageParser(data);
       });   
 
 }
@@ -303,6 +302,7 @@ function serverMessageParser(data)
           DrawGivenAmmount(splittedData[1]);
         break;
         case 'GAME_START':
+        console.log("gamestart");
           isXPRunning = true;
           //ClearGameState();
           ClearLobbyState();
