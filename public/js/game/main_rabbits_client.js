@@ -276,6 +276,7 @@ function startServerListen()
       }
       //Socket Server Listener
       socket.on("message",function(data){
+        console.log(data);
             serverMessageParser(data);
       });   
 
