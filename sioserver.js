@@ -285,16 +285,7 @@ game_server.prototype.matchClients = function()
 		{
 
 			this.createGame(this.clientsinLobby[i*2],this.clientsinLobby[(i*2)+1]);
-			/*
-			for(var j = 0; j < this.games.length; j ++)
-			{
-				console.log("//////MATCHING FUNCTION////////");
-				console.log("game n°"+j);
-				console.log('\t' +this.games[j].id);
-				console.log('\t\t' +this.games[j].p1.userid);
-				console.log('\t\t' +this.games[j].p2.userid);
-			}
-			*/
+			
 		}
 	}	
 };

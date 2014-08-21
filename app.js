@@ -343,8 +343,7 @@ if(sio != undefined)
 setInterval(function(){
     if(wrap_server != undefined && wrap_server.experiment.isRunning)
     {
-        wrap_server.matchClients();
-        
+        wrap_server.matchClients();     
     }
     else if(!wrap_server.experiment.isRunning)
     {

@@ -5,15 +5,14 @@
 //    This function calls the main function of the game choosed for the experiment
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function Main(xp_type) {
-  console.log(xp_type);
-  if(xp_type == "space_coop")
+function Main(xp_game,xptype) {
+  if(xp_game == "space_coop")
   {
-    Main_Space();
+    Main_Space(xptype);
   }
-  else
+  else if(xp_game == "rabbits")
   {
-    Main_Rabbits();
+    Main_Rabbits(xptype);
   }    
 }
 

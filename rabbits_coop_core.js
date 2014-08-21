@@ -277,25 +277,25 @@ rabbits_game_core.prototype.generateFlyerString = function()
 //Set the directions of the balloon lines, to avoid colliding with the wall
 rabbits_game_core.prototype.setDirections = function()
 {
-    if(this.balloons.x > (this.world.width - 50 - balloonsX_spacing * number) && !this.balloonsLeft)
+    if(this.balloons.x > (this.world.width - balloonsX_spacing * number) && !this.balloonsLeft)
     {
         this.balloonsLeft = true;
     }
-    if(this.balloons.x < 50 && this.balloonsLeft)
+    if(this.balloons.x <0 && this.balloonsLeft)
     {
         this.balloonsLeft = false;
     }
-
+    /*
     if( Math.random() > 0.95)
     {
         this.goalballoonLeft = !this.goalballoonLeft;
     }
-
-    if(this.goalballoonX > (this.world.width - 50 - goal_width) && !this.goalballoonLeft)
+    */
+    if(this.goalballoonX > (this.world.width - goal_width) && !this.goalballoonLeft)
     {
         this.goalballoonLeft = true;
     }
-    if(this.goalballoonX < 50 && this.goalballoonLeft)
+    if(this.goalballoonX < 0 && this.goalballoonLeft)
     {
         this.goalballoonLeft = false;
     }
@@ -386,6 +386,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             this.inAirTime = 0;
             deltaX = Math.abs((this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2));
             console.log(deltaX);
+
             if(deltaX < (this.launcher.w/2 + this.flyer.w/2))
             {
                 //console.log("inside");
@@ -544,9 +545,13 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.kept = parseInt(data[1]);
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
+
         this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given);
+
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
+        
     }
     else
     {
@@ -557,7 +562,9 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p1.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given);
+
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
     }
     setTimeout(this.EndGame(),2000); 
 };
@@ -578,6 +585,7 @@ rabbits_game_core.prototype.onMessage = function(client, data){
     switch (splittedData[0])
     {
         case 'INPUT':
+            splittedData.push(new Date());
             this.onInput(client, splittedData);
         break;
         case 'MOUSE_INPUT':

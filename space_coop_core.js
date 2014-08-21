@@ -521,7 +521,9 @@ space_game_core.prototype.Share = function(client, data)
         this.p2.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given);
+        
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
     }
     else
     {
@@ -532,7 +534,9 @@ space_game_core.prototype.Share = function(client, data)
         this.p1.player.score += parseInt(data[1]);
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given);
+        
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
     }
     setTimeout(this.EndGame(),2000); 
 };
@@ -551,6 +555,7 @@ space_game_core.prototype.onMessage = function(client, data){
     switch (splittedData[0])
     {
         case 'INPUT':
+            splittedData.push(new Date());
             this.onInput(client, splittedData);
         break;
         case 'MOUSE_INPUT':

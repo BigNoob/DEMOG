@@ -100,13 +100,13 @@
 			Please wait for another player to join.
 		</str_lobby>
 		<str_noxp>
-			No game is currently running \n Please come back later
+			No game is currently running &#xD; Please come back later
 		</str_noxp>
 		<str_waitShare>
-			Congratulations! Before going on, please wait while the other player is sharing the loot.
+			Congratulations!&#xD; Before going on, please wait while the other player is sharing the loot.
 		</str_waitShare>
 		<str_doShare>
-			Congratulations! Before going on, share the loot with the other player by clicking on the scale below. &#xD; Use the arrow keys to move the cursor and validate by pressing the space key.
+			Congratulations!&#xD;Before going on, share the loot with the other player by clicking on the scale below.&#xD;Use the arrow keys to move the cursor and validate by pressing the space key.
 		</str_doShare>
 		<str_playerId>
 			Player ID: 

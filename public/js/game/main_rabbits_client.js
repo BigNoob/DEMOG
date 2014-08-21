@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 var isXPRunning = false;
+var xpType;
 var canvas;
 var stage;
 var stagewidth;
@@ -119,20 +120,21 @@ var KEYCODE_SPACE = 32;
 //    Entry Point of Space Coop (Function called by main.jst)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function Main_Rabbits() {
-      canvas = document.getElementById("viewport");
-      stage = new createjs.Stage(canvas);
+function Main_Rabbits(type) {
+  xpType = type;
+  canvas = document.getElementById("viewport");
+  stage = new createjs.Stage(canvas);
 
-      stagewidth = stage.canvas.width;
-      stageheight = stage.canvas.height;
+  stagewidth = stage.canvas.width;
+  stageheight = stage.canvas.height;
 
-      //Game Loop Listener
-      createjs.Ticker.setFPS(60);
-      createjs.Ticker.on("tick", tick); 
-      window.addEventListener('keydown', function(event) { handleKeyDown(event); }, false);
-      canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
+  //Game Loop Listener
+  createjs.Ticker.setFPS(60);
+  createjs.Ticker.on("tick", tick); 
+  window.addEventListener('keydown', function(event) { handleKeyDown(event); }, false);
+  canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
 
-      StartLoading();
+  StartLoading();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -210,60 +212,60 @@ function LoadStrings()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function handleFileLoad (event)
 {
-      if(event.item.id == "background"){
-            background = new createjs.Bitmap(event.result);
-      }
-      if(event.item.id == "goal"){
-            mothership = new createjs.Bitmap(event.result);
-      }
-      if(event.item.id == "arrowBMP"){
-            arrow = new createjs.Bitmap(event.result);
-      }
-      if(event.item.id == "catched"){
-        mothershipEndBitmap = new createjs.Bitmap(event.result);
-      }
-      if(event.item.id == "balloon"){
-            enemy = new createjs.Bitmap(event.result);
-            for(var j = 0; j < lines; j++)
+  if(event.item.id == "background"){
+        background = new createjs.Bitmap(event.result);
+  }
+  if(event.item.id == "goal"){
+        mothership = new createjs.Bitmap(event.result);
+  }
+  if(event.item.id == "arrowBMP"){
+        arrow = new createjs.Bitmap(event.result);
+  }
+  if(event.item.id == "catched"){
+    mothershipEndBitmap = new createjs.Bitmap(event.result);
+  }
+  if(event.item.id == "balloon"){
+        enemy = new createjs.Bitmap(event.result);
+        for(var j = 0; j < lines; j++)
+        {
+            for(var i = 0; i < number; i ++)
             {
-                for(var i = 0; i < number; i ++)
-                {
-                  var tmpEnemy = new createjs.Bitmap(event.result);
-                  tmpEnemy.x = i * enemiesX_spacing;
-                  tmpEnemy.y = j * enemiesY_spacing;
-                  EnemiesCont.addChild(tmpEnemy);
-                }
-            } 
-      }
+              var tmpEnemy = new createjs.Bitmap(event.result);
+              tmpEnemy.x = i * enemiesX_spacing;
+              tmpEnemy.y = j * enemiesY_spacing;
+              EnemiesCont.addChild(tmpEnemy);
+            }
+        } 
+  }
 }
 function loadError (event)
 {
-      console.log("PRELOAD ERROR : "+event.text);
+  console.log("PRELOAD ERROR : "+event.text);
 }
 function handleProgress (event)
 {
-     progressText.text = (preloader.progress*100|0) + " % Loaded";
-     stage.update(); 
+ progressText.text = (preloader.progress*100|0) + " % Loaded";
+ stage.update(); 
 }
 function handleComplete (event)
 {
-      launcherSpriteSheet = new createjs.SpriteSheet(
-        {
-        images: ["/public/images/LauncherSheet.png"],
-        frames: {width:96, height:53},
-        }
-      );
+  launcherSpriteSheet = new createjs.SpriteSheet(
+    {
+    images: ["/public/images/LauncherSheet.png"],
+    frames: {width:96, height:53},
+    }
+  );
 
-      flyerSpriteSheet = new createjs.SpriteSheet(
-        {
-        images: ["/public/images/FlyerSheet.png"],
-        frames: {width:40, height:46},
-        }
-      );
-      launcher = new createjs.Sprite(launcherSpriteSheet);
-      flyer = new createjs.Sprite(flyerSpriteSheet);
-     startServerListen();  //We start listening to the server after the loading of all the assets
-     InitLobbyState(); 
+  flyerSpriteSheet = new createjs.SpriteSheet(
+    {
+    images: ["/public/images/FlyerSheet.png"],
+    frames: {width:40, height:46},
+    }
+  );
+  launcher = new createjs.Sprite(launcherSpriteSheet);
+  flyer = new createjs.Sprite(flyerSpriteSheet);
+  startServerListen();  //We start listening to the server after the loading of all the assets
+  InitLobbyState(); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,20 +275,23 @@ function handleComplete (event)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function startServerListen()
 {
-      //Socket init
-      
-      var tmpAddress = document.URL;
-      var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
-      socket = io.connect(serverAddress);
-      loginPrompt  = prompt(stringsArray[str_loginPrompt]);
-      if(loginPrompt != null)
-      {
-        socket.emit('playerLogin',loginPrompt);
-      }
-      //Socket Server Listener
-      socket.on("message",function(data){
-          serverMessageParser(data);
-      });   
+  //Socket init
+
+  var tmpAddress = document.URL;
+  var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
+  socket = io.connect(serverAddress);
+  if(xpType == "amazon")
+  {
+    loginPrompt  = prompt(stringsArray[str_loginPrompt]);
+    if(loginPrompt != null)
+    {
+      socket.emit('playerLogin',loginPrompt);
+    }
+  }
+  //Socket Server Listener
+  socket.on("message",function(data){
+      serverMessageParser(data);
+  });   
 
 }
 
@@ -299,6 +304,7 @@ function serverMessageParser(data)
           updateScreen(splittedData);
         break;
         case 'INFO':
+        /*
           document.getElementById("id").innerHTML = stringsArray[str_playerId]+splittedData[1];
           document.getElementById("repetition").innerHTML = stringsArray[str_playerRep]+splittedData[2];
           document.getElementById("score").innerHTML = stringsArray[str_playerScore]+splittedData[3];
@@ -306,6 +312,7 @@ function serverMessageParser(data)
           document.getElementById("xpName").innerHTML = stringsArray[str_xpName]+splittedData[4];
           document.getElementById("xpIter").innerHTML = stringsArray[str_xpRep]+splittedData[5];
           document.getElementById("xpGame").innerHTML = stringsArray[str_xpGame]+splittedData[6];
+          */
         break;
         case 'GIVEN_AMMOUNT':
           DrawGivenAmmount(splittedData[1],splittedData[2]);
@@ -342,7 +349,7 @@ function serverMessageParser(data)
         break;
         case 'ANIM_STATE':
           ClearFlyer();
-          //mothership.image = mothershipEndBitmap.image;
+          state=state_endAnim;
         break;
         case 'STATE_RELOAD':
           setTimeout(function(){
@@ -523,13 +530,13 @@ function InitShareWait()
   state = state_wait; 
 }
 
-function DrawGivenAmmount(data)
+function DrawGivenAmmount(data, role)
 {
-  if(data[1] == "GIVEN")
+  if(role == "RECIEVER")
   { 
     alert("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
   }
-  else
+  else if(role == "SHARER")
   {
     alert("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus y.\n Click to continue to the next game." );
   }
@@ -547,6 +554,8 @@ function ClearGameState()
   stage.removeChild(EnemiesCont);
   stage.removeChild(mothership);
   stage.removeChild(score);
+  stage.removeChild(flyer);
+  //stage.removeChild(mothershipEndBitmap);
   for(var i = 0 ; i < EnemiesCont.getNumChildren() ; i++)
   {
     EnemiesCont.getChildAt(i).alpha = 1;
@@ -576,7 +585,7 @@ function ClearWaitState()
 }
 function ClearFlyer()
 {
-  stage.removeChild(flyer);
+  //stage.addChild(mothershipEndBitmap);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -650,8 +659,8 @@ function UpdateShareAmmount(x)
   maxAmmount.text = score_value;
   minAmmount.text = 0;
   givenAmmount.text = share;
-
 }
+
 function SendShareAmmount()
 {
   socket.emit("message",'SHARE,'+ share);
@@ -664,6 +673,7 @@ function sendInputs(left,right,shoot)
     socket.emit("message",'INPUT,'+left+','+right+','+shoot);
   }
 }
+
 function sendMouseInput(x)
 {
   var X = x;
@@ -704,7 +714,10 @@ function updateScreen(data)
 {
   //console.log(data);
   drawLauncher(data[1]);
-  drawFlyer(data[2]);
+  if(state != state_endAnim)
+  {
+    drawFlyer(data[2]);
+  }
   launcherNumber = parseInt(data[3]);
   if(launcherNumber == 1)
   {
@@ -735,8 +748,8 @@ function drawFlyer(data)
   var splittedData = data.split('#');
   if(splittedData[0]==NaN || splittedData[1]==NaN)
   {
-    flyer.x = 400;
-    flyer.y = 400;
+    //flyer.x = 400;
+    //flyer.y = 400;
   }
   else
   {
@@ -769,6 +782,13 @@ function drawMothership(data)
   var splittedData = data.split('#');
   mothership.x = splittedData[0];
   mothership.y = splittedData[1];
+
+  if(state == state_endAnim)
+  {
+    console.log(flyer.x+';'+flyer.y);
+    flyer.x = splittedData[0];
+    flyer.y = parseInt(splittedData[1]) + 56;
+  }
 }
 
 function drawScore(data)

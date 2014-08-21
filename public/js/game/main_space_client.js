@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 var isXPRunning = false;
+var xpType;
 var canvas;
 var stage;
 var stagewidth;
@@ -108,21 +109,21 @@ var KEYCODE_SPACE = 32;
 //    Entry Point of Space Coop (Function called by main.jst)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function Main_Space() {
-  console.log('plop');
-      canvas = document.getElementById("viewport");
-      stage = new createjs.Stage(canvas);
+function Main_Space(type) {
+  xpType = type;
+  canvas = document.getElementById("viewport");
+  stage = new createjs.Stage(canvas);
 
-      stagewidth = stage.canvas.width;
-      stageheight = stage.canvas.height;
+  stagewidth = stage.canvas.width;
+  stageheight = stage.canvas.height;
 
-      //Game Loop Listener
-      createjs.Ticker.setFPS(60);
-      createjs.Ticker.on("tick", tick_Space); 
-      window.addEventListener('keydown', function(event) { handleKeyDown_Space(event); }, false);
-      canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
+  //Game Loop Listener
+  createjs.Ticker.setFPS(60);
+  createjs.Ticker.on("tick", tick_Space); 
+  window.addEventListener('keydown', function(event) { handleKeyDown_Space(event); }, false);
+  canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
 
-      StartLoading_Space();
+  StartLoading_Space();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -261,21 +262,23 @@ function handleComplete_Space (event)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function startServerListen_Space()
 {
-      //Socket init
-      
-      var tmpAddress = document.URL;
-      var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
-      socket = io.connect(serverAddress);
-      loginPrompt  = prompt(stringsArray[str_loginPrompt]);
-      if(loginPrompt != null)
-      {
-        socket.emit('playerLogin',loginPrompt);
-      }
-      //Socket Server Listener
-      socket.on("message",function(data){
-            serverMessageParser_Space(data);
-      });   
+  //Socket init
 
+  var tmpAddress = document.URL;
+  var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
+  socket = io.connect(serverAddress);
+  if(xpType == "amazon")
+  {
+    loginPrompt  = prompt(stringsArray[str_loginPrompt]);
+    if(loginPrompt != null)
+    {
+      socket.emit('playerLogin',loginPrompt);
+    }
+  }
+  //Socket Server Listener
+  socket.on("message",function(data){
+        serverMessageParser_Space(data);
+  });   
 }
 
 function serverMessageParser_Space(data)
@@ -287,6 +290,7 @@ function serverMessageParser_Space(data)
           updateScreen_Space(splittedData);
         break;
         case 'INFO':
+        /*
           document.getElementById("id").innerHTML = stringsArray[str_playerId]+splittedData[1];
           document.getElementById("repetition").innerHTML = stringsArray[str_playerRep]+splittedData[2];
           document.getElementById("score").innerHTML = stringsArray[str_playerScore]+splittedData[3];
@@ -294,9 +298,10 @@ function serverMessageParser_Space(data)
           document.getElementById("xpName").innerHTML = stringsArray[str_xpName]+splittedData[4];
           document.getElementById("xpIter").innerHTML = stringsArray[str_xpRep]+splittedData[5];
           document.getElementById("xpGame").innerHTML = stringsArray[str_xpGame]+splittedData[6];
+          */
         break;
         case 'GIVEN_AMMOUNT':
-          DrawGivenAmmount(splittedData[1]);
+          DrawGivenAmmount(splittedData[1], splittedData[2]);
         break;
         case 'GAME_START':
           isXPRunning = true;
@@ -496,13 +501,13 @@ function InitShareWait_Space()
   state = state_wait; 
 }
 
-function DrawGivenAmmount(data)
+function DrawGivenAmmount(data, role)
 {
-    if(data[1] == "GIVEN")
+    if(role == "RECIEVER")
   { 
     alert("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
   }
-  else
+  else if(role == "SHARER")
   {
     alert("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus y.\n Click to continue to the next game." );
   }
