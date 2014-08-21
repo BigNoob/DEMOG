@@ -322,21 +322,17 @@ space_game_core.prototype.moveMother = function()
 //Animate the mothership during its fall
 space_game_core.prototype.animMotherFall = function()
 {
-    if( Math.random() > 0.95)
-    {
-        this.mothershipLeft = !this.mothershipLeft;
-    }
 
-    if(this.mothershipX > (this.world.width - 50 - mother_width) && !this.mothershipLeft)
+    if(this.mothershipX > (this.world.width - mother_width) && !this.mothershipLeft)
     {
         this.mothershipLeft = true;
     }
-    if(this.mothershipX < 50 && this.mothershipLeft)
+    if(this.mothershipX < 0 && this.mothershipLeft)
     {
         this.mothershipLeft = false;
     }
-
-    if (this.mothershipY > 600)
+    
+    if (this.mothershipY > 500)
     {
         this.state = state_share;
         if(Math.abs(this.p2ShipX - this.mothershipX) > Math.abs(this.p1ShipX - this.mothershipX))
@@ -352,7 +348,7 @@ space_game_core.prototype.animMotherFall = function()
     }
     else
     {
-        this.mothershipY += mother_speed;
+        this.mothershipY += mother_speed/3;
     }
     if(this.mothershipLeft)
     {
