@@ -59,12 +59,14 @@ var rabbits_game_core = function(maxIter)
     this.p2 = undefined;
     this.launcherNumber = 1;
 
+    this.inputsP1 = [];
+    this.inputsP2 = [];
+
     this.balloons = new Balloons(balloonsX,lines,number);
     this.goalShip = undefined;
     this.score = 0;
     this.given = 0;
     this.kept = 0;
-    //this.inputs = [];
     
     this.goalballoonX = 100;
     this.goalballoonY = 100;
@@ -415,7 +417,7 @@ rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
     
     this.init_speed = 0.2 * (deltaX / this.launcher.w / 2) + 0.8;
-    this.init_angle = 0.7 * (deltaX / this.launcher.w / 2)+ 0.3;
+    this.init_angle = 0.9 * (deltaX / this.launcher.w / 2)+ 0.3;
     this.angleDirection = (this.launcherNumber == 1)? -1 : 1;
     this.init_abs = this.launcher.x + this.angleDirection + this.launcher.w / 2;
 };
@@ -430,7 +432,7 @@ rabbits_game_core.prototype.checkCollisions = function()
             if(this.doCollide(this.flyer,this.balloons.array[j].rect))
             {
                 this.balloons.KillBalloon(j);
-                //this.score += 100;
+                this.score += 100;
             }
         }
     }
@@ -439,7 +441,7 @@ rabbits_game_core.prototype.checkCollisions = function()
     {
         if(this.balloons.numBalloons == 0)
         {
-            this.score+= 100;
+            //this.score+= 100;
             this.state = state_endAnim;
             this.p1.emit('message',"ANIM_STATE");
             this.p2.emit('message',"ANIM_STATE");
@@ -460,6 +462,15 @@ rabbits_game_core.prototype.doCollide = function(rect1,rect2)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 rabbits_game_core.prototype.onInput = function(client, data){
     
+    if(client.userid == this.p1.userid)
+    {
+        this.inputsP1.push(data);
+    }
+    else if(client.userid == this.p2.userid)
+    {
+        this.inputsP2.push(data);
+    }
+
     if(this.state == state_game || this.state == state_reload)
     {
 
@@ -525,7 +536,7 @@ rabbits_game_core.prototype.EndGame = function()
 };
 rabbits_game_core.prototype.Share = function(client, data)
 {
-    console.log(client.userid + data);
+    //console.log(client.userid + data);
     if(client.userid == this.p1.userid)
     {
         this.sharer = this.p1;
@@ -548,8 +559,7 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given);
     }
-
-    this.EndGame();
+    setTimeout(this.EndGame(),2000); 
 };
 rabbits_game_core.prototype.GetResult = function()
 {

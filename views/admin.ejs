@@ -2,115 +2,28 @@
 <html>
 <head>
 	<title>administration page</title>
-	<link rel='stylesheet' href='/public/styles/styles.css' />
 	<script>
-		var localUrl = (window.location.toString()).substring(0,(window.location.toString()).length -6);
+	
+    function myFunction()
+    {
+    	var login = "<%= login %>";
+    	var passw = "<%= passw %>";
+    	var userName=prompt("Username","");
+    	var passWord=prompt("Password",""); 
+	    if(userName == login && passWord == passw)
+	    {
+	    	console.log('yes');
+	    	window.location.replace('/dictateur');
+	    }
+	    else
+	    {
+	    	console.log("non");
+	    	window.location.replace('/end');
+	    }
+    }
 	</script>
 </head>
-<body>
-	<h1> Experiments administration board</h1>
-	<div class="centerDiv">
-		<section class="xpholdercreate">
-			<h2>Clients connected: </h2>
-			<p> In Lobby : <%= clientsInLobbyNum %> </p>
-			<p> In Game : <%= clientsInGameNum %> </p>
-		</section>
-
-	</div>
-	<div class="centerDiv">
-	<section class="xpholderrunning">
-		<h2>Running Experiments</h2>
-			
-		<ul>
-		<% exps.forEach(function(exp, index){ if(exp.isRunning){ %>
-			
-			<section class="experiment">
-				<p>Name: <%= exp.xpName %></p>
-				<p>Type: <%= exp.xpType %></p>
-				<p>Game: <%= exp.xpGame %></p>
-				<p>Link: <script>document.write(localUrl);</script><%=  exp.xpLink %></p>
-				<p>Iterations: <%= exp.xpMaxIter %></p>
-				<p>Is Running : <%= exp.isRunning %></p>
-				<p>Start Date : <%= exp.launchDate %></p>
-				
-				<form action="/admin/delete/<%= exp.xpName %>" method="post">
-					<button class="button" type="submit">Delete</button>
-				</form>
-				<form action="/admin/stop/<%= exp.xpName %>" method="post">
-					<button class="button" type="submit">Stop XP</button>
-				</form>
-				<form action="/admin/write/<%= exp.xpName %>" method="post">
-					<button class="button" type="submit"> Write XP Results</button>
-				</form>
-			</section>
-		<%} }); %>
-		</ul>
-	</section>
-	<section class="xpholdernotrunning">
-		<h2>Not Running Experiments</h2>
-		
-		<ul>
-		<% exps.forEach(function(exp, index){ if(!exp.isRunning){ %>
-			
-			<section class="experiment">
-				<p>Name: <%= exp.xpName %></p>
-				<p>Type: <%= exp.xpType %></p>
-				<p>Game: <%= exp.xpGame %></p>
-				<p>Link: <script>document.write(localUrl);</script><%= exp.xpLink %></p>
-				<p>Iterations: <%= exp.xpMaxIter %></p>
-				<p>Is Running : <%= exp.isRunning %></p>
-				<p>Start Date : <%= exp.launchDate %></p>
-			
-				<form action="/admin/delete/<%= exp.xpName %>" method="post">
-					<button class="button" type="submit">Delete</button>
-				</form>
-				<form action="/admin/start/<%= exp.xpName %>" method="post">
-					<button class="button" type="submit">Start XP</button>
-				</form>
-				<form action="/admin/write/<%= exp.xpName %>" method="post">
-					<button class="button" type="submit"> Write XP Results</button>
-				</form>
-			</section>
-		<% }}); %>
-		</ul>
-	</section>
-	</div>
-	<div class="centerDiv">
-		<section class="xpholdercreate">
-		<h2>Create a new Experiment</h2>
-		<form action="/admin/add/" method="post">
-			<p>
-				
-				<label for="xpName">Experiment Name</label>
-                <input type="text" name="xpName" id="xpName"/>
-                <br>
-                <label for="xpName">Iterations</label>
-                <input type="number" name="Iter" id="Iter"/>
-                <br>
-                <label for="xpName">Type</label>
-                <select name="xpType">
-					<option value="web">web</option>
-					<option value="local">local</option>
-					<option value="amazon">amazon</option>
-				</select>
-				<br>
-				<label for="xpName">Game</label>
-				<select name="xpGame">
-					<option value="space_coop">Space Coop</option>
-					<option value="rabbits">Rabbits</option>
-				</select>
-                <br>
-                <br>
-				<label for="lang">Language</label>
-				<select name="lang">
-					<option value="en">English</option>
-					<option value="fr">French</option>
-				</select>
-                <br>
-                <input class="button" type="submit" />
-			</p>
-		</form>
-		<section class="xpholder">
-	</div>
+<body onload="myFunction()">
+	
 </body>
 </html>

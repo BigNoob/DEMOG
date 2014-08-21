@@ -97,16 +97,16 @@
 	</fr>
 	<en>
 		<str_lobby>
-			You are now in Lobby &#xD; Waiting For another Player to join
+			Please wait for another player to join.
 		</str_lobby>
 		<str_noxp>
-			You are now in Lobby &#xD; No XP is currently running &#xD; Please come again later or contact the administrator : johndoe@fake.com
+			No game is currently running \n Please come back later
 		</str_noxp>
 		<str_waitShare>
-			The other player will now share a fraction of the points with you.&#xD;Wait until he is done
+			Congratulations! Before going on, please wait while the other player is sharing the loot.
 		</str_waitShare>
 		<str_doShare>
-			You can now share the points with the other player &#xD; Click the bar to set points &#xD; then hit space key to send
+			Congratulations! Before going on, share the loot with the other player by clicking on the scale below. &#xD; Use the arrow keys to move the cursor and validate by pressing the space key.
 		</str_doShare>
 		<str_playerId>
 			Player ID: 
@@ -118,7 +118,7 @@
 			Total Score: 
 		</str_playerScore>
 		<str_xpName>
-			Experience Name : 
+			Experiment Name : 
 		</str_xpName>
 		<str_xpRep>
 			Number of Repetition : 
@@ -130,10 +130,10 @@
 			Score : 
 		</str_score>	
 		<str_given>
-			Given Ammount : 
+			Given Amount : 
 		</str_given>	
 		<str_loginPrompt> 
-			Enter your login(mechanical truk id if relevant)
+			Please enter your Mturk ID
 		</str_loginPrompt>
 		<str_gameTuto> 
 			Use Arrow Keys to Move and Space key to shoot

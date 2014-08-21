@@ -54,6 +54,9 @@ var space_game_core = function(maxIter)
     this.p1 = undefined;
     this.p2 = undefined;
 
+    this.inputsP1 = [];
+    this.inputsP2 = [];
+
     this.enemies = new Enemies(enemiesX,lines,number);
     this.motherShip = undefined;
     this.score = 0;
@@ -416,6 +419,15 @@ space_game_core.prototype.doCollide = function(rect1,rect2)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 space_game_core.prototype.onInput = function(client, data){
+
+    if(client.userid == this.p1.userid)
+    {
+        this.inputsP1.push(data);
+    }
+    else if(client.userid == this.p2.userid)
+    {
+        this.inputsP2.push(data);
+    }
     
     if(this.state == state_game)
     {
@@ -522,8 +534,7 @@ space_game_core.prototype.Share = function(client, data)
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given);
     }
-
-    this.EndGame();
+    setTimeout(this.EndGame(),2000); 
 };
 space_game_core.prototype.GetResult = function()
 {

@@ -59,11 +59,12 @@ var launcherSpriteSheet;
 var launcher;
 var flyerSpriteSheet;
 var flyer;
-
+var arrow;
 
 var background;
 var enemy;
 var mothership;
+var mothershipEndBitmap;
 
 var progressText ;
 var score;
@@ -165,6 +166,8 @@ function StartLoading()
                 {src:"/public/images/RabbitBackground.png", id:"background"},
                 {src:"/public/images/RedBalloon.png", id:"balloon"},
                 {src:"/public/images/GoalBalloon.png", id:"goal"},
+                {src:"/public/images/BalloonCatched.png,",id:"catched"},
+                {src:"/public/images/Arrow.png", id:"arrowBMP"},
               ];
   //loading Events and Callbacks
   preloader = new createjs.LoadQueue(true)
@@ -213,6 +216,12 @@ function handleFileLoad (event)
       if(event.item.id == "goal"){
             mothership = new createjs.Bitmap(event.result);
       }
+      if(event.item.id == "arrowBMP"){
+            arrow = new createjs.Bitmap(event.result);
+      }
+      if(event.item.id == "catched"){
+        mothershipEndBitmap = new createjs.Bitmap(event.result);
+      }
       if(event.item.id == "balloon"){
             enemy = new createjs.Bitmap(event.result);
             for(var j = 0; j < lines; j++)
@@ -229,7 +238,7 @@ function handleFileLoad (event)
 }
 function loadError (event)
 {
-      console.log("PRELOAD ERROR : "+evt.text);
+      console.log("PRELOAD ERROR : "+event.text);
 }
 function handleProgress (event)
 {
@@ -299,7 +308,7 @@ function serverMessageParser(data)
           document.getElementById("xpGame").innerHTML = stringsArray[str_xpGame]+splittedData[6];
         break;
         case 'GIVEN_AMMOUNT':
-          DrawGivenAmmount(splittedData[1]);
+          DrawGivenAmmount(splittedData[1],splittedData[2]);
         break;
         case 'GAME_START':
         console.log("gamestart");
@@ -333,6 +342,7 @@ function serverMessageParser(data)
         break;
         case 'ANIM_STATE':
           ClearFlyer();
+          //mothership.image = mothershipEndBitmap.image;
         break;
         case 'STATE_RELOAD':
           setTimeout(function(){
@@ -364,6 +374,7 @@ function InitGameState()
 
   launcher.x = 400;
   launcher.y = 550;
+  launcher.alpha = 1.0;
 
   flyer.x = 380;
   flyer.y = 350;
@@ -482,7 +493,12 @@ function InitShareState()
   slider.graphics.beginFill("white").drawRect(100,400,600,20);
   launcher.x = 100;
   launcher.y = 390;
-  
+  launcher.alpha = 0.0;
+
+  arrow.x=100;
+  arrow.y = 400;
+  arrow.alpha = 0.0;
+
   stage.addChild(slider);
 
   stage.addChild(launcher);
@@ -490,6 +506,7 @@ function InitShareState()
   stage.addChild(minAmmount);
   stage.addChild(givenAmmount);
   stage.addChild(progressText);
+  stage.addChild(arrow);
   stage.update();
   state = state_share;  
 }
@@ -508,7 +525,15 @@ function InitShareWait()
 
 function DrawGivenAmmount(data)
 {
-  alert("The Other Player gave you : "+data+"points" );
+  if(data[1] == "GIVEN")
+  { 
+    alert("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
+  }
+  else
+  {
+    alert("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus y.\n Click to continue to the next game." );
+  }
+  
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -543,6 +568,7 @@ function ClearShareState()
   stage.removeChild(minAmmount);
   stage.removeChild(givenAmmount);
   stage.removeChild(progressText);
+  stage.removeChild(arrow);
 }
 function ClearWaitState()
 {
@@ -601,14 +627,26 @@ function handleClick(e)
 {
   if(state == state_share)
   {
-    sendMouseInput(e.offsetX);
+    var mousePos = getMousePos(canvas,e);
+    sendMouseInput(mousePos.x);
+    UpdateShareAmmount(mousePos.x);
   } 
 }
-
-function UpdateShareAmmount()
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+function UpdateShareAmmount(x)
 {
-  share = parseInt(score_value * (launcher.x -100)/(600 - 96));
-  //console.log(share);
+  var X = x;
+  if(X < 100){X = 100;}
+  if(X > 700-18){X = 700;}
+  arrow.x = X - 9 ;
+  share = parseInt(score_value * (X -100)/(600));
+  console.log(share);
   maxAmmount.text = score_value;
   minAmmount.text = 0;
   givenAmmount.text = share;
@@ -633,10 +671,16 @@ function sendMouseInput(x)
   if(X > 700-96){X = 700-96;}
   socket.emit("message",'MOUSE_INPUT,'+ X);
   UpdateShareAmmount();
+  if(arrow.alpha == 0.0)
+  {
+    arrow.alpha = 1.0;
+  }
+  /*
   if(launcher.alpha == 0.0)
   {
     launcher.alpha = 1.0;
   }
+  */
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -729,7 +773,10 @@ function drawMothership(data)
 
 function drawScore(data)
 {
-  score.text = stringsArray[str_score] + data;
-  score_value = data;
-  stage.update();
+  if(state == state_game)
+  {
+    score.text =stringsArray[str_score] + data;
+    score_value = data;
+    stage.update();
+  }
 }

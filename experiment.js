@@ -99,9 +99,21 @@ Experiment.prototype.addPlayerResults = function(playerResults)
 {
 	this.result.playerResults.push(playerResults);
 };
-Experiment.prototype.addGameResults = function(gameId, gamescore, player1, player2, sharer, given, kept)
+Experiment.prototype.addGameResults = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2)
 {
-	this.result.gameResults.push(new gameResult(gameId, gamescore, player1, player2, sharer, given, kept));
+	this.result.gameResults.push(new gameResult(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2));
+};
+Experiment.prototype.returnOldCLientsNum = function()
+{
+	if(this.result.playerResults.length)
+	{
+		return(this.result.playerResults.length);
+	}
+	else
+	{
+		return(0);	
+	}
+	
 };
 function XPResults()
 {
@@ -116,7 +128,7 @@ function XPResults()
 	
 }
 
-var gameResult = function(gameId, gameScore, player1, player2, sharer, given, kept)
+var gameResult = function(gameId, gameScore, player1, player2, sharer, given, kept,inputP1,inputP2)
 {
 	this.gameId = gameId;
 	this.gameScore = gameScore;
@@ -125,6 +137,8 @@ var gameResult = function(gameId, gameScore, player1, player2, sharer, given, ke
 	this.sharer = sharer;
 	this.given = given;
 	this.kept = kept;
+	this.p1Input = inputP1;
+	this.p2Input = inputP2;
 };
 
 if( 'undefined' != typeof global ) {

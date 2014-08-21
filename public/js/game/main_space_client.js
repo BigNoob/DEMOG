@@ -59,6 +59,7 @@ var background;
 var enemy;
 var shot;
 var mothership;
+var arrow;
 
 var progressText ;
 var score;
@@ -159,6 +160,7 @@ function StartLoading_Space()
                 {src:"/public/images/Enemy.png", id:"enemy"},
                 {src:"/public/images/ShootGradius.png", id:"shot"},
                 {src:"/public/images/Boss.png", id:"mother"},
+                {src:"/public/images/Arrow.png", id:"arrowBMP"},
               ];
   //loading Events and Callbacks
   preloader = new createjs.LoadQueue(true)
@@ -214,6 +216,9 @@ function handleFileLoad_Space (event)
       }
       if(event.item.id == "mother"){
             mothership = new createjs.Bitmap(event.result);
+      }
+      if(event.item.id == "arrowBMP"){
+            arrow = new createjs.Bitmap(event.result);
       }
       if(event.item.id == "enemy"){
             enemy = new createjs.Bitmap(event.result);
@@ -324,8 +329,7 @@ function serverMessageParser_Space(data)
           InitShareWait_Space();
         break;
         case 'REDIRECT':
- 
-          window.location.replace('/end');
+          window.location.replace('/end'); 
         break;
       }
 }
@@ -344,7 +348,8 @@ function InitGameState_Space()
 
   ship.x = 400;
   ship.y = 550;
-  
+  ship.alpha = 1.0;
+
   allyShip.x = 400;
   allyShip.y = 550;
 
@@ -463,6 +468,10 @@ function InitShareState_Space()
   ship.x = 100;
   ship.y = 390;
   ship.alpha = 0.0;
+
+  arrow.x=100;
+  arrow.y = 400;
+  arrow.alpha = 0.0;
   
   stage.addChild(slider);
   stage.addChild(ship);
@@ -470,6 +479,7 @@ function InitShareState_Space()
   stage.addChild(minAmmount);
   stage.addChild(givenAmmount);
   stage.addChild(progressText);
+  stage.addChild(arrow);
   stage.update();
   state = state_share;  
 }
@@ -488,7 +498,14 @@ function InitShareWait_Space()
 
 function DrawGivenAmmount(data)
 {
-  alert("The Other Player gave you : "+data+"points" );
+    if(data[1] == "GIVEN")
+  { 
+    alert("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
+  }
+  else
+  {
+    alert("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus y.\n Click to continue to the next game." );
+  }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -528,6 +545,7 @@ function ClearShareState_Space()
   stage.removeChild(minAmmount);
   stage.removeChild(givenAmmount);
   stage.removeChild(progressText);
+  stage.removeChild(arrow);
 }
 function ClearWaitState_Space()
 {
@@ -600,13 +618,25 @@ function handleClick(e)
 {
   if(state == state_share)
   {
-    sendMouseInput(e.offsetX);
+    var mousePos = getMousePos(canvas,e);
+    sendMouseInput(mousePos.x);
+    UpdateShareAmmount_Space(mousePos.x);
   } 
 }
-
-function UpdateShareAmmount_Space()
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+function UpdateShareAmmount_Space(x)
 {
-  share = parseInt(score_value * (ship.x -100)/(600- 18));
+  var X = x;
+  if(X < 100){X = 100;}
+  if(X > 700){X = 700;}
+  arrow.x= X - 9;
+  share = parseInt(score_value * (X -100)/(600));
   console.log(share);
   maxAmmount.text = score_value;
   minAmmount.text = 0;
@@ -628,14 +658,21 @@ function sendInputs_Space(left,right,shoot)
 function sendMouseInput(x)
 {
   var X = x;
+  console.log(X);
   if(X < 100){X = 100;}
   if(X > 700-18){X = 700-18;}
   socket.emit("message",'MOUSE_INPUT,'+ X);
   UpdateShareAmmount_Space();
+  if(arrow.alpha == 0.0)
+  {
+    arrow.alpha = 1.0;
+  }
+  /*
   if(ship.alpha == 0.0)
   {
     ship.alpha = 1.0;
   }
+  */
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -742,7 +779,10 @@ function drawShots_Space(data)
 
 function drawScore_Space(data)
 {
-  score.text =stringsArray[str_score] + data;
-  score_value = data;
-  stage.update();
+  if(state == state_game)
+  {
+    score.text =stringsArray[str_score] + data;
+    score_value = data;
+    stage.update();
+  }
 }

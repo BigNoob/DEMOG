@@ -59,8 +59,8 @@ var
 var frame_time = 60;
 var physic_time = 15;
 
-var adminLogin = 'debove';                                  //Login of the admin page
-var adminPassw = 'wivyxuvo';                                //password of the admin page
+var adminLogin = "debove";                                  //Login of the admin page
+var adminPassw = "test";                                //password of the admin page
 
 var resultMailAdress = 'running.panda.website@gmail.com';   //mail adress where the results will be send
 
@@ -124,10 +124,14 @@ var server 		= http.createServer(app);					// Creation of the Express server
 server.listen(gameport);
 
 app.get('/admin',function(req,res){
-    res.render('admin.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length});
+    res.render('admin.ejs',{login: adminLogin, passw: adminPassw});
+})
+
+app.get('/dictateur',function(req,res){
+    res.render('dictateur.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length, clientsFinished: wrap_server.experiment.returnOldCLientsNum()});
 });
 
-app.post('/admin/add/', function(req,res){
+app.post('/dictateur/add/', function(req,res){
     var xpName = req.param('xpName');
     var xpType = req.param('xpType');
     var xpGame = req.param('xpGame');
@@ -137,10 +141,10 @@ app.post('/admin/add/', function(req,res){
     {
         experimentsList.push(CreateExperiment(xpName,xpType,Iter,xpGame,lang));
     }
-    res.redirect('/admin');
+    res.redirect('/dictateur');
 });
 
-app.post('/admin/delete/:xpName', function(req, res) {
+app.post('/dictateur/delete/:xpName', function(req, res) {
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
@@ -151,9 +155,9 @@ app.post('/admin/delete/:xpName', function(req, res) {
             }
         }
     }
-    res.redirect('/admin');
+    res.redirect('/dictateur');
 });
-app.post('/admin/start/:xpName', function(req, res) {
+app.post('/dictateur/start/:xpName', function(req, res) {
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
@@ -171,9 +175,9 @@ app.post('/admin/start/:xpName', function(req, res) {
             }
         }
     }
-    res.redirect('/admin');
+    res.redirect('/dictateur');
 });
-app.post('/admin/stop/:xpName', function(req, res) {
+app.post('/dictateur/stop/:xpName', function(req, res) {
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
@@ -185,9 +189,9 @@ app.post('/admin/stop/:xpName', function(req, res) {
             }
         }
     }
-    res.redirect('/admin');
+    res.redirect('/dictateur');
 });
-app.post('/admin/write/:xpName', function(req, res) {
+app.post('/dictateur/write/:xpName', function(req, res) {
     var xpName = req.param('xpName');
     if (xpName != '') {
         for(var i =0; i < experimentsList.length; i ++)
@@ -243,7 +247,7 @@ app.post('/admin/write/:xpName', function(req, res) {
             }
         }
     }
-    res.redirect('/admin');
+    res.redirect('/dictateur');
 });
 
 app.get('/game', function(req, res){
@@ -346,7 +350,7 @@ setInterval(function(){
     {
 
     }
-}, 2000);
+}, 5000);
 //Check ended games in wrap_server
 setInterval(function(){
    wrap_server.update(frame_time);
