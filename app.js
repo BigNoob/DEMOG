@@ -62,7 +62,7 @@ var physic_time = 15;
 var adminLogin = "debove";                                  //Login of the admin page
 var adminPassw = "test";                                //password of the admin page
 
-var resultMailAdress = 'running.panda.website@gmail.com';   //mail adress where the results will be send
+var resultMailAdress = 'debove.stephane@gmail.com';     //mail adress where the results will be send
 
 var mailSenderLogin = 'olivier.allouard@gmail.com';         //login of the gmail account used to send results
 var mailSenderPassw = 'wivyxuvo';                           //password of the gmail account used to send results
