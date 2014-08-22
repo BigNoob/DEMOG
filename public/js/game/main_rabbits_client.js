@@ -117,7 +117,7 @@ var KEYCODE_SPACE = 32;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//    Entry Point of Space Coop (Function called by main.jst)
+//    Entry Point of Rabbits Coop (Function called by main.jst)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function Main_Rabbits(type) {
@@ -315,8 +315,8 @@ function serverMessageParser(data)
           */
         break;
         case 'GIVEN_AMMOUNT':
-          ClearShareState_Space();
-          ClearWaitState_Space();
+          ClearShareState();
+          ClearWaitState();
           DrawGivenAmmount(splittedData[1],splittedData[2]);
         break;
         case 'GAME_START':
@@ -641,6 +641,7 @@ function handleKeyDown(e)
       case KEYCODE_SPACE:
         if(share)
         {
+          console.log("sended");
           SendShareAmmount();
         }
       break;
