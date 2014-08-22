@@ -560,7 +560,7 @@ rabbits_game_core.prototype.EndGame = function()
 rabbits_game_core.prototype.Share = function(client, data)
 {
     //console.log(client.userid + data);
-    if(client.userid == this.p1.userid)
+    if(client.userid == this.p2.userid)
     {
         this.sharer = this.p1;
         this.given = this.score - parseInt(data[1]);
