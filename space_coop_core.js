@@ -514,6 +514,7 @@ space_game_core.prototype.PlayerEnded = function(client , data)
 
     if(this.p1Ended && this.p2Ended)
     {
+        console.log('ended game');
         this.EndGame();
     }
 };

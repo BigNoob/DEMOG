@@ -506,28 +506,14 @@ function DrawGivenAmmount(data, role)
 {
   if(role == "RECIEVER")
   { 
-    var conf = confirm("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
-    if(conf)
-    {
-      socket.emit("message",'ENDED');
-    }
-    else
-    {
-      socket.emit("message",'ENDED'); 
-    }
+    alert("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
+    socket.emit("message",'ENDED'); 
   }
   else if(role == "SHARER")
   {
-    var recieved = 3000 - parseInt(data)
-    var conf = confirm("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus "+ recieved +".\n Click to continue to the next game." );
-    if(conf)
-    {
-      socket.emit("message",'ENDED');
-    }
-    else
-    {
-      socket.emit("message",'ENDED');
-    }
+    var recieved = 3000 - parseInt(data);
+    alert("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus "+ recieved +".\n Click to continue to the next game." );
+    socket.emit("message",'ENDED');
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
