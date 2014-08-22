@@ -252,7 +252,7 @@ function handleProgress_Space (event)
 function handleComplete_Space (event)
 {
      startServerListen_Space();  //We start listening to the server after the loading of all the assets
-     InitLobbyState_Space(); 
+     InitLobbyState_Space(undefined); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ function serverMessageParser_Space(data)
           //ClearLobbyState_Space();
           ClearGameState_Space();
           
-          InitLobbyState_Space();
+          InitLobbyState_Space(splittedData);
         break;
         case 'NO_XP':
           isXPRunning = false;
@@ -375,9 +375,24 @@ function InitGameState_Space()
   state = state_game;  
 }
 
-function InitLobbyState_Space()
+function InitLobbyState_Space(data)
 {
-  progressText.text = stringsArray[str_lobby];
+  if(data == undefined)
+  {
+    var score = 0;
+  }
+  else
+  {
+    var score = data[1].player.score;   
+  }
+  if(score == 0)
+  {
+    progressText.text = stringsArray[str_lobby];
+  }
+  else
+  {
+    progressText.text = stringsArray[str_lobby]+'\n You have '+score+' points';
+  }
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";

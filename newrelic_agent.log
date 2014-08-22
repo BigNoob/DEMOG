@@ -1141,3 +1141,9 @@
 {"name":"newrelic","hostname":"Kether-Portable","pid":7900,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2014-08-22T11:12:40.448Z","v":0}
 {"name":"newrelic","hostname":"Kether-Portable","pid":7900,"component":"new_relic_response","level":30,"msg":"Reporting to: https://rpm.newrelic.com/accounts/700671/applications/4583090","time":"2014-08-22T11:12:42.063Z","v":0}
 {"name":"newrelic","hostname":"Kether-Portable","pid":7900,"component":"collector_api","level":30,"msg":"Connected to collector-103.newrelic.com:443 with agent run ID 1122638941.","time":"2014-08-22T11:12:42.064Z","v":0}
+{"name":"newrelic","hostname":"Kether-Portable","pid":4548,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2014-08-22T11:34:10.379Z","v":0}
+{"name":"newrelic","hostname":"Kether-Portable","pid":4548,"component":"new_relic_response","level":30,"msg":"Reporting to: https://rpm.newrelic.com/accounts/700671/applications/4583090","time":"2014-08-22T11:34:12.262Z","v":0}
+{"name":"newrelic","hostname":"Kether-Portable","pid":4548,"component":"collector_api","level":30,"msg":"Connected to collector-103.newrelic.com:443 with agent run ID 1122660414.","time":"2014-08-22T11:34:12.263Z","v":0}
+{"name":"newrelic","hostname":"Kether-Portable","pid":10220,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2014-08-22T11:40:01.714Z","v":0}
+{"name":"newrelic","hostname":"Kether-Portable","pid":10220,"component":"new_relic_response","level":30,"msg":"Reporting to: https://rpm.newrelic.com/accounts/700671/applications/4583090","time":"2014-08-22T11:40:03.317Z","v":0}
+{"name":"newrelic","hostname":"Kether-Portable","pid":10220,"component":"collector_api","level":30,"msg":"Connected to collector-103.newrelic.com:443 with agent run ID 1122666342.","time":"2014-08-22T11:40:03.317Z","v":0}

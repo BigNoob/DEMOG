@@ -332,7 +332,7 @@ rabbits_game_core.prototype.moveMother = function()
 
 rabbits_game_core.prototype.animMotherFall = function()
 {
-    if (this.goalballoonY > 600)
+    if (this.goalballoonY > 500)
     {
         this.state = state_share;
         if(Math.random()*800 > Math.abs(this.launcher.x - this.goalballoonX))

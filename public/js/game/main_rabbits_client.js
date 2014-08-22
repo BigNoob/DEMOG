@@ -265,7 +265,7 @@ function handleComplete (event)
   launcher = new createjs.Sprite(launcherSpriteSheet);
   flyer = new createjs.Sprite(flyerSpriteSheet);
   startServerListen();  //We start listening to the server after the loading of all the assets
-  InitLobbyState(); 
+  InitLobbyState(undefined); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -329,7 +329,7 @@ function serverMessageParser(data)
         case 'LOBBY':
           //ClearLobbyState();
           ClearGameState();
-          InitLobbyState();
+          InitLobbyState(splittedData);
         break;
         case 'NO_XP':
           isXPRunning = false;
@@ -402,9 +402,24 @@ function InitGameState()
   state = state_game;  
 }
 
-function InitLobbyState()
+function InitLobbyState(data)
 {
-  progressText.text = stringsArray[str_lobby];
+  if(data == undefined)
+  {
+    var score = 0;
+  }
+  else
+  {
+    var score = data[1].player.score;   
+  }
+  if(score == 0)
+  {
+    progressText.text = stringsArray[str_lobby];
+  }
+  else
+  {
+    progressText.text = stringsArray[str_lobby]+'\n You have '+score+' points';
+  }
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";

@@ -138,7 +138,7 @@ game_server.prototype.sendClientToLobby = function(client)
 	this.clients.splice(this.getClientIndexFromGame(client),1);
 	client.player.isInLobby = true;
 	this.clientsinLobby.push(client);
-	client.emit('message', 'LOBBY');
+	client.emit('message', 'LOBBY,'+client);
 };
 //Remove a client from the lobby
 game_server.prototype.removeCientFromLobby = function(client)
