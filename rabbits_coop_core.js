@@ -571,8 +571,8 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
 
-        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         
     }
     else
@@ -585,8 +585,8 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
 
-        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
     }
     //setTimeout(this.EndGame(),2000); 
 };
