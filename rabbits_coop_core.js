@@ -78,11 +78,14 @@ var rabbits_game_core = function(maxIter)
     this.launcher = new Rect(350,549,96,53);
 
     this.init_speed = 0.5;
-    this.init_angle = 0.5;
+    this.init_angle = 0;
     this.init_abs = 350;
     this.inAirTime = 0.0;
     this.timeScale = 10;
     this.angleDirection = -1;
+
+    this.p1Ended = false;
+    this.p2Ended = false;
 };
 
 //This line is used to tell node.js that he can access the constructor
@@ -369,14 +372,16 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
         {
 
             this.angleDirection = 1;
-            this.init_abs = - this.launcher.x;
+            this.init_angle = 0;
+            this.init_abs = 0;
             this.flyer.x = 0;
         }
         if ( this.flyer.x > 800 - 40)
         {
 
             this.angleDirection = -1;
-            this.init_abs = 800 + this.launcher.x;
+            this.init_angle = 0
+            this.init_abs = 800 -40;
             this.flyer.x = 800 - 40;
         }
         if(this.flyer.y > 550)
@@ -418,7 +423,7 @@ rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
     
     this.init_speed = 0.2 * (deltaX / this.launcher.w / 2) + 0.8;
-    this.init_angle = 0.9 * (deltaX / this.launcher.w / 2)+ 0.3;
+    this.init_angle = 0.9 * (deltaX / this.launcher.w / 2)+ 0.4;
     this.angleDirection = (this.launcherNumber == 1)? -1 : 1;
     this.init_abs = this.launcher.x + this.angleDirection + this.launcher.w / 2;
 };
@@ -528,6 +533,22 @@ rabbits_game_core.prototype.shareInput = function(client,data)
 //    Debug functions (only used to test game states)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+rabbits_game_core.prototype.PlayerEnded = function(client , data)
+{
+    if(client.userid == this.p1.userid)
+    {
+        this.p1Ended = true;
+    }
+    else
+    {
+        this.p2Ended = true;
+    }
+
+    if(this.p1Ended && this.p2Ended)
+    {
+        this.EndGame();
+    }
+};
 
 rabbits_game_core.prototype.EndGame = function()
 {
@@ -550,7 +571,7 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         
     }
     else
@@ -563,10 +584,10 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
 
-        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
     }
-    setTimeout(this.EndGame(),2000); 
+    //setTimeout(this.EndGame(),2000); 
 };
 rabbits_game_core.prototype.GetResult = function()
 {
@@ -599,6 +620,9 @@ rabbits_game_core.prototype.onMessage = function(client, data){
         break;
         case 'SHARE':
             this.Share(client,splittedData);
+        break;
+        case 'ENDED':
+            this.PlayerEnded(client, splittedData);
         break;
     }
 };

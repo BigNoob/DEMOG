@@ -74,6 +74,9 @@ var space_game_core = function(maxIter)
     this.mothershipLeft = false;
     this.shots = [];
     this.shotNum = 0;
+
+    this.p1Ended = false;
+    this.p2Ended = false;
 };
 
 //This line is used to tell node.js that he can access the constructor
@@ -498,7 +501,22 @@ space_game_core.prototype.shoot = function(x)
 //    Debug functions (only used to test game states)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+space_game_core.prototype.PlayerEnded = function(client , data)
+{
+    if(client.userid == this.p1.userid)
+    {
+        this.p1Ended = true;
+    }
+    else
+    {
+        this.p2Ended = true;
+    }
 
+    if(this.p1Ended && this.p2Ended)
+    {
+        this.EndGame();
+    }
+};
 space_game_core.prototype.EndGame = function()
 {
     this.p1.player.currentRepetition ++;
@@ -519,7 +537,7 @@ space_game_core.prototype.Share = function(client, data)
         this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
+        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
     }
     else
     {
@@ -531,10 +549,10 @@ space_game_core.prototype.Share = function(client, data)
         this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
         
-        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+'RECIEVER');
+        this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
     }
-    setTimeout(this.EndGame(),2000); 
+    //setTimeout(this.EndGame(),2000); 
 };
 space_game_core.prototype.GetResult = function()
 {
@@ -563,6 +581,9 @@ space_game_core.prototype.onMessage = function(client, data){
         break;
         case 'SHARE':
             this.Share(client,splittedData);
+        break;
+        case 'ENDED':
+            this.PlayerEnded(client, splittedData);
         break;
     }
 };

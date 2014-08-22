@@ -301,6 +301,8 @@ function serverMessageParser_Space(data)
           */
         break;
         case 'GIVEN_AMMOUNT':
+          ClearShareState_Space();
+          ClearWaitState_Space();
           DrawGivenAmmount(splittedData[1], splittedData[2]);
         break;
         case 'GAME_START':
@@ -313,8 +315,7 @@ function serverMessageParser_Space(data)
         case 'LOBBY':
           //ClearLobbyState_Space();
           ClearGameState_Space();
-          ClearShareState_Space();
-          ClearWaitState_Space();
+          
           InitLobbyState_Space();
         break;
         case 'NO_XP':
@@ -503,13 +504,30 @@ function InitShareWait_Space()
 
 function DrawGivenAmmount(data, role)
 {
-    if(role == "RECIEVER")
+  if(role == "RECIEVER")
   { 
-    alert("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
+    var conf = confirm("The other player shared the loot and gave you "+data+" points. Click to continue to the next game." );
+    if(conf)
+    {
+      socket.emit("message",'ENDED');
+    }
+    else
+    {
+      socket.emit("message",'ENDED'); 
+    }
   }
   else if(role == "SHARER")
   {
-    alert("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus y.\n Click to continue to the next game." );
+    var recieved = 3000 - parseInt(data)
+    var conf = confirm("You have given "+data+" points out of 3000 to the other player.\n Your points for this game are thus "+ recieved +".\n Click to continue to the next game." );
+    if(conf)
+    {
+      socket.emit("message",'ENDED');
+    }
+    else
+    {
+      socket.emit("message",'ENDED');
+    }
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
