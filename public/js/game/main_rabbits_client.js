@@ -47,6 +47,7 @@ var str_given = 11;
 var str_loginPrompt = 12;
 var str_gameTuto = 13;
 var str_loading = 14;
+var str_gameTutoRabbit = 15;
 
 //Strings Array
 var stringsArray = [];
@@ -374,7 +375,7 @@ function serverMessageParser(data)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function InitGameState()
 {
-  progressText.text = stringsArray[str_gameTuto]; 
+  progressText.text = stringsArray[str_gameTutoRabbit]; 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -550,13 +551,13 @@ function DrawGivenAmmount(data, role)
   var recieved = 3000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-    alert("The other player shared the loot and gave you "+recieved+" points. Click to continue to the next game." );
+    alert("The other player shared the loot and gave you "+recieved+" points. Click to continue to the next game and wait for the next game to start." );
     socket.emit("message",'ENDED'); 
   }
   else if(role == "SHARER")
   {
     
-    alert("You have given "+recieved+" points out of 3000 to the other player.\n Your points for this game are thus "+data+".\n Click to continue to the next game." );
+    alert("You have given "+recieved+" points out of 3000 to the other player.\n Your points for this game are thus "+data+".\n Click to continue to the next game and wait for the next game to start." );
     socket.emit("message",'ENDED');
   }
 }

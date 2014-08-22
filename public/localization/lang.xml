@@ -106,7 +106,7 @@
 			Congratulations!&#xD; Before going on, please wait while the other player is sharing the loot.
 		</str_waitShare>
 		<str_doShare>
-			Congratulations!&#xD;Before going on, share the loot with the other player by clicking on the scale below.&#xD;Use the arrow keys to move the cursor and validate by pressing the space key.
+			Congratulations!&#xD;Before going on, share the loot with the other player by clicking on the scale below.&#xD;Click to move the cursor and validate by pressing the space key.
 		</str_doShare>
 		<str_playerId>
 			Player ID: 
@@ -141,5 +141,8 @@
 		<str_loading> 
 			% loaded
 		</str_loading>
+		<str_gameTutoRabbit> 
+			Use Arrow Keys to Move
+		</str_gameTutoRabbit>
 	</en>
 </LANG>
