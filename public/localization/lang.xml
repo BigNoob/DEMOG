@@ -136,13 +136,13 @@
 			Please enter your Mturk ID
 		</str_loginPrompt>
 		<str_gameTuto> 
-			Use Arrow Keys to Move and Space key to shoot
+			Use the arrow keys to move and the space key to shoot
 		</str_gameTuto>
 		<str_loading> 
 			% loaded
 		</str_loading>
 		<str_gameTutoRabbit> 
-			Use Arrow Keys to Move
+			Use the arrow keys to move the seesaw
 		</str_gameTutoRabbit>
 	</en>
 </LANG>
