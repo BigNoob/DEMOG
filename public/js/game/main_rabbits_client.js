@@ -192,7 +192,7 @@ function LoadStrings()
   }
   else
   {
-    var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");    
+    var xmlhttp = new ActiveXObject("'MSXML2.XMLHTTP.3.0'");    
   }
   xmlhttp.open("GET","/public/localization/lang.xml",false);
   xmlhttp.send();
