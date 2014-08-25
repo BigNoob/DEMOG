@@ -199,15 +199,14 @@ function LoadStrings_Space()
             XMLStrings = resp.responseXML;
         }
     });
-  console.log(XMLStrings);
   XMLNode = XMLStrings.getElementsByTagName(language)
-  console.log(XMLNode);
-
-  for(var i = 0; i < XMLNode[0].children.length ; i++)
+  console.log(XMLNode[0].childElementCount);
+  for(var i = 0; i < XMLNode[0].childElementCount ; i++)
   {
-    stringsArray.push(XMLNode[0].children[i].innerHTML)
+    var tmp = XMLNode[0].childNodes[i].textContent || XMLNode[0].childNodes[i].innerText
+    stringsArray.push(tmp);
+    console.log(tmp);
   }
-  console.log(stringsArray);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
