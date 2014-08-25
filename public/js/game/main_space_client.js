@@ -177,6 +177,7 @@ function LoadStrings_Space()
 {
   var XMLStrings;
   var XMLNode;
+  /*
   if(window.XMLHttpRequest)
   {
     var xmlhttp = new XMLHttpRequest();
@@ -185,11 +186,20 @@ function LoadStrings_Space()
   {
     var xmlhttp = new ActiveXObject("'MSXML2.XMLHTTP.3.0'");    
   }
-  xmlhttp.open("GET","/public/localization/lang.xml",false);
+  xmlhttp.open("GET","/public/localization/lang.xml");
   xmlhttp.send();
-  
   XMLStrings= xmlhttp.responseXML;
+  */
 
+    var xmlURL = "/public/localization/lang.xml";
+    new Ajax.Request(xmlURL, {
+        method: "get",
+        asynchronous: false,
+        onSuccess: function(resp, jsonObj) {
+            XMLStrings = resp.responseXML;
+        }
+    });
+  console.log(XMLStrings);
   XMLNode = XMLStrings.getElementsByTagName(language)
   console.log(XMLNode);
 
