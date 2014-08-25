@@ -254,9 +254,14 @@ app.get('/game', function(req, res){
     res.render('client.ejs', {exp: current_experiment});
 });
 
-app.get('/end', function(req,res){
-    res.render('end.ejs');
+app.get('/end1', function(req,res){
+    res.render('end1.ejs');
 });
+
+app.get('/end3', function(req,res){
+    res.render('end3.ejs');
+});
+
 app.get('/homespace', function(req,res){
     res.render('homespace.ejs');
 });

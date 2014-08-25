@@ -363,7 +363,7 @@ function serverMessageParser(data)
         break;
         case 'REDIRECT':
  
-          window.location.replace('/end');
+          window.location.replace('/end3');
         break;
       }
 }

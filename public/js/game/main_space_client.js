@@ -335,7 +335,7 @@ function serverMessageParser_Space(data)
           InitShareWait_Space();
         break;
         case 'REDIRECT':
-          window.location.replace('/end'); 
+          window.location.replace('/end1'); 
         break;
       }
 }
