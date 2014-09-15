@@ -416,13 +416,14 @@ function InitGameState()
 
 function InitLobbyState(data)
 {
-  if(data == undefined)
+  if(data == undefined || data==null)
   {
     var score = 0;
   }
   else
   {
-    var score = data[1].player.score;   
+    if(data[1].player.score)
+    {var score = data[1].player.score;}   
   }
   if(score == 0)
   {
@@ -806,6 +807,15 @@ function drawEnemies(data)
       
     }
   }
+  /*
+  for(var i = 1 ;  i <  splittedData.length;  i++)
+  {
+    if (EnemiesCont.getChildAt(i-1).x > 800)
+    {
+      EnemiesCont.getChildAt(i-1).x -= 800;
+    }
+  }
+  */
 }
 
 function drawMothership(data)
