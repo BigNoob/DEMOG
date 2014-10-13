@@ -123,9 +123,18 @@ Balloons.prototype.Init = function()
 Balloons.prototype.Move = function(x)
 {
     this.x += x;
+    if(this.x > 800)
+    {
+        this.x -= 800
+    }
     for(var i = 0 ; i < this.array.length; i ++)
     {
+        
         this.array[i].rect.x += x;
+        if(this.array[i].rect.x > 800)
+        {
+            this.array[i].rect.x -= 800;
+        }
     }
 };
 Balloons.prototype.KillBalloon = function(i)
@@ -280,6 +289,7 @@ rabbits_game_core.prototype.generateFlyerString = function()
 //Set the directions of the balloon lines, to avoid colliding with the wall
 rabbits_game_core.prototype.setDirections = function()
 {
+    /*
     if(this.balloons.x > (this.world.width - balloonsX_spacing * number) && !this.balloonsLeft)
     {
         this.balloonsLeft = true;
@@ -288,6 +298,7 @@ rabbits_game_core.prototype.setDirections = function()
     {
         this.balloonsLeft = false;
     }
+    */
     /*
     if( Math.random() > 0.95)
     {
