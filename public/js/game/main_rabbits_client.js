@@ -106,8 +106,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 60;
 var enemiesY_spacing = 60;
-var lines = 3;
-var number = 10;
+var lines = 4;  //must be changed in rabbits_coop_core.js also
+var number = 10; //must be changed in rabbits_coop_core.js also
 
 
 //Constants
@@ -560,16 +560,16 @@ function InitShareWait()
 
 function DrawGivenAmmount(data, role)
 {
-  var recieved = 3000 - parseInt(data);
+  var recieved = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-    alert("The other player shared the loot and gave you "+recieved+" out of 3000 points. \n Click to continue and wait for the next game to start." );
+    alert("The other player shared the loot and gave you "+recieved+" out of 1000 points. \n Click to continue and wait for the next game to start." );
     socket.emit("message",'ENDED'); 
   }
   else if(role == "SHARER")
   {
     
-    alert("You have given "+recieved+" out of 3000 points to the other player.\n Your points for this game are thus "+data+".\n Click to continue and wait for the next game to start." );
+    alert("You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n Click to continue and wait for the next game to start." );
     socket.emit("message",'ENDED');
   }
 }
