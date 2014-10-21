@@ -104,7 +104,7 @@ Enemies.prototype.Init = function()
     for(var j = 0; j < this.lines; j++)
     {
         for(var i = 0; i < this.number; i ++)
-        {
+        { 
             this.tmpX = i * enemiesX_spacing + enemiesX;
             this.tmpY = j * enemiesY_spacing + enemiesY;
             //console.log(this.tmpX+";"+this.tmpY);

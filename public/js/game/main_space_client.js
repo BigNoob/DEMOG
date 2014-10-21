@@ -95,7 +95,7 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
-var lines = 3;
+var lines = 4; 
 var number = 10;
 
 
