@@ -262,11 +262,11 @@ app.get('/end3', function(req,res){
     res.render('end3.ejs');
 });
 
-app.get('/homespace', function(req,res){
-    res.render('homespace.ejs');
+app.get('/home1', function(req,res){
+    res.render('home1.ejs');
 });
-app.get('/homerabbits', function(req,res){
-    res.render('homerabbits.ejs');
+app.get('/home3', function(req,res){
+    res.render('home3.ejs');
 });
 
 
