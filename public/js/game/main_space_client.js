@@ -4,6 +4,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+
+var shareStep = 10; // precision of sharing
+
 var isXPRunning = false;
 var xpType;
 var canvas;
@@ -653,6 +656,18 @@ function handleClick(e)
   if(state == state_share)
   {
     var mousePos = getMousePos(canvas,e);
+	var modulo = mousePos.x % shareStep;
+	if (modulo != 0)
+	{
+		if (modulo < 6)
+		{
+			mousePos.x -= modulo;
+		}
+		else
+		{
+			mousePos.x += shareStep - modulo;
+		}
+	}
     sendMouseInput(mousePos.x);
     UpdateShareAmmount_Space(mousePos.x);
   } 
@@ -683,7 +698,7 @@ function SendShareAmmount_Space()
 }
 
 function sendInputs_Space(left,right,shoot)
-{
+{	
   if(isXPRunning)
   {
     socket.emit("message",'INPUT,'+left+','+right+','+shoot);
