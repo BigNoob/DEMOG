@@ -27,8 +27,9 @@ var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 100;
-var lines = 3;
+var lines = 4;
 var number = 10;
+var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
 var state_endAnim = 'STATE_ENDANIM';
@@ -389,7 +390,7 @@ space_game_core.prototype.checkCollisions = function()
                 {
                     this.shots[i].alive = false;
                     this.enemies.KillEnemy(j);
-                    this.score += 100;
+                    this.score += points_per_enemy;
                 }
             }
         }

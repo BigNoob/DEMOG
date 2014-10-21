@@ -27,8 +27,9 @@ var balloonsX_spacing = 60;
 var balloonsY_spacing = 60;
 var balloonsY = 150;
 var balloonsX = 100;
-var lines = 3;
+var lines = 4;
 var number = 10;
+var points_per_enemy = 25;
 
 var launcherSpeed = 10;
 
@@ -449,7 +450,7 @@ rabbits_game_core.prototype.checkCollisions = function()
             if(this.doCollide(this.flyer,this.balloons.array[j].rect))
             {
                 this.balloons.KillBalloon(j);
-                this.score += 100;
+                this.score += points_per_enemy;
             }
         }
     }
