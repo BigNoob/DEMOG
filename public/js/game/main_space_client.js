@@ -656,18 +656,6 @@ function handleClick(e)
   if(state == state_share)
   {
     var mousePos = getMousePos(canvas,e);
-	var modulo = mousePos.x % shareStep;
-	if (modulo != 0)
-	{
-		if (modulo < 6)
-		{
-			mousePos.x -= modulo;
-		}
-		else
-		{
-			mousePos.x += shareStep - modulo;
-		}
-	}
     sendMouseInput(mousePos.x);
     UpdateShareAmmount_Space(mousePos.x);
   } 
@@ -684,6 +672,19 @@ function UpdateShareAmmount_Space(x)
   var X = x;
   if(X < 100){X = 100;}
   if(X > 700){X = 700;}
+
+	var modulo = X % shareStep;
+	if (modulo != 0)
+	{
+		if (modulo < 6)
+		{
+			X -= modulo;
+		}
+		else
+		{
+			X += shareStep - modulo;
+		}
+	}
   arrow.x= X - 9;
   share = parseInt(score_value * (X -100)/(600));
   console.log(share);
