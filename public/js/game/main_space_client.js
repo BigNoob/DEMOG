@@ -673,19 +673,7 @@ function UpdateShareAmmount_Space(x)
   if(X < 100){X = 100;}
   if(X > 700){X = 700;}
 
-	var modulo = X % shareStep;
-	if (modulo != 0)
-	{
-		if (modulo < 6)
-		{
-			X -= modulo;
-		}
-		else
-		{
-			X += shareStep - modulo;
-		}
-	}
-  X -= 3; 
+  X = Math.round(X / 10) * 10); // round to the nearest 10
   arrow.x= X - 9;
   share = parseInt(score_value * (X -100)/(600));
   console.log(share);
