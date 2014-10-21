@@ -685,6 +685,7 @@ function UpdateShareAmmount_Space(x)
 			X += shareStep - modulo;
 		}
 	}
+  X -= 3; 
   arrow.x= X - 9;
   share = parseInt(score_value * (X -100)/(600));
   console.log(share);
