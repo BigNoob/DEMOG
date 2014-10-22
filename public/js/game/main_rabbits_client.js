@@ -651,15 +651,22 @@ function handleKeyDown(e)
   else if (state == state_share)
   {
     switch (e.keyCode) {
+      case KEYCODE_LEFT:
+        sendInputs(1,0,0);
+        UpdateShareAmmount(-1);
+        break;
+
+      case KEYCODE_RIGHT:
+        sendInputs(0,1,0);
+        UpdateShareAmmount(-2);
+        break;
 
       case KEYCODE_SPACE:
         if(share)
         {
-          console.log("sended");
           SendShareAmmount();
         }
       break;
-
     }
   }
 }
@@ -682,15 +689,36 @@ function getMousePos(canvas, evt) {
 }
 function UpdateShareAmmount(x)
 {
-  var X = x;
-  if(X < 100){X = 100;}
-  if(X > 700-18){X = 700;}
-  arrow.x = X - 9 ;
-  share = parseInt(score_value * (X -100)/(600));
-  console.log(share);
-  maxAmmount.text = score_value;
-  minAmmount.text = 0;
-  givenAmmount.text = share;
+  
+  if(arrow.alpha == 1.0) //execute only if player has clicked once - prohibit using left and right keys first
+  {
+
+	  if (x == -1) // if left key is pressed - see above function handleKeyDown_Space
+	  {
+		share -= 1;
+		if(share < 0){share = 0;}
+		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+	  }
+	  else if (x == -2) // if right key is pressed - see above function handleKeyDown_Space
+	  {
+		share += 1;
+		if(share > score_value){share = score_value;}
+		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+	  }
+	  else // if click
+	  {
+		  var X = x;
+		  if(X < 100){X = 100;}
+		  if(X > 700){X = 700;}
+		 
+		  arrow.x= X - 9;
+		  share = parseInt(score_value * (X -100)/(600));
+	  }
+	  console.log(share);
+	  maxAmmount.text = score_value;
+	  minAmmount.text = 0;
+	  givenAmmount.text = share;
+  }
 }
 
 function SendShareAmmount()

@@ -74,6 +74,7 @@ var givenAmmount;
 var slider;
 //Game Variables
 
+
 var share = 0;
 var canfire = true;
 var cooldown = 240;
@@ -633,12 +634,12 @@ function handleKeyDown_Space(e)
     switch (e.keyCode) {
       case KEYCODE_LEFT:
         sendInputs_Space(1,0,0);
-        UpdateShareAmmount_Space();
+        UpdateShareAmmount_Space(-1);
         break;
 
       case KEYCODE_RIGHT:
         sendInputs_Space(0,1,0);
-        UpdateShareAmmount_Space();
+        UpdateShareAmmount_Space(-2);
         break;
 
       case KEYCODE_SPACE:
@@ -669,18 +670,36 @@ function getMousePos(canvas, evt) {
 }
 function UpdateShareAmmount_Space(x)
 {
-  var X = x;
-  if(X < 100){X = 100;}
-  if(X > 700){X = 700;}
+  
+  if(arrow.alpha == 1.0) //execute only if player has clicked once - prohibit using left and right keys first
+  {
 
-  X = Math.round(X / 10) * 10); // round to the nearest 10
-  arrow.x= X - 9;
-  share = parseInt(score_value * (X -100)/(600));
-  console.log(share);
-  maxAmmount.text = score_value;
-  minAmmount.text = 0;
-  givenAmmount.text = share;
-
+	  if (x == -1) // if left key is pressed - see above function handleKeyDown_Space
+	  {
+		share -= 1;
+		if(share < 0){share = 0;}
+		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+	  }
+	  else if (x == -2) // if right key is pressed - see above function handleKeyDown_Space
+	  {
+		share += 1;
+		if(share > score_value){share = score_value;}
+		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+	  }
+	  else // if click
+	  {
+		  var X = x;
+		  if(X < 100){X = 100;}
+		  if(X > 700){X = 700;}
+		 
+		  arrow.x= X - 9;
+		  share = parseInt(score_value * (X -100)/(600));
+	  }
+	  console.log(share);
+	  maxAmmount.text = score_value;
+	  minAmmount.text = 0;
+	  givenAmmount.text = share;
+  }
 }
 function SendShareAmmount_Space()
 {
