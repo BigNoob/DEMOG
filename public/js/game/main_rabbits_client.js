@@ -866,6 +866,10 @@ function drawScore(data)
   {
     score.text =stringsArray[str_score] + data;
     score_value = data;
+    if (score_value < 1000)
+	{
+		score_value = 1000; //makes sure the score value is 1000 - found a case in which it was only 975 in the rabbits case without touching a single key
+	}
     stage.update();
   }
 }
