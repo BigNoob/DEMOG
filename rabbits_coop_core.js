@@ -126,7 +126,7 @@ Balloons.prototype.Move = function(x)
     this.x += x;
     if(this.x > 800)
     {
-        this.x -= 800
+        this.x -= (800 + balloonsX_spacing * number);
     }
     for(var i = 0 ; i < this.array.length; i ++)
     {
@@ -134,7 +134,7 @@ Balloons.prototype.Move = function(x)
         this.array[i].rect.x += x;
         if(this.array[i].rect.x > 800)
         {
-            this.array[i].rect.x -= 800;
+            this.array[i].rect.x -= 800 + balloonsX_spacing * number;
         }
     }
 };
