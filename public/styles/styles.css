@@ -11,24 +11,6 @@ footer {
 	font-weight: bold;
 }
 
-@media (max-width: 799px) {
-  #txt_good {
-    display: none;
-  }
-  #txt_bad {
-    display: block;
-  }
-}
-
-@media (min-width: 800px) {
-  #txt_good {
-    display: block;
-  }
-  #txt_bad {
-    display: none;
-  }
-}
-
 .txtCentered {
     
     text-align: center; }
