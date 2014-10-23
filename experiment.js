@@ -40,11 +40,11 @@ Experiment.prototype.generateLink = function ()
 {
 	if(this.xpGame == "space_coop")
 	{
-		return ('/homespace');
+		return ('/home1');
 	}
 	else if(this.xpGame == "rabbits")
 	{
-		return ('/homerabbits');
+		return ('/home3');
 	}
 };
 
