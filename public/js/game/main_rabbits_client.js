@@ -17,6 +17,7 @@ var state_load = 'STATE_LOAD';
 var state_game ='STATE_GAME';
 var state_endAnim = 'STATE_ENDANIM';
 var state_share = 'STATE_SHARE';
+var state_displayShare = "STATE_DISPLAY";
 var state_wait = 'STATE_WAIT';
 var state_lobby = 'STATE_LOBBY';
 var state_noxp = 'STATE_NOXP';
@@ -69,6 +70,7 @@ var mothership;
 var mothershipEndBitmap;
 
 var progressText ;
+var buttonText;
 var score;
 
 var maxAmmount;
@@ -329,7 +331,7 @@ function serverMessageParser(data)
         case 'GIVEN_AMMOUNT':
           ClearShareState();
           ClearWaitState();
-          DrawGivenAmmount(splittedData[1],splittedData[2]);
+          DrawGivenAmmount(splittedData[1], splittedData[2]);
         break;
         case 'GAME_START':
         console.log("gamestart");
@@ -519,7 +521,7 @@ function InitShareState()
   minAmmount.text = "0";
   minAmmount.textAlign = "right";
 
-  givenAmmount.x = 350;
+  givenAmmount.x = 390;
   givenAmmount.y = 350;
   givenAmmount.width = 100;
   givenAmmount.text = ""
@@ -563,14 +565,48 @@ function DrawGivenAmmount(data, role)
   var recieved = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-    alert("The other player shared the loot and gave you "+recieved+" out of 1000 points. \n Click to continue and wait for the next game to start." );
-    socket.emit("message",'ENDED'); 
+	  progressText.text = "The other player shared the loot and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; 
+	  progressText.y = 20;
+	  progressText.x = 400 ;
+	  progressText.textAlign = "center";
+
+	  button = new createjs.Shape();
+	  button.graphics.beginFill("white").drawRect(325,400,150,50);
+      buttonText = new createjs.Text("", "20px Arial", "#000000");
+      buttonText.textAlign = "center";
+	  buttonText.text = "Continue";
+	  buttonText.y = 415;
+	  buttonText.x = 400;
+
+	  stage.addChild(button);
+	  stage.addChild(progressText);
+	  stage.addChild(buttonText);
+	  stage.update();
+	  state = state_displayShare; 
+    
   }
   else if(role == "SHARER")
   {
+
+	progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n \n Click to continue and wait for the next game to start."; 
+	  progressText.y = 20;
+	  progressText.x = 400 ;
+	  progressText.textAlign = "center";
+	  button = new createjs.Shape();
+	  button.graphics.beginFill("white").drawRect(325,400,150,50);
+      buttonText = new createjs.Text("", "20px Arial", "#000000");
+      buttonText.textAlign = "center";
+	  buttonText.text = "Continue";
+	  buttonText.y = 415;
+	  buttonText.x = 400;
+
+	  stage.addChild(button);
+	  stage.addChild(buttonText);
+	  stage.addChild(progressText);
+	  stage.update();
+	  state = state_displayShare; 
+ 
     
-    alert("You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n Click to continue and wait for the next game to start." );
-    socket.emit("message",'ENDED');
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -617,6 +653,13 @@ function ClearWaitState()
 function ClearFlyer()
 {
   //stage.addChild(mothershipEndBitmap);
+}
+function ClearDrawGivenAmmount()
+{
+  stage.removeChild(progressText);
+  stage.removeChild(button);
+  stage.removeChild(buttonText);
+  stage.update();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -679,6 +722,16 @@ function handleClick(e)
     sendMouseInput(mousePos.x);
     UpdateShareAmmount(mousePos.x);
   } 
+  else if (state == state_displayShare)
+  {
+	var mousePos = getMousePos(canvas,e);
+    if ((mousePos.x >= 325) && (mousePos.x <= 425) && (mousePos.y >= 400) && (mousePos.y <= 450)) //if click on button
+	{
+		ClearDrawGivenAmmount();
+		socket.emit("message",'ENDED');
+	}
+
+  }
 }
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
@@ -693,13 +746,13 @@ function UpdateShareAmmount(x)
   if(arrow.alpha == 1.0) //execute only if player has clicked once - prohibit using left and right keys first
   {
 
-	  if (x == -1) // if left key is pressed - see above function handleKeyDown_Space
+	  if (x == -1) // if left key is pressed - see above function handleKeyDown
 	  {
 		share -= 1;
 		if(share < 0){share = 0;}
 		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
 	  }
-	  else if (x == -2) // if right key is pressed - see above function handleKeyDown_Space
+	  else if (x == -2) // if right key is pressed - see above function handleKeyDown
 	  {
 		share += 1;
 		if(share > score_value){share = score_value;}

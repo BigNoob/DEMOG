@@ -59,7 +59,7 @@ var
 var frame_time = 60;
 var physic_time = 15;
 
-var adminLogin = "debove";                                  //Login of the admin page
+var adminLogin = "demog";                                  //Login of the admin page
 var adminPassw = "test";                                //password of the admin page
 
 var resultMailAdress = 'resultsdemog@yahoo.fr';     //mail adress where the results will be send

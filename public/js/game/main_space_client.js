@@ -4,9 +4,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-
-var shareStep = 6; // precision of sharing
-
 var isXPRunning = false;
 var xpType;
 var canvas;
@@ -20,6 +17,7 @@ var state_load = 'STATE_LOAD';
 var state_game ='STATE_GAME';
 var state_endAnim = 'STATE_ENDANIM';
 var state_share = 'STATE_SHARE';
+var state_displayShare = "STATE_DISPLAY";
 var state_wait = 'STATE_WAIT';
 var state_lobby = 'STATE_LOBBY';
 var state_noxp = 'STATE_NOXP';
@@ -65,7 +63,8 @@ var shot;
 var mothership;
 var arrow;
 
-var progressText ;
+var progressText;
+var buttonText;
 var score;
 
 var maxAmmount;
@@ -347,6 +346,8 @@ function serverMessageParser_Space(data)
           ClearLobbyState_Space();
           InitShareWait_Space();
         break;
+
+       
         case 'REDIRECT':
           window.location.replace('/end1'); 
         break;
@@ -492,7 +493,7 @@ function InitShareState_Space()
   minAmmount.text = "0";
   minAmmount.textAlign = "right";
 
-  givenAmmount.x = 350;
+  givenAmmount.x = 390;
   givenAmmount.y = 350;
   givenAmmount.width = 100;
   givenAmmount.text = "";
@@ -530,19 +531,55 @@ function InitShareWait_Space()
   state = state_wait; 
 }
 
+
+
 function DrawGivenAmmount(data, role)
 {
   var recieved = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-    alert("The other player shared the loot and gave you "+recieved+" out of 1000 points. \n Click to continue and wait for the next game to start." );
-    socket.emit("message",'ENDED'); 
+	  progressText.text = "The other player shared the loot and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; 
+	  progressText.y = 20;
+	  progressText.x = 400 ;
+	  progressText.textAlign = "center";
+
+	  button = new createjs.Shape();
+	  button.graphics.beginFill("white").drawRect(325,400,150,50);
+      buttonText = new createjs.Text("", "20px Arial", "#000000");
+      buttonText.textAlign = "center";
+	  buttonText.text = "Continue";
+	  buttonText.y = 415;
+	  buttonText.x = 400;
+
+	  stage.addChild(button);
+	  stage.addChild(progressText);
+	  stage.addChild(buttonText);
+	  stage.update();
+	  state = state_displayShare; 
+    
   }
   else if(role == "SHARER")
   {
+
+	progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n \n Click to continue and wait for the next game to start."; 
+	  progressText.y = 20;
+	  progressText.x = 400 ;
+	  progressText.textAlign = "center";
+	  button = new createjs.Shape();
+	  button.graphics.beginFill("white").drawRect(325,400,150,50);
+      buttonText = new createjs.Text("", "20px Arial", "#000000");
+      buttonText.textAlign = "center";
+	  buttonText.text = "Continue";
+	  buttonText.y = 415;
+	  buttonText.x = 400;
+
+	  stage.addChild(button);
+	  stage.addChild(buttonText);
+	  stage.addChild(progressText);
+	  stage.update();
+	  state = state_displayShare; 
+ 
     
-    alert("You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n Click to continue and wait for the next game to start." );
-    socket.emit("message",'ENDED');
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -575,6 +612,13 @@ function ClearLobbyState_Space()
   stage.removeChild(WaitWheel);
   stage.update();
 }
+
+function ClearShareWait_Space()
+{
+  stage.removeChild(progressText);
+  stage.update();
+}
+
 function ClearShareState_Space()
 {
   stage.removeChild(slider);
@@ -588,6 +632,14 @@ function ClearShareState_Space()
 function ClearWaitState_Space()
 {
   stage.removeChild(progressText);
+}
+
+function ClearDrawGivenAmmount_Space()
+{
+  stage.removeChild(progressText);
+  stage.removeChild(button);
+  stage.removeChild(buttonText);
+  stage.update();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -660,6 +712,16 @@ function handleClick(e)
     sendMouseInput(mousePos.x);
     UpdateShareAmmount_Space(mousePos.x);
   } 
+  else if (state == state_displayShare)
+  {
+	var mousePos = getMousePos(canvas,e);
+    if ((mousePos.x >= 325) && (mousePos.x <= 425) && (mousePos.y >= 400) && (mousePos.y <= 450)) //if click on button
+	{
+		ClearDrawGivenAmmount_Space();
+		socket.emit("message",'ENDED');
+	}
+
+  }
 }
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
