@@ -148,7 +148,7 @@ function StartLoading_Space()
   progressText.y = 20;
   progressText.x = 400 ;
 
-  score = new createjs.Text("Score : 0","10px Arial","#FFFFFF");
+  score = new createjs.Text("Score : 0","20px Arial","#FFFFFF");
 
   maxAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
   minAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
@@ -905,7 +905,7 @@ function drawScore_Space(data)
     score_value = data;
     if (score_value < 1000)
 	{
-		score_value = 1000; //makes sure the score value is 1000 - found a case in which it was only 975 in the rabbits case without touching a single key
+		score_value = 1000; //makes sure the score value at the end of the expe is 1000, so that sharing is always on 1000 - found a bug in which it was only 975 (rabbits game, without touching a single key during the whole game)
 	}
     stage.update();
   }

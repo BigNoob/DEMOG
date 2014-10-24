@@ -158,7 +158,7 @@ function StartLoading()
   progressText.y = 20;
   progressText.x = 400 ;
 
-  score = new createjs.Text("Score : 0","10px Arial","#FFFFFF");
+  score = new createjs.Text("Score : 0","20px Arial","#FFFFFF");
 
   maxAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
   minAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
