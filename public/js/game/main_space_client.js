@@ -6,6 +6,7 @@
 //
 var isXPRunning = false;
 var xpType;
+var xpGame;
 var canvas;
 var stage;
 var stagewidth;
@@ -112,8 +113,9 @@ var KEYCODE_SPACE = 32;
 //    Entry Point of Space Coop (Function called by main.jst)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function Main_Space(type) {
+function Main_Space(type,game) {
   xpType = type;
+  xpGame = game;
   canvas = document.getElementById("viewport");
   stage = new createjs.Stage(canvas);
 
@@ -264,6 +266,7 @@ function handleProgress_Space (event)
 function handleComplete_Space (event)
 {
      startServerListen_Space();  //We start listening to the server after the loading of all the assets
+	 
      InitLobbyState_Space(undefined); 
 }
 
@@ -326,8 +329,7 @@ function serverMessageParser_Space(data)
         break;
         case 'LOBBY':
           //ClearLobbyState_Space();
-          ClearGameState_Space();
-          
+          ClearGameState_Space();         
           InitLobbyState_Space(splittedData);
         break;
         case 'NO_XP':
@@ -337,11 +339,16 @@ function serverMessageParser_Space(data)
           InitNoXP_Space();
         break;
         case 'SHARE_STATE':
+		  if (xpGame == "dg") {score_value = 1000;}
+		  isXPRunning = true;
+		  ClearLobbyState_Space();
           ClearGameState_Space();
           //ClearLobbyState_Space();
           InitShareState_Space();
         break;
         case 'SHARE_WAIT':
+		  if (xpGame == "dg") {score_value = 1000;}
+		  isXPRunning = true;
           ClearGameState_Space();
           ClearLobbyState_Space();
           InitShareWait_Space();
@@ -349,7 +356,9 @@ function serverMessageParser_Space(data)
 
        
         case 'REDIRECT':
-          window.location.replace('/end1'); 
+		if (xpGame == "dg") {window.location.replace('/end4');} 
+		else {window.location.replace('/end1');}
+          
         break;
       }
 }
@@ -399,7 +408,12 @@ function InitLobbyState_Space(data)
   {
     var score = data[1].player.score;   
   }
-  if(score == 0)
+ 
+  if ((xpGame == 'dg') && (score == 0))
+  {
+    progressText.text = "Please wait for another person to join.";
+  }
+  else if (score == 0)
   {
     progressText.text = stringsArray[str_lobby];
   }
@@ -477,7 +491,10 @@ function InitNoXP_Space()
 
 function InitShareState_Space()
 {
-  progressText.text = stringsArray[str_doShare]; 
+  if (xpGame == "dg")
+  {progressText.text = "You have been randomly attributed the role of giver.\n \n Indicate how much you want to give by clicking on the scale below.\n You can use the left and right keys to adjust.\n\nWhen you are done, validate by pressing the space key.";}
+  else 
+  {progressText.text = stringsArray[str_doShare];}
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -521,7 +538,11 @@ function InitShareState_Space()
 
 function InitShareWait_Space()
 {
-  progressText.text = stringsArray[str_waitShare];  
+  
+  if (xpGame == "dg")
+  {progressText.text = "You have been randomly attributed the role of receiver.\n \n Please wait while the other person makes his decision.";}
+  else 
+  {progressText.text = stringsArray[str_waitShare];} 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -538,7 +559,12 @@ function DrawGivenAmmount(data, role)
   var recieved = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-	  progressText.text = "The other player shared the loot and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; 
+
+	  if (xpGame == "dg")
+	  {progressText.text = "The other person decided to give you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next experiment to start."; }
+	  else 
+	  {progressText.text = "The other player shared the loot and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; } 
+	  
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";
@@ -560,8 +586,11 @@ function DrawGivenAmmount(data, role)
   }
   else if(role == "SHARER")
   {
-
-	progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n \n Click to continue and wait for the next game to start."; 
+	  if (xpGame == "dg")
+	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other person.\n Your points for this experiment are thus "+data+".\n \n Click to continue and wait for the next experiment to start."; }
+	  else 
+	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n \n Click to continue and wait for the next game to start."; } 
+	
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";

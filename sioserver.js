@@ -16,6 +16,8 @@ var game_server = function()
 
 module.exports = global.game_server = game_server;
 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Main function to start and shutdown server
@@ -138,7 +140,12 @@ game_server.prototype.sendClientToLobby = function(client)
 	this.clients.splice(this.getClientIndexFromGame(client),1);
 	client.player.isInLobby = true;
 	this.clientsinLobby.push(client);
+
+
 	client.emit('message', 'LOBBY,'+client);
+
+
+	
 };
 //Remove a client from the lobby
 game_server.prototype.removeCientFromLobby = function(client)
@@ -219,13 +226,17 @@ game_server.prototype.getGameIndex = function(game)
 game_server.prototype.createGame = function(client1, client2)
 {
 	var tmpGame;
+	
 	switch(this.experiment.xpGame)
 	{
 		case "space_coop":
-			tmpGame = new space_game_core(this.experiment.xpMaxIter);
+			tmpGame = new space_game_core(this.experiment.xpMaxIter,"");
+		break;
+		case "dg":
+			tmpGame = new space_game_core(this.experiment.xpMaxIter,"dg");
 		break;
 		case "rabbits":
-			tmpGame = new rabbits_game_core(this.experiment.xpMaxIter);
+			tmpGame = new rabbits_game_core(this.experiment.xpMaxIter,"");
 		break;
 	}
 
@@ -304,14 +315,18 @@ game_server.prototype.checkEndedGames = function()
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 		    	this.experiment.addPlayerResults(this.games[i].p1.player.GetResult());
+
 		    	this.games[i].p1.emit('message','REDIRECT');
+
 		        this.removeClient(this.games[i].p1);
 		        this.games[i].p1 = null;
 		    }
 		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 		    	this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
+
 		    	this.games[i].p2.emit('message','REDIRECT');
+
 		        this.removeClient(this.games[i].p2);
 		        this.games[i].p2 = null;
 		    }

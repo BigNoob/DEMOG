@@ -6,9 +6,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function Main(xp_game,xptype) {
-  if(xp_game == "space_coop")
+  if((xp_game == "space_coop") || (xp_game == "dg"))
   {
-    Main_Space(xptype);
+    Main_Space(xptype,xp_game);
   }
   else if(xp_game == "rabbits")
   {

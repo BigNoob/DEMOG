@@ -40,7 +40,7 @@ var state_share = 'STATE_SHARE';
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var space_game_core = function(maxIter)
+var space_game_core = function(maxIter,isDG)
 {
     this.id =undefined;
 	this.viewport;
@@ -77,7 +77,9 @@ var space_game_core = function(maxIter)
     this.shotNum = 0;
 
     this.p1Ended = false;
-    this.p2Ended = false;
+    this.p2Ended = false; 
+	this.isDG = isDG;
+	
 };
 
 //This line is used to tell node.js that he can access the constructor
@@ -155,7 +157,26 @@ var Rect = function(x,y,w,h)
 space_game_core.prototype.beginInit = function()
 {
     this.enemies.Init();
-    this.beginGame();
+	if(this.isDG == "dg")  // skip the game stage and go to share state directly
+	{
+		this.score = 1000; // this.score cannot be determined in the game
+        if(Math.random() < 0.5)
+        {
+            this.p1.emit('message','SHARE_STATE,dg');
+            this.p2.emit('message','SHARE_WAIT,dg');
+        }
+        else
+        {
+            this.p2.emit('message','SHARE_STATE,dg');
+            this.p1.emit('message','SHARE_WAIT,dg');
+        }
+    }
+	else
+	{
+		this.beginGame();
+	}
+    
+	
 };
 space_game_core.prototype.beginGame = function()
 {

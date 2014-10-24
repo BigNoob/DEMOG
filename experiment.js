@@ -2,7 +2,7 @@
 
 var Experiment = function (xpName, xpType, xpMaxIter,xpGame,lang)
 {
-	this.GAME_TYPES = ["space_coop","rabbits"];
+	this.GAME_TYPES = ["space_coop","rabbits","dg"];
 	this.TYPES = ["local","amazon","web"];
 	this.LANG = ["fr","en"];
 	
@@ -45,6 +45,10 @@ Experiment.prototype.generateLink = function ()
 	else if(this.xpGame == "rabbits")
 	{
 		return ('/home3');
+	}
+	else if(this.xpGame == "dg")
+	{
+		return ('/home4');
 	}
 };
 
