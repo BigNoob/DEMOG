@@ -356,7 +356,7 @@ function serverMessageParser_Space(data)
 
        
         case 'REDIRECT':
-		if (xpGame == "dg") {window.location.replace('/end4');} 
+		if (xpGame == "dg") {window.location.replace('/end5');} 
 		else {window.location.replace('/end1');}
           
         break;

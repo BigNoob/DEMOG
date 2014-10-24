@@ -48,7 +48,7 @@ Experiment.prototype.generateLink = function ()
 	}
 	else if(this.xpGame == "dg")
 	{
-		return ('/home4');
+		return ('/home5');
 	}
 };
 

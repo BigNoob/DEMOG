@@ -262,11 +262,18 @@ app.get('/end3', function(req,res){
     res.render('end3.ejs');
 });
 
+app.get('/end5', function(req,res){
+    res.render('end5.ejs');
+});
+
 app.get('/home1', function(req,res){
     res.render('home1.ejs');
 });
 app.get('/home3', function(req,res){
     res.render('home3.ejs');
+});
+app.get('/home5', function(req,res){
+    res.render('home5.ejs');
 });
 
 
