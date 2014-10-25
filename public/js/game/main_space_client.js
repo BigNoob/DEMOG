@@ -47,6 +47,8 @@ var str_given = 11;
 var str_loginPrompt = 12;
 var str_gameTuto = 13;
 var str_loading = 14;
+var addx = 0;
+var addy = 0;
 
 //Strings Array
 var stringsArray = [];
@@ -337,6 +339,11 @@ function serverMessageParser_Space(data)
           ClearGameState_Space();
           //ClearLobbyState_Space();
           InitNoXP_Space();
+        break;
+        case 'REMOVE_MOTHERSHIP':
+			stage.removeChild(mothership);
+			stage.removeChild(score);			
+			stage.update();
         break;
         case 'SHARE_STATE':
 		  if (xpGame == "dg") {score_value = 1000;}
@@ -880,6 +887,7 @@ function drawMothership_Space(data)
 {
   var splittedData = data.split('#');
   mothership.x = splittedData[0];
+  scoreX = splittedData[0] +5;
   mothership.y = splittedData[1];
 }
 
@@ -930,12 +938,21 @@ function drawScore_Space(data)
 {
   if(state == state_game)
   {
-    score.text =stringsArray[str_score] + data;
+    //score.text =stringsArray[str_score] + data;
+	score.text =data;   
+	if (data == 1000)
+	{addx = parseInt(mothership.x) + 10;}
+	else if (data == 0) {addx = parseInt(mothership.x) + 25;}
+	else {addx = parseInt(mothership.x) + 19;}
+	score.x = addx.toString();
+    addy = parseInt(mothership.y) + 20;
+	score.y = addy.toString();
     score_value = data;
     if (score_value < 1000)
 	{
 		score_value = 1000; //makes sure the score value at the end of the expe is 1000, so that sharing is always on 1000 - found a bug in which it was only 975 (rabbits game, without touching a single key during the whole game)
 	}
+	
     stage.update();
   }
 }

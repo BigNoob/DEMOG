@@ -15,7 +15,8 @@ var shot_speed = 6;
 var shot_width = 8;
 var shot_height = 8;
 
-var mother_speed = 5;
+var mother_speed = 2;
+var mother_speed_fall = 5;
 var mothershipY = 20;
 var mother_width = 64;
 var mother_height = 96;
@@ -34,6 +35,10 @@ var points_per_enemy = 25;
 var state_game = 'STATE_GAME';
 var state_endAnim = 'STATE_ENDANIM';
 var state_share = 'STATE_SHARE';
+
+var distanceP1 = 0;
+var distanceP2 = 0;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Space Invaders Game Core Constructor
@@ -79,6 +84,7 @@ var space_game_core = function(maxIter,isDG)
     this.p1Ended = false;
     this.p2Ended = false; 
 	this.isDG = isDG;
+	this.mothershipFallen = false;	
 	
 };
 
@@ -308,7 +314,7 @@ space_game_core.prototype.setDirections = function()
         this.enemiesLeft = false;
     }
 
-    if( Math.random() > 0.95)
+    if( Math.random() > 0.99)
     {
         this.mothershipLeft = !this.mothershipLeft;
     }
@@ -337,14 +343,17 @@ space_game_core.prototype.moveEnemies = function()
 //Move the mothership
 space_game_core.prototype.moveMother = function()
 {
-    if(this.mothershipLeft)
+    if (!this.mothershipFallen)
     {
-        this.mothershipX -= mother_speed;
-    }
-    else
-    {
-        this.mothershipX += mother_speed;
-    }
+		if(this.mothershipLeft)
+		{
+		    this.mothershipX -= mother_speed;
+		}
+		else
+		{
+		    this.mothershipX += mother_speed;
+		}
+	}
 };
 //Animate the mothership during its fall
 space_game_core.prototype.animMotherFall = function()
@@ -361,30 +370,61 @@ space_game_core.prototype.animMotherFall = function()
     
     if (this.mothershipY > 500)
     {
-        this.state = state_share;
-        if(Math.abs(this.p2ShipX - this.mothershipX) > Math.abs(this.p1ShipX - this.mothershipX))
-        {
-            this.p1.emit('message','SHARE_STATE');
-            this.p2.emit('message','SHARE_WAIT');
-        }
-        else
-        {
-            this.p2.emit('message','SHARE_STATE');
-            this.p1.emit('message','SHARE_WAIT');
-        }
+		this.mothershipFallen = true;
+		var centerP1 = this.p1ShipX + (ship_width / 2);
+		var centerP2 = this.p2ShipX + (ship_width / 2);
+		distanceP1 = Math.abs(centerP1 - (this.mothershipX + (mother_width / 2)));
+		distanceP2 = Math.abs(centerP2 - (this.mothershipX + (mother_width / 2)));
+		if (distanceP2 == 0 || distanceP1 == 0)
+		{ 
+			this.p1.emit('message','REMOVE_MOTHERSHIP');
+		    this.p2.emit('message','REMOVE_MOTHERSHIP');
+           var currentTime = new Date().getTime();
+           while (currentTime + 2000 >= new Date().getTime()) {
+           }	
+			this.state = state_share;    
+		    if(distanceP2 > distanceP1)
+		    {
+		        this.p1.emit('message','SHARE_STATE');
+		        this.p2.emit('message','SHARE_WAIT');
+		    }
+		    else
+		    {
+		        this.p2.emit('message','SHARE_STATE');
+		        this.p1.emit('message','SHARE_WAIT');
+		    }
+		}
+		else 
+		{
+		    if(distanceP2 > distanceP1)
+		    { //p1 closest
+		      if (centerP1 - (this.mothershipX + (mother_width / 2)) > 0)
+			  {this.p1ShipX -= 1;}
+			  else {this.p1ShipX += 1;}
+		    }
+		    else
+		    { //p2 closest
+		      if (centerP2 - (this.mothershipX + (mother_width / 2)) > 0)
+			  {this.p2ShipX -= 1;}
+			  else {this.p2ShipX += 1;}		        
+		    }
+		}
     }
     else
     {
-        this.mothershipY += mother_speed/3;
+        this.mothershipY += mother_speed_fall/3;
     }
-    if(this.mothershipLeft)
-    {
-        this.mothershipX -= mother_speed;
-    }
-    else
-    {
-        this.mothershipX += mother_speed;
-    }
+    if (!this.mothershipFallen)
+    {    
+		if(this.mothershipLeft)
+		{
+		    this.mothershipX -= mother_speed_fall;
+		}
+		else
+		{
+		    this.mothershipX += mother_speed_fall;
+		}
+	}
 };    
 
 //Move the shots
