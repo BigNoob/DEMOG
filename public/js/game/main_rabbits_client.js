@@ -412,7 +412,7 @@ function InitGameState()
   stage.addChild(mothership);
   stage.addChild(score);
   stage.addChild(EnemiesCont);
-
+ 
   state = state_game;  
 }
 
@@ -915,9 +915,19 @@ function drawMothership(data)
 
 function drawScore(data)
 {
-  if(state == state_game)
+  if ((state == state_game) || (state == state_endAnim))
   {
-    score.text =stringsArray[str_score] + data;
+    //score.text =stringsArray[str_score] + data;
+	score.text =data; 
+	if (data == 1000)
+	{addx = parseInt(mothership.x) - 2;}
+	else if (data == 0) {addx = parseInt(mothership.x) + 8;}
+	else {addx = parseInt(mothership.x) + 3;}
+	score.x = addx.toString();
+	if (data == 1000)
+    {addy = parseInt(mothership.y) - 30;}
+	else {addy = parseInt(mothership.y) + 20;}
+	score.y = addy.toString();
     score_value = data;
     if (score_value < 1000)
 	{

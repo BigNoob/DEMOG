@@ -15,7 +15,7 @@ var shot_speed = 6;
 var shot_width = 8;
 var shot_height = 8;
 
-var goal_speed = 5;
+var goal_speed = 2;
 var goalballoonY = 20;
 var goal_width = 39;
 var goal_height = 56;
