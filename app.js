@@ -82,6 +82,7 @@ var
 function CreateExperiment(name,type,iter,game,lang)
 {
 	var myHost = os.hostname();
+	name = myHost;
 	if((myHost.indexOf("space3") != -1) || (myHost.indexOf("nor3") != -1))
 	{
 		name="rabbits"
