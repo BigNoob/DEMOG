@@ -75,11 +75,22 @@ var mailSenderPassw = 'wivyxuvo';                           //password of the gm
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('space1',"web",2,"space_coop","en"),
+    current_experiment = CreateExperiment('space',"amazon",2,"space_coop","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)
 {
+	
+	if((__dirname.indexOf("space3") != -1) || (__dirname.indexOf("nor3") != -1))
+	{
+		name="rabbits"
+		game="rabbits";
+	}
+	else if((__dirname.indexOf("space5") != -1) || (__dirname.indexOf("nor5") != -1))
+	{
+		name="dg"
+		game="dg";
+	} 
     try{
         return(new Experiment(name,type,iter,game,lang));
     }catch(err)
