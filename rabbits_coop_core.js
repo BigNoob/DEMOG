@@ -78,10 +78,15 @@ var rabbits_game_core = function(maxIter)
     this.flyer = new Rect(380,350,40,46);
     this.launcher = new Rect(350,549,96,53);
 
-    this.init_speed = 0.5;
+    this.flyer.x = 400 - this.flyer.w;
+    this.flyer.y = 400;
+        
+		
+
+    this.init_speed = 0.2;
     this.init_angle = 0;
-    this.init_abs = 350;
-    this.inAirTime = 0.0;
+    this.init_abs = 400 - this.flyer.w;
+    this.inAirTime = 1000.0;
     this.timeScale = 10;
     this.angleDirection = -1;
 
@@ -373,7 +378,10 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
         this.flyer.x = 400 - this.flyer.w;
         this.flyer.y = 400;
         this.init_abs = 400 - this.flyer.w;
-        this.inAirTime = 0;
+		this.init_angle = 0;
+		this.init_speed = 0.2;
+		this.inAirTime = 1000;
+        //this.inAirTime = 0;
 
         //this.sendUpdate();
         
@@ -401,12 +409,14 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
             //console.log(this.launcherNumber);
             this.inAirTime = 0;
-            deltaX = Math.abs((this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2));
-            console.log(deltaX);
+			deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2);
+            //console.log(deltaX);
 
-            if(deltaX < (this.launcher.w/2 + this.flyer.w/2))
+            if((deltaX <= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 2) || (deltaX >= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 1)) // flyer is on the good side of the seesaw
             {
+				deltaX = Math.abs(deltaX);
                 //console.log("inside");
+				
                 this.calculateTrajectory(deltaX);
             }
             else
@@ -426,16 +436,19 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             this.inAirTime += deltaT;
 
             this.flyer.x =   Math.round(this.init_angle * this.angleDirection * this.inAirTime / this.timeScale + this.init_abs);
-            this.flyer.y =450 -  Math.round( this.init_speed*( 4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime / this.timeScale,2)) / 100));
+            this.flyer.y = 450 -  Math.round( this.init_speed*( 4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime / this.timeScale,2)) / 100));
         } 
     }
 };
 
 rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
-    
-    this.init_speed = 0.2 * (deltaX / this.launcher.w / 2) + 0.8;
-    this.init_angle = 0.9 * (deltaX / this.launcher.w / 2)+ 0.4;
+	deltaX = deltaX / (this.launcher.x + this.launcher.w/2);    
+    	
+	if ((this.launcher.x < 100) || (this.launcher.x + this.launcher.w > 700)) {var ordonnees = 0.4;} // to get away from the edges
+	else {var ordonnees = 0;}
+	this.init_speed = 5 * deltaX + 0.2 + ordonnees;
+    this.init_angle = 3 * deltaX + 0.1 + ordonnees;
     this.angleDirection = (this.launcherNumber == 1)? -1 : 1;
     this.init_abs = this.launcher.x + this.angleDirection + this.launcher.w / 2;
 };
