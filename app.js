@@ -54,7 +54,7 @@ var
     sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD),
     sio         = undefined,
     wrap_server = undefined;
-	os = require("os");
+	path = require('path');
     
 
 var frame_time = 60;
@@ -81,8 +81,9 @@ var
 
 function CreateExperiment(name,type,iter,game,lang)
 {
-	var myHost = os.hostname();
-	name = myHost;
+	var appDir = path.dirname(require.main.filename);    
+	name = appDir;
+	var myHost="1";
 	if((myHost.indexOf("space3") != -1) || (myHost.indexOf("nor3") != -1))
 	{
 		name="rabbits"
