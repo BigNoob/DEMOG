@@ -76,7 +76,7 @@ var mailSenderPassw = 'wivyxuvo';                           //password of the gm
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('space',"amazon",2,"space_coop","en"),
+    current_experiment = CreateExperiment('rabbits',"amazon",2,"rabbits","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)
