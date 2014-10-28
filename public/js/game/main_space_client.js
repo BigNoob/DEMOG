@@ -284,7 +284,7 @@ function startServerListen_Space()
   var tmpAddress = document.URL;
   var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
   socket = io.connect(serverAddress);
-  if(xpType == "amazon")
+  if(xpType == "amazona")
   {
     loginPrompt  = prompt(stringsArray[str_loginPrompt]);
     if(loginPrompt != null)

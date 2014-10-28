@@ -21,23 +21,32 @@ header {
 
 h1{
 	text-align: center;
-	font-family: "Arial";
+	font-family: "Open Sans", "Inconsolata", "Georgia";
 }
 h3{
 	text-align: center;
-	font-family: "Arial";
+	font-family: "Inconsolata", "Georgia";
 	margin:5px;
 }
 p{
-	font-family: "Arial";	
+    
+	
+	font-family: "Inconsolata", "Georgia";	
 	margin: 20px;
 }
 
+#notFilled {
+	color: white;
+}
+
+#screenshot {
+	width:640px;
+}
 .centerDiv {
 	
 	margin-left: auto;
 	margin-right: auto;
-	width:900px;
+	width:840px;
 }
 .playerHolder {
 	display: inline;
@@ -71,7 +80,7 @@ p{
 
 .canvasHolder {
 	
-	display:table-row;
+	display:block;
 	position:relative;
 	height: 620px;
 	width: 840px;
@@ -178,7 +187,7 @@ p{
 	border:1px solid #dcdcdc;
 	display:inline-block;
 	color:#666666;
-	font-family:Trebuchet MS;
+	font-family:"Inconsolata", "Georgia";
 	font-size:15px;
 	font-weight:bold;
 	font-style:italic;
@@ -282,7 +291,7 @@ p{
   -webkit-border-radius: 28;
   -moz-border-radius: 28;
   border-radius: 28px;
-  font-family: Arial;
+  font-family: "Inconsolata", "Georgia";
   color: #ffffff;
   font-size: 20px;
   padding: 10px 20px 10px 20px;
@@ -297,4 +306,8 @@ p{
   background-image: -o-linear-gradient(top, #eb9999, #d6809d);
   background-image: linear-gradient(to bottom, #eb9999, #d6809d);
   text-decoration: none;
+}
+
+.hide {
+	display: none;
 }

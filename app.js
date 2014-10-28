@@ -76,7 +76,7 @@ var mailSenderPassw = 'wivyxuvo';                           //password of the gm
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('space',"web",2,"space_coop","en"),
+    current_experiment = CreateExperiment('space',"amazon",2,"space_coop","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)
@@ -270,11 +270,66 @@ app.get('/end5', function(req,res){
 app.get('/home1', function(req,res){
     res.render('home1.ejs');
 });
+app.get('/home12', function(req,res){
+    res.render('home12.ejs');
+});
+app.get('/home13', function(req,res){
+    res.render('home13.ejs');
+});
+app.get('/home14', function(req,res){
+    res.render('home14.ejs');
+});
+app.get('/home15', function(req,res){
+    res.render('home15.ejs');
+});
+app.get('/home16', function(req,res){
+    res.render('home16.ejs');
+});
+app.get('/home17', function(req,res){
+    res.render('home17.ejs');
+});
+
 app.get('/home3', function(req,res){
     res.render('home3.ejs');
 });
+app.get('/home32', function(req,res){
+    res.render('home32.ejs');
+});
+app.get('/home33', function(req,res){
+    res.render('home33.ejs');
+});
+app.get('/home34', function(req,res){
+    res.render('home34.ejs');
+});
+app.get('/home35', function(req,res){
+    res.render('home35.ejs');
+});
+app.get('/home36', function(req,res){
+    res.render('home36.ejs');
+});
+app.get('/home37', function(req,res){
+    res.render('home37.ejs');
+});
 app.get('/home5', function(req,res){
     res.render('home5.ejs');
+});
+app.get('/home52', function(req,res){
+    res.render('home52.ejs');
+});
+app.get('/home53', function(req,res){
+    res.render('home53.ejs');
+});
+app.get('/home54', function(req,res){
+    res.render('home54.ejs');
+});
+app.get('/home55', function(req,res){
+    res.render('home55.ejs');
+});
+app.get('/home56', function(req,res){
+    res.render('home56.ejs');
+});
+app.get('/home57', function(req,res){
+    res.render('home57.ejs');
 });
 
 

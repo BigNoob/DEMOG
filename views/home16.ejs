@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script>
+		function validateMyForm() {
+			var x = document.forms["forma"]["playerid"].value;
+			if (x == null || x == "") {
+				document.getElementById("notFilled").innerHTML = "Mturk ID must be filled out!";
+				return false;
+			}
+			else {
+				socket.emit('playerLogin',x);
+			}
+		}
+	</script>
+	</head>
+
+		<title>Video Game Test</title>
+		<link rel='stylesheet' href='../public/styles/styles.css' />
+		<link href="../public/styles/styles.css" rel="stylesheet" type="text/css">
+	</head>
+	<body> 
+	<div>
+		<header>
+		    <h1 id="selection"></h1>	        
+		</header>
+	</div>
+	<div id="toHide">
+		<header>
+		    
+		</header>
+		<div class="centerDiv">
+			<div class="canvasHolder">
+				
+
+					<p class="bold">You will play the game twice.</p>
+
+					<p class="bold">You need to finish the two games and give your feedback at the end in order for us to pay you.<br /><br /></p>
+
+		
+		<form name="forma" action="/home17" onsubmit="return validateMyForm()" method="get">
+
+		<p>Please enter your mturk id: <input type="text" name="playerid">
+		</p>
+		<p id="notFilled" class="bold"></p>
+		<p>
+		<br /><br />
+		<input type="submit" class="btn" value="Enter waiting room">
+		</form>
+		</p>
+
+				
+		
+   			</div>
+			
+	</div>
+
+	</div>
+
+	<script src="../public/js/game/check.js"></script>
+
+	</body>
+</html>
