@@ -46,7 +46,7 @@ game_server.prototype.physic_update = function(physic_time)
 		this.games[i].physic_update(physic_time);
 	}
 };
-//this function stop the socket server
+//this function stops the socket server
 game_server.prototype.stopServer = function()
 {
     //console.log('SIOServer is stopped');

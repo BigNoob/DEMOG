@@ -70,8 +70,8 @@ var space_game_core = function(maxIter,isDG)
     this.kept = 0;
     this.sharer = undefined;
     this.inputs = [];
-    this.p1ShipX = 400;
-    this.p2ShipX = 400;
+    this.p1ShipX = 370;
+    this.p2ShipX = 430;
     
     this.mothershipX = 100;
     this.mothershipY = 20;

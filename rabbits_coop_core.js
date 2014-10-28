@@ -352,7 +352,7 @@ rabbits_game_core.prototype.animMotherFall = function()
     if (this.goalballoonY > 500)
     {
         this.state = state_share;
-        if(Math.random()*800 > Math.abs(this.launcher.x - this.goalballoonX))
+        if(this.launcherNumber == 2)
         {
             this.p1.emit('message','SHARE_STATE');
             this.p2.emit('message','SHARE_WAIT');
@@ -404,7 +404,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             this.init_abs = 800 -40;
             this.flyer.x = 800 - 40;
         }
-        if(this.flyer.y > 550)
+        if(this.flyer.y > 550) //flyer touches the ground
         {
             this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
             //console.log(this.launcherNumber);
@@ -423,6 +423,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             {
                 if(this.state == state_game)
                 {
+					
                     this.state = state_reload;
                     this.p1.emit('message',state_reload);
                     this.p2.emit('message',state_reload);
@@ -447,7 +448,7 @@ rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
     	
 	if ((this.launcher.x < 100) || (this.launcher.x + this.launcher.w > 700)) {var ordonnees = 0.4;} // to get away from the edges
 	else {var ordonnees = 0;}
-	this.init_speed = 5 * deltaX + 0.2 + ordonnees;
+	this.init_speed = 3 * deltaX + 0.3 + ordonnees;
     this.init_angle = 3 * deltaX + 0.1 + ordonnees;
     this.angleDirection = (this.launcherNumber == 1)? -1 : 1;
     this.init_abs = this.launcher.x + this.angleDirection + this.launcher.w / 2;

@@ -69,7 +69,8 @@ var enemy;
 var mothership;
 var mothershipEndBitmap;
 
-var progressText ;
+var progressText;
+var progressText2;
 var buttonText;
 var score;
 
@@ -82,7 +83,7 @@ var slider;
 var ownNumber;
 var launcherNumber;
 
-var share = 0;
+var share = -1;
 var canfire = true;
 var cooldown = 20;
 var reloadTime = 2000;
@@ -156,7 +157,12 @@ function StartLoading()
   progressText = new createjs.Text("", "20px Arial", "#FFFFFF");
   progressText.textAlign = "center";
   progressText.y = 20;
-  progressText.x = 400 ;
+  progressText.x = 400;
+
+  progressText2 = new createjs.Text("", "20px Arial", "#FFFFFF");
+  progressText2.textAlign = "center";
+  progressText2.y = 500;
+  progressText2.x = 400 ;
 
   score = new createjs.Text("Score : 0","20px Arial","#FFFFFF");
 
@@ -165,6 +171,7 @@ function StartLoading()
   givenAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
 
   stage.addChild(progressText);
+  stage.addChild(progressText2);
   stage.update();
   //Loading Manifest
   manifest = [
@@ -442,8 +449,8 @@ function InitLobbyState(data)
   var circleSize = 80;
   var elemSize = 20;
   var elemNum = 8;
-  var stageCenterX = stagewidth / 2;
-  var stageCenterY = stageheight / 2;
+  var stageCenterX = 400;
+  var stageCenterY = 300;
   var angle = 2*Math.PI / elemNum;
 
   WaitWheel = null;
@@ -510,6 +517,11 @@ function InitShareState()
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
+  progressText2.text = "Validate by pressing space";
+  progressText2.y = 500;
+  progressText2.x = 400 ;
+  progressText2.textAlign = "center";
+
   maxAmmount.x = 700;
   maxAmmount.y = 400;
   maxAmmount.width = 100;
@@ -543,6 +555,7 @@ function InitShareState()
   stage.addChild(minAmmount);
   stage.addChild(givenAmmount);
   stage.addChild(progressText);
+  stage.addChild(progressText2);
   stage.addChild(arrow);
   stage.update();
   state = state_share;  
@@ -644,6 +657,7 @@ function ClearShareState()
   stage.removeChild(minAmmount);
   stage.removeChild(givenAmmount);
   stage.removeChild(progressText);
+  stage.removeChild(progressText2);
   stage.removeChild(arrow);
 }
 function ClearWaitState()
@@ -705,7 +719,7 @@ function handleKeyDown(e)
         break;
 
       case KEYCODE_SPACE:
-        if(share)
+        if(share >= 0)
         {
           SendShareAmmount();
         }
@@ -748,13 +762,13 @@ function UpdateShareAmmount(x)
 
 	  if (x == -1) // if left key is pressed - see above function handleKeyDown
 	  {
-		share -= 1;
+		share -= 10;
 		if(share < 0){share = 0;}
 		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
 	  }
 	  else if (x == -2) // if right key is pressed - see above function handleKeyDown
 	  {
-		share += 1;
+		share += 10;
 		if(share > score_value){share = score_value;}
 		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
 	  }
@@ -764,8 +778,9 @@ function UpdateShareAmmount(x)
 		  if(X < 100){X = 100;}
 		  if(X > 700){X = 700;}
 		 
-		  arrow.x= X - 9;
 		  share = parseInt(score_value * (X -100)/(600));
+		  share = Math.round(share / 10) * 10; // round to closest 10
+		  arrow.x= parseInt((share / score_value) * 600 + 100) - 9;
 	  }
 	  console.log(share);
 	  maxAmmount.text = score_value;

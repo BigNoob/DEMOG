@@ -67,6 +67,7 @@ var mothership;
 var arrow;
 
 var progressText;
+var progressText2;
 var buttonText;
 var score;
 
@@ -77,7 +78,7 @@ var slider;
 //Game Variables
 
 
-var share = 0;
+var share = -1;
 var canfire = true;
 var cooldown = 240;
 var bulletArray = [];
@@ -152,6 +153,11 @@ function StartLoading_Space()
   progressText.y = 20;
   progressText.x = 400 ;
 
+  progressText2 = new createjs.Text("", "20px Arial", "#FFFFFF");
+  progressText2.textAlign = "center";
+  progressText2.y = 500;
+  progressText2.x = 400 ;
+
   score = new createjs.Text("Score : 0","20px Arial","#FFFFFF");
 
   maxAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
@@ -159,6 +165,7 @@ function StartLoading_Space()
   givenAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
 
   stage.addChild(progressText);
+  stage.addChild(progressText2);
   stage.update();
   //Loading Manifest
   manifest = [
@@ -331,7 +338,9 @@ function serverMessageParser_Space(data)
         break;
         case 'LOBBY':
           //ClearLobbyState_Space();
-          ClearGameState_Space();         
+          ClearGameState_Space();    
+          ClearShareState_Space();
+          ClearWaitState_Space();     
           InitLobbyState_Space(splittedData);
         break;
         case 'NO_XP':
@@ -382,11 +391,11 @@ function InitGameState_Space()
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
-  ship.x = 400;
+  ship.x = 350;
   ship.y = 550;
   ship.alpha = 1.0;
 
-  allyShip.x = 400;
+  allyShip.x = 450;
   allyShip.y = 550;
 
   EnemiesCont.x = 100;
@@ -435,8 +444,8 @@ function InitLobbyState_Space(data)
   var circleSize = 80;
   var elemSize = 20;
   var elemNum = 8;
-  var stageCenterX = stagewidth / 2;
-  var stageCenterY = stageheight / 2;
+  var stageCenterX = 400;
+  var stageCenterY = 300;
   var angle = 2*Math.PI / elemNum;
 
   WaitWheel = null;
@@ -499,12 +508,20 @@ function InitNoXP_Space()
 function InitShareState_Space()
 {
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role of giver.\n \n Indicate how much you want to give by clicking on the scale below.\n You can use the left and right keys to adjust.\n\nWhen you are done, validate by pressing the space key.";}
+  {progressText.text = "You have been randomly attributed the role of giver.\n \n Indicate how much you want to give by clicking on the scale below.\n You can use the left and right keys to adjust.\n\nWhen you are done, validate by pressing the space key.";
+  progressText2.text = "";
+}
   else 
-  {progressText.text = stringsArray[str_doShare];}
+  {
+	progressText.text = stringsArray[str_doShare];
+	progressText2.text = "Validate by pressing space";
+  }
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
+  progressText2.y = 500;
+  progressText2.x = 400 ;
+  progressText2.textAlign = "center";
 
   maxAmmount.x = 700;
   maxAmmount.y = 400;
@@ -538,6 +555,7 @@ function InitShareState_Space()
   stage.addChild(minAmmount);
   stage.addChild(givenAmmount);
   stage.addChild(progressText);
+  stage.addChild(progressText2);
   stage.addChild(arrow);
   stage.update();
   state = state_share;  
@@ -663,6 +681,7 @@ function ClearShareState_Space()
   stage.removeChild(minAmmount);
   stage.removeChild(givenAmmount);
   stage.removeChild(progressText);
+  stage.removeChild(progressText2);
   stage.removeChild(arrow);
 }
 function ClearWaitState_Space()
@@ -731,7 +750,7 @@ function handleKeyDown_Space(e)
         break;
 
       case KEYCODE_SPACE:
-        if(share)
+        if(share >= 0)
         {
           SendShareAmmount_Space();
         }
@@ -774,13 +793,13 @@ function UpdateShareAmmount_Space(x)
 
 	  if (x == -1) // if left key is pressed - see above function handleKeyDown_Space
 	  {
-		share -= 1;
+		share -= 10;
 		if(share < 0){share = 0;}
 		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
 	  }
 	  else if (x == -2) // if right key is pressed - see above function handleKeyDown_Space
 	  {
-		share += 1;
+		share += 10;
 		if(share > score_value){share = score_value;}
 		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
 	  }
@@ -789,9 +808,10 @@ function UpdateShareAmmount_Space(x)
 		  var X = x;
 		  if(X < 100){X = 100;}
 		  if(X > 700){X = 700;}
-		 
-		  arrow.x= X - 9;
 		  share = parseInt(score_value * (X -100)/(600));
+		  share = Math.round(share / 10) * 10; // round to closest 10
+		  arrow.x= parseInt((share / score_value) * 600 + 100) - 9;
+		  
 	  }
 	  console.log(share);
 	  maxAmmount.text = score_value;
@@ -943,7 +963,7 @@ function drawScore_Space(data)
 	if (data == 1000)
 	{addx = parseInt(mothership.x) + 10;}
 	else if (data == 0) {addx = parseInt(mothership.x) + 25;}
-	else {addx = parseInt(mothership.x) + 19;}
+	else {addx = parseInt(mothership.x) + 17;}
 	score.x = addx.toString();
     addy = parseInt(mothership.y) + 20;
 	score.y = addy.toString();
