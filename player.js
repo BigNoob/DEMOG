@@ -63,7 +63,7 @@ var GameResult = function(gameid,repetition, isSharer,total, given, kept, presen
 	this.given = given;
 	this.kept = kept;
 	this.presentScore = presentScore;
-	this.timesMissed = 
+	this.timesMissed = timesMissed;
 };
 
 if( 'undefined' != typeof global ) {
