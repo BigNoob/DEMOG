@@ -68,7 +68,9 @@ var rabbits_game_core = function(maxIter)
     this.score = 0;
     this.given = 0;
     this.kept = 0;
-    
+	this.p1MissedSeesaw = 0;
+    this.p2MissedSeesaw = 0;
+
     this.goalballoonX = 100;
     this.goalballoonY = 100;
     this.goalShipAlive = true;
@@ -423,7 +425,8 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             {
                 if(this.state == state_game)
                 {
-					
+					if (this.launcherNumber == 2) {this.p1MissedSeesaw += 1} else {this.p2MissedSeesaw += 1}
+						
                     this.state = state_reload;
                     this.p1.emit('message',state_reload);
                     this.p2.emit('message',state_reload);
@@ -594,8 +597,8 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
 
-        this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
+        this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw);
+        this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
@@ -608,8 +611,8 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.kept = parseInt(data[1]);
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
+        this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw);
+        this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');

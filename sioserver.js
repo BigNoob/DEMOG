@@ -310,7 +310,7 @@ game_server.prototype.checkEndedGames = function()
 		{
 	        this.updateClient(this.games[i].p1);
 	        this.updateClient(this.games[i].p2);
-	        this.experiment.addGameResults(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2);
+	        this.experiment.addGameResults(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2,this.games[i].p1MissedSeesaw,this.games[i].p2MissedSeesaw);
 
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
