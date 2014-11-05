@@ -16,9 +16,9 @@ player.prototype.GetResult = function()
 	return this.result;
 };
 
-player.prototype.SetGameResult = function(gameid, isSharer,total, given, kept, timesMissed)
+player.prototype.SetGameResult = function(gameid, isSharer,total, given, kept, timesMissed, distanceSeesaw, balloonsPopped)
 {
-	this.result.addGameResult(gameid,this.currentRepetition, isSharer,total, given, kept, this.score, timesMissed);
+	this.result.addGameResult(gameid,this.currentRepetition, isSharer,total, given, kept, this.score, timesMissed, distanceSeesaw, balloonsPopped);
 };
 
 var PlayerResult = function()
@@ -49,12 +49,12 @@ PlayerResult.prototype.updateTotalScore = function(score)
 	this.totalScore = score;
 };
 
-PlayerResult.prototype.addGameResult = function(gameid,currentRepetition, isSharer,total, given, kept, presentScore,timesMissed)
+PlayerResult.prototype.addGameResult = function(gameid,currentRepetition, isSharer,total, given, kept, presentScore,timesMissed,distanceSeesaw,balloonsPopped)
 {
-	this.gameLog.push(new GameResult(gameid, currentRepetition,isSharer, total, given, kept, presentScore,timesMissed));
+	this.gameLog.push(new GameResult(gameid, currentRepetition,isSharer, total, given, kept, presentScore,timesMissed,distanceSeesaw,balloonsPopped));
 };
 
-var GameResult = function(gameid,repetition, isSharer,total, given, kept, presentScore, timesMissed)
+var GameResult = function(gameid,repetition, isSharer,total, given, kept, presentScore, timesMissed,distanceSeesaw,balloonsPopped)
 {
 	this.gameid = gameid;
 	this.repetition = repetition;
@@ -64,6 +64,8 @@ var GameResult = function(gameid,repetition, isSharer,total, given, kept, presen
 	this.kept = kept;
 	this.presentScore = presentScore;
 	this.timesMissed = timesMissed;
+	this.distanceSeesaw = distanceSeesaw;
+	this.balloonsPopped = balloonsPopped;
 };
 
 if( 'undefined' != typeof global ) {

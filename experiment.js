@@ -103,9 +103,9 @@ Experiment.prototype.addPlayerResults = function(playerResults)
 {
 	this.result.playerResults.push(playerResults);
 };
-Experiment.prototype.addGameResults = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw)
+Experiment.prototype.addGameResults = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw,p1BalloonsPopped,p2BalloonsPopped)
 {
-	this.result.gameResults.push(new gameResult(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw));
+	this.result.gameResults.push(new gameResult(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw,p1BalloonsPopped,p2BalloonsPopped));
 };
 Experiment.prototype.returnOldCLientsNum = function()
 {

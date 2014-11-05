@@ -71,6 +71,14 @@ var rabbits_game_core = function(maxIter)
 	this.p1MissedSeesaw = 0;
     this.p2MissedSeesaw = 0;
 
+	this.p1DistanceSeesaw = 0; // average distance from the center of the landed rabbit to the center of the seesaw
+    this.p2DistanceSeesaw = 0;
+	this.p1DistanceTimes = 0; // to calculate average distance
+    this.p2DistanceTimes = 0; // to calculate average distance
+
+	this.p1BalloonsPopped = 0;
+    this.p2BalloonsPopped = 0;
+
     this.goalballoonX = 100;
     this.goalballoonY = 100;
     this.goalShipAlive = true;
@@ -417,6 +425,15 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             if((deltaX <= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 2) || (deltaX >= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 1)) // flyer is on the good side of the seesaw
             {
 				deltaX = Math.abs(deltaX);
+			    if (this.launcherNumber == 2) 
+				{	
+					this.p1DistanceSeesaw += deltaX;
+					this.p1DistanceTimes += 1;
+				} else 
+				{
+					this.p2DistanceSeesaw += deltaX;
+					this.p2DistanceTimes += 1;
+				}
                 //console.log("inside");
 				
                 this.calculateTrajectory(deltaX);
@@ -466,6 +483,7 @@ rabbits_game_core.prototype.checkCollisions = function()
         {
             if(this.doCollide(this.flyer,this.balloons.array[j].rect))
             {
+				if (this.launcherNumber == 2) {this.p1BalloonsPopped += 1} else {this.p2BalloonsPopped += 1}
                 this.balloons.KillBalloon(j);
                 this.score += points_per_enemy;
             }
@@ -597,8 +615,11 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
 
-        this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw);
-        this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw);
+		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
+		this.p2DistanceSeesaw /= this.p2DistanceTimes;		
+
+        this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
+        this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
@@ -611,8 +632,12 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.kept = parseInt(data[1]);
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw);
-        this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw);
+
+		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
+		this.p2DistanceSeesaw /= this.p2DistanceTimes;	
+
+        this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
+        this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
