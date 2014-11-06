@@ -147,11 +147,11 @@ var Enemy = function(x,y)
     this.rect = new Rect(x,y,enemy_width,enemy_height);
     this.alive = true;
 };
-var Shot = function(x,whichPlayer)
+var Shot = function(x)
 {
     this.id = undefined;
     this.rect = new Rect(x, 550, shot_width, shot_height);
-	this.shooter = whichPlayer;
+	this.shooter = undefined;
     this.alive = true;
 
 };
@@ -532,7 +532,7 @@ space_game_core.prototype.onInput = function(client, data){
             }
             if(data[3] == '1')
             {
-                this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2,whichPlayer,"p1");
+                this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2,"p1");
 				this.p1ShotsFired += 1;
             }
         }
@@ -577,6 +577,7 @@ space_game_core.prototype.shoot = function(x,whichPlayer)
 {
     var tmpShot = new Shot(x,whichPlayer);
     tmpShot.id = this.shotNum;
+	tmpShot.shooter = whichPlayer;
     this.shotNum ++;
     this.shots.push(tmpShot);
 }
