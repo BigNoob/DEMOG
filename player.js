@@ -44,6 +44,7 @@ PlayerResult.prototype.init = function(userid, amazonId)
 	this.totalScore = 0;
 	this.gameLog = [];
 	this.lostPartner = 0;
+	this.IPaddress = -1;
 };
 
 PlayerResult.prototype.updateStatus = function(status)
