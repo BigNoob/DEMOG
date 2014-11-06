@@ -618,8 +618,8 @@ rabbits_game_core.prototype.Share = function(client, data)
 		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
 		this.p2DistanceSeesaw /= this.p2DistanceTimes;		
 
-        this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
-        this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
+        this.p1.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
+        this.p2.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
@@ -636,8 +636,8 @@ rabbits_game_core.prototype.Share = function(client, data)
 		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
 		this.p2DistanceSeesaw /= this.p2DistanceTimes;	
 
-        this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
-        this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
+        this.p1.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
+        this.p2.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');

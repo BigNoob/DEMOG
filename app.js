@@ -59,7 +59,7 @@ var
 // In core.js, record variable with this.variable and send variable to SetGameResult in function prototype.Share (4x)
 // In player.js, add to function prototype.SetGameResult, prototype.addGameResult and var GameResult
 // In sioserver.js, add to function addGameResults in prototype.checkEndedGames
-// In experiment.js, add to prototype.addGameResults
+// In experiment.js, add to prototype.addGameResults and var gameResult
 
 var frame_time = 60;
 var physic_time = 15;

@@ -81,6 +81,14 @@ var space_game_core = function(maxIter,isDG)
     this.shots = [];
     this.shotNum = 0;
 
+	this.p1ShotsFired = 0;
+	this.p2ShotsFired = 0;
+	this.p1EnemyKilled = 0;
+	this.p2EnemyKilled = 0;
+
+	this.p1DistanceToMothership = -1;
+	this.p2DistanceToMothership = -1;
+
     this.p1Ended = false;
     this.p2Ended = false; 
 	this.isDG = isDG;
@@ -139,10 +147,11 @@ var Enemy = function(x,y)
     this.rect = new Rect(x,y,enemy_width,enemy_height);
     this.alive = true;
 };
-var Shot = function(x)
+var Shot = function(x,whichPlayer)
 {
     this.id = undefined;
     this.rect = new Rect(x, 550, shot_width, shot_height);
+	this.shooter = whichPlayer;
     this.alive = true;
 
 };
@@ -370,11 +379,18 @@ space_game_core.prototype.animMotherFall = function()
     
     if (this.mothershipY > 500)
     {
-		this.mothershipFallen = true;
+
 		var centerP1 = this.p1ShipX + (ship_width / 2);
 		var centerP2 = this.p2ShipX + (ship_width / 2);
 		distanceP1 = Math.abs(centerP1 - (this.mothershipX + (mother_width / 2)));
 		distanceP2 = Math.abs(centerP2 - (this.mothershipX + (mother_width / 2)));
+
+		if (this.mothershipFallen == false)
+		{
+			this.p1DistanceToMothership = distanceP1;
+			this.p2DistanceToMothership = distanceP2;
+		}
+		this.mothershipFallen = true;
 		if (distanceP2 == 0 || distanceP1 == 0)
 		{ 
 			this.p1.emit('message','REMOVE_MOTHERSHIP');
@@ -451,6 +467,9 @@ space_game_core.prototype.checkCollisions = function()
             {
                 if(this.doCollide(this.shots[i].rect,this.enemies.array[j].rect))
                 {
+					if(this.shots[i].shooter == "p1") {this.p1EnemyKilled += 1} 
+					else {this.p2EnemyKilled += 1} 					
+					
                     this.shots[i].alive = false;
                     this.enemies.KillEnemy(j);
                     this.score += points_per_enemy;
@@ -513,7 +532,8 @@ space_game_core.prototype.onInput = function(client, data){
             }
             if(data[3] == '1')
             {
-                this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2);
+                this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2,whichPlayer,"p1");
+				this.p1ShotsFired += 1;
             }
         }
         else
@@ -534,7 +554,8 @@ space_game_core.prototype.onInput = function(client, data){
             }
             if(data[3] == '1')
             {
-                this.shoot(this.p2ShipX + ship_width / 2 - shot_width/2);
+                this.shoot(this.p2ShipX + ship_width / 2 - shot_width/2,"p2");
+				this.p2ShotsFired += 1;
             }
         }
     }
@@ -552,9 +573,9 @@ space_game_core.prototype.shareInput = function(client,data)
     }
 };
 
-space_game_core.prototype.shoot = function(x)
+space_game_core.prototype.shoot = function(x,whichPlayer)
 {
-    var tmpShot = new Shot(x);
+    var tmpShot = new Shot(x,whichPlayer);
     tmpShot.id = this.shotNum;
     this.shotNum ++;
     this.shots.push(tmpShot);
@@ -598,9 +619,9 @@ space_game_core.prototype.Share = function(client, data)
         this.kept = parseInt(data[1]);
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p2.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        
+        this.p1.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);
+        this.p2.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);        
+
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
     }
@@ -611,8 +632,8 @@ space_game_core.prototype.Share = function(client, data)
         this.kept = parseInt(data[1]);
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResult(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
-        this.p2.player.SetGameResult(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]));
+        this.p1.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);
+        this.p2.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);
         
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
