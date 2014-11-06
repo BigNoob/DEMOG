@@ -93,6 +93,9 @@ var space_game_core = function(maxIter,isDG)
     this.p2Ended = false; 
 	this.isDG = isDG;
 	this.mothershipFallen = false;	
+
+	this.startMilliseconds = -1;
+	this.gameLength = -1;
 	
 };
 
@@ -188,6 +191,7 @@ space_game_core.prototype.beginInit = function()
     }
 	else
 	{
+		this.startMilliseconds = new Date().getTime();
 		this.beginGame();
 	}
     
@@ -395,6 +399,7 @@ space_game_core.prototype.animMotherFall = function()
 		{ 
 			this.p1.emit('message','REMOVE_MOTHERSHIP');
 		    this.p2.emit('message','REMOVE_MOTHERSHIP');
+		   this.gameLength = (new Date().getTime()) - this.startMilliseconds;
            var currentTime = new Date().getTime();
            while (currentTime + 2000 >= new Date().getTime()) {
            }	
@@ -620,8 +625,8 @@ space_game_core.prototype.Share = function(client, data)
         this.kept = parseInt(data[1]);
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);
-        this.p2.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);        
+        this.p1.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);
+        this.p2.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);        
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
@@ -633,8 +638,8 @@ space_game_core.prototype.Share = function(client, data)
         this.kept = parseInt(data[1]);
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);
-        this.p2.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership);
+        this.p1.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);
+        this.p2.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);
         
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
@@ -656,7 +661,7 @@ space_game_core.prototype.onMessage = function(client, data){
     switch (splittedData[0])
     {
         case 'INPUT':
-            splittedData.push(new Date());
+            splittedData.push((new Date().getTime()) - this.startMilliseconds);
             this.onInput(client, splittedData);
         break;
         case 'MOUSE_INPUT':

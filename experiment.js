@@ -103,14 +103,14 @@ Experiment.prototype.addPlayerResults = function(playerResults)
 {
 	this.result.playerResults.push(playerResults);
 };
-Experiment.prototype.addGameResultsRabbits = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped)
+Experiment.prototype.addGameResultsRabbits = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength)
 {
-	this.result.gameResults.push(new gameResultRabbits(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped));
+	this.result.gameResults.push(new gameResultRabbits(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength));
 };
 
-Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership)
+Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength)
 {
-	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership));
+	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength));
 };
 
 Experiment.prototype.returnOldCLientsNum = function()
@@ -138,7 +138,7 @@ function XPResults()
 	
 }
 
-var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1MissedSeesaw, p2MissedSeesaw, p1DistanceSeesaw, p2DistanceSeesaw, p1BalloonsPopped, p2BalloonsPopped)
+var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1MissedSeesaw, p2MissedSeesaw, p1DistanceSeesaw, p2DistanceSeesaw, p1BalloonsPopped, p2BalloonsPopped, gameLength)
 {
 	this.gameId = gameId;
 	this.gameScore = gameScore;
@@ -155,9 +155,10 @@ var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, gi
 	this.p2DistanceSeesaw = p2DistanceSeesaw;
 	this.p1BalloonsPopped = p1BalloonsPopped;
 	this.p2BalloonsPopped = p2BalloonsPopped;
+	this.gameLength = gameLength;
 };
 
-var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership)
+var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength)
 {
 	this.gameId = gameId;
 	this.gameScore = gameScore;
@@ -174,6 +175,7 @@ var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, give
 	this.p2EnemyKilled = p2EnemyKilled;
 	this.p1DistanceToMothership = p1DistanceToMothership;
 	this.p2DistanceToMothership = p2DistanceToMothership;
+	this.gameLength = gameLength;
 };
 
 if( 'undefined' != typeof global ) {

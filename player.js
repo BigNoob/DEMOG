@@ -16,14 +16,14 @@ player.prototype.GetResult = function()
 	return this.result;
 };
 
-player.prototype.SetGameResultRabbits = function(gameid, isSharer,total, given, kept, timesMissed, distanceSeesaw, balloonsPopped)
+player.prototype.SetGameResultRabbits = function(gameid, isSharer,total, given, kept, timesMissed, distanceSeesaw, balloonsPopped, gameLength)
 {
-	this.result.addGameResultRabbits(gameid,this.currentRepetition, isSharer,total, given, kept, this.score, timesMissed, distanceSeesaw, balloonsPopped);
+	this.result.addGameResultRabbits(gameid,this.currentRepetition, isSharer,total, given, kept, this.score, timesMissed, distanceSeesaw, balloonsPopped, gameLength);
 };
 
-player.prototype.SetGameResultSpace = function(gameid, isSharer,total, given, kept, p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership)
+player.prototype.SetGameResultSpace = function(gameid, isSharer,total, given, kept, p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength)
 {
-	this.result.addGameResultSpace(gameid,this.currentRepetition, isSharer,total, given, kept, this.score, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership);
+	this.result.addGameResultSpace(gameid,this.currentRepetition, isSharer,total, given, kept, this.score, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength);
 };
 
 var PlayerResult = function()
@@ -54,17 +54,17 @@ PlayerResult.prototype.updateTotalScore = function(score)
 	this.totalScore = score;
 };
 
-PlayerResult.prototype.addGameResultRabbits = function(gameid,currentRepetition, isSharer,total, given, kept, presentScore,timesMissed,distanceSeesaw,balloonsPopped)
+PlayerResult.prototype.addGameResultRabbits = function(gameid,currentRepetition, isSharer,total, given, kept, presentScore,timesMissed,distanceSeesaw,balloonsPopped, gameLength)
 {
-	this.gameLog.push(new GameResultRabbits(gameid, currentRepetition,isSharer, total, given, kept, presentScore,timesMissed,distanceSeesaw,balloonsPopped));
+	this.gameLog.push(new GameResultRabbits(gameid, currentRepetition,isSharer, total, given, kept, presentScore,timesMissed,distanceSeesaw,balloonsPopped, gameLength));
 };
 
-PlayerResult.prototype.addGameResultSpace = function(gameid,currentRepetition, isSharer,total, given, kept, presentScore,p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership)
+PlayerResult.prototype.addGameResultSpace = function(gameid,currentRepetition, isSharer,total, given, kept, presentScore,p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength)
 {
-	this.gameLog.push(new GameResultSpace(gameid, currentRepetition,isSharer, total, given, kept, presentScore,p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership));
+	this.gameLog.push(new GameResultSpace(gameid, currentRepetition,isSharer, total, given, kept, presentScore,p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength));
 };
 
-var GameResultRabbits = function(gameid,repetition, isSharer,total, given, kept, presentScore, timesMissed,distanceSeesaw,balloonsPopped)
+var GameResultRabbits = function(gameid,repetition, isSharer,total, given, kept, presentScore, timesMissed,distanceSeesaw,balloonsPopped, gameLength)
 {
 	this.gameid = gameid;
 	this.repetition = repetition;
@@ -76,9 +76,10 @@ var GameResultRabbits = function(gameid,repetition, isSharer,total, given, kept,
 	this.timesMissed = timesMissed;
 	this.distanceSeesaw = distanceSeesaw;
 	this.balloonsPopped = balloonsPopped;
+	this.gameLength = gameLength;
 };
 
-var GameResultSpace = function(gameid,repetition, isSharer,total, given, kept, presentScore, p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership)
+var GameResultSpace = function(gameid,repetition, isSharer,total, given, kept, presentScore, p1ShotsFired,p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength)
 {
 	this.gameid = gameid;
 	this.repetition = repetition;
@@ -93,6 +94,7 @@ var GameResultSpace = function(gameid,repetition, isSharer,total, given, kept, p
 	this.p2EnemyKilled = p2EnemyKilled;
 	this.p1DistanceToMothership = p1DistanceToMothership;
 	this.p2DistanceToMothership = p2DistanceToMothership;
+	this.gameLength = gameLength;
 };
 
 if( 'undefined' != typeof global ) {

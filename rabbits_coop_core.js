@@ -91,7 +91,8 @@ var rabbits_game_core = function(maxIter)
     this.flyer.x = 400 - this.flyer.w;
     this.flyer.y = 400;
         
-		
+	this.startMilliseconds = -1;
+	this.gameLength = -1;
 
     this.init_speed = 0.2;
     this.init_angle = 0;
@@ -179,6 +180,7 @@ var Rect = function(x,y,w,h)
 
 rabbits_game_core.prototype.beginInit = function()
 {
+	this.startMilliseconds = new Date().getTime();
     this.balloons.Init();
     this.beginGame();
 };
@@ -362,6 +364,7 @@ rabbits_game_core.prototype.animMotherFall = function()
     if (this.goalballoonY > 500)
     {
         this.state = state_share;
+		this.gameLength = (new Date().getTime()) - this.startMilliseconds;
         if(this.launcherNumber == 2)
         {
             this.p1.emit('message','SHARE_STATE');
@@ -618,8 +621,8 @@ rabbits_game_core.prototype.Share = function(client, data)
 		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
 		this.p2DistanceSeesaw /= this.p2DistanceTimes;		
 
-        this.p1.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
-        this.p2.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
+        this.p1.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped,this.gameLength);
+        this.p2.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
@@ -636,8 +639,8 @@ rabbits_game_core.prototype.Share = function(client, data)
 		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
 		this.p2DistanceSeesaw /= this.p2DistanceTimes;	
 
-        this.p1.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped);
-        this.p2.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped);
+        this.p1.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped,this.gameLength);
+        this.p2.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
@@ -661,7 +664,7 @@ rabbits_game_core.prototype.onMessage = function(client, data){
     switch (splittedData[0])
     {
         case 'INPUT':
-            splittedData.push(new Date());
+            splittedData.push((new Date().getTime()) - this.startMilliseconds);
             this.onInput(client, splittedData);
         break;
         case 'MOUSE_INPUT':
