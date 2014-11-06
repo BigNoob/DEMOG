@@ -174,6 +174,7 @@ function StartLoading()
   stage.addChild(progressText2);
   stage.update();
   //Loading Manifest
+	
   manifest = [
                 {src:"/public/images/RabbitBackground.png", id:"background"},
                 {src:"/public/images/RedBalloon.png", id:"balloon"},
@@ -270,6 +271,7 @@ function handleProgress (event)
 }
 function handleComplete (event)
 {
+  /*
   launcherSpriteSheet = new createjs.SpriteSheet(
     {
     images: ["/public/images/LauncherSheet.png"],
@@ -285,8 +287,40 @@ function handleComplete (event)
   );
   launcher = new createjs.Sprite(launcherSpriteSheet);
   flyer = new createjs.Sprite(flyerSpriteSheet);
+  */
   startServerListen();  //We start listening to the server after the loading of all the assets
   InitLobbyState(undefined); 
+}
+
+function reloadSprites(color)
+{
+  var myLauncher = "";
+  var myFlyer = "";
+  
+  if (color == "1") 
+  {
+	myLauncher = "/public/images/LauncherSheet.png";
+    myFlyer = "/public/images/FlyerSheet.png";
+  } else 
+  {
+	myLauncher = "/public/images/LauncherSheet2.png";
+    myFlyer = "/public/images/FlyerSheet2.png";  
+  }
+  launcherSpriteSheet = new createjs.SpriteSheet(
+    {
+    images: [myLauncher],
+    frames: {width:96, height:53},
+    }
+  );
+
+  flyerSpriteSheet = new createjs.SpriteSheet(
+    {
+    images: [myFlyer],
+    frames: {width:40, height:46},
+    }
+  );
+  launcher = new createjs.Sprite(launcherSpriteSheet);
+  flyer = new createjs.Sprite(flyerSpriteSheet);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,6 +355,9 @@ function serverMessageParser(data)
       var splittedData = data.split(',');
       switch (splittedData[0])
       {
+        case 'COLOR':
+		  reloadSprites(splittedData[1]);
+          
         case 'UPDATE':
           updateScreen(splittedData);
         break;

@@ -180,6 +180,8 @@ var Rect = function(x,y,w,h)
 
 rabbits_game_core.prototype.beginInit = function()
 {
+    this.p1.emit("message",'COLOR,1'); //says what sprites client should use (so that the two clients control a rabbit of the same color)
+    this.p2.emit("message",'COLOR,2');
 	this.startMilliseconds = new Date().getTime();
     this.balloons.Init();
     this.beginGame();
