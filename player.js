@@ -33,6 +33,7 @@ var PlayerResult = function()
 	this.status;
 	this.totalScore;
 	this.gameLog;
+	this.lostPartner;
 
 };
 
@@ -42,6 +43,7 @@ PlayerResult.prototype.init = function(userid, amazonId)
 	this.amazonId = amazonId;
 	this.totalScore = 0;
 	this.gameLog = [];
+	this.lostPartner = 0;
 };
 
 PlayerResult.prototype.updateStatus = function(status)

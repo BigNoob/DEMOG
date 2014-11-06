@@ -271,7 +271,7 @@ function handleProgress (event)
 }
 function handleComplete (event)
 {
-  /*
+  /* done later, when a player knows what spritesheet he must load (see below reloadSprites)
   launcherSpriteSheet = new createjs.SpriteSheet(
     {
     images: ["/public/images/LauncherSheet.png"],

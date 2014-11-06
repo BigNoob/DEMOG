@@ -375,26 +375,32 @@ if(sio != undefined)
         client.userid = UUID();
         client.player = new player();
         client.player.InitResult(client.userid,undefined);
-        client.player.result.updateStatus("wating for games");
+        client.player.result.updateStatus("waiting for games");
         wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){
             client.player.result.amazonId = m;
+        });
+        client.on('partnerLost', function (){
+            client.player.result.lostPartner = 1;
         });
         client.on('message', function (m){
             wrap_server.onMessage(client, m);
         });
 
         client.on('disconnect', function (){
+			var tmpGame = wrap_server.findGame(client);
+			var tmpPartner = wrap_server.findPartner(tmpGame,client)
+			
             if(wrap_server.isClientInLobby(client))
             {
-                wrap_server.removeCientFromLobby(client);
+                wrap_server.removeClientFromLobby(client);
                 wrap_server.removeClient(client); 
             }
             else if(wrap_server.isClientInGame(client))
             {
                 wrap_server.endGame(wrap_server.findGame(client));
-                wrap_server.removeCientFromLobby(client);
+                wrap_server.removeClientFromLobby(client);
                 wrap_server.removeClient(client);
             }
             else

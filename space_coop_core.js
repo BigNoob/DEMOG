@@ -7,7 +7,7 @@ var UUID        = require('node-uuid');
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var ship_speed = 4;
+var ship_speed = 6;
 var ship_width = 16;
 var ship_height = 16;
 
@@ -135,9 +135,26 @@ Enemies.prototype.Init = function()
 Enemies.prototype.Move = function(x)
 {
     this.x += x;
+    if(this.x > 800)
+    {
+        this.x -= (800 + enemiesX_spacing * number);
+    }
+	else if (this.x < (- enemiesX_spacing * number))
+    {
+        this.x = 800;
+    }
     for(var i = 0 ; i < this.array.length; i ++)
     {
+        
         this.array[i].rect.x += x;
+        if(this.array[i].rect.x > 800)
+        {
+            this.array[i].rect.x -= 800 + enemiesX_spacing * number;
+        }
+		else if (this.array[i].rect.x < (- enemiesX_spacing * number))
+		{
+		    this.array[i].rect.x = 800;
+		}
     }
 };
 Enemies.prototype.KillEnemy = function(i)
@@ -344,14 +361,13 @@ space_game_core.prototype.setDirections = function()
 //Move the enemy lines
 space_game_core.prototype.moveEnemies = function()
 {
-    if(this.enemiesLeft)
+    /*if(Math.random() > 0.99)
     {
-        this.enemies.Move(-enemy_speed);
-    }
-    else
-    {
-        this.enemies.Move(enemy_speed);
-    }
+        enemy_speed *= -1; // change direction
+    }*/
+
+    this.enemies.Move(enemy_speed);
+  
 };
 //Move the mothership
 space_game_core.prototype.moveMother = function()

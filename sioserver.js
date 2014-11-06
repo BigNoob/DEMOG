@@ -148,7 +148,7 @@ game_server.prototype.sendClientToLobby = function(client)
 	
 };
 //Remove a client from the lobby
-game_server.prototype.removeCientFromLobby = function(client)
+game_server.prototype.removeClientFromLobby = function(client)
 {
 	client.player.isInLobby = false;
 	this.clients.push(client);
@@ -246,8 +246,8 @@ game_server.prototype.createGame = function(client1, client2)
 	this.games[this.games.length - 1].p2 = client2;
 	this.games[this.games.length - 1].beginInit();
 	
-	this.removeCientFromLobby(client1);
-	this.removeCientFromLobby(client2);
+	this.removeClientFromLobby(client1);
+	this.removeClientFromLobby(client2);
 	
 };
 
@@ -266,6 +266,18 @@ game_server.prototype.endGame = function(game)
 	}
 	
 	this.games.splice(this.getGameIndex(game),1);
+};
+
+//this function finds partner of player
+game_server.prototype.findPartner = function(game,client)
+{
+		if(this.game.p1.userid == client.userid)
+		{
+			this.game.p2.emit('partnerLost');
+		} else
+		{
+			this.game.p1.emit('partnerLost');
+		}	
 };
 
 //this function finds a selected core game server instance based one of its client
