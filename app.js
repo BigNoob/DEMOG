@@ -373,11 +373,12 @@ if(sio != undefined)
     sio.sockets.on('connection', function (client){
         var tmpClient = client;
 		var addr = client.handshake.address;
-		client.IPaddress = addr.address;
+        
         client.userid = UUID();
         client.player = new player();
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("waiting for games");
+	    client.player.result.updateIP(addr.address);
         wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){

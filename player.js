@@ -34,7 +34,7 @@ var PlayerResult = function()
 	this.totalScore;
 	this.gameLog;
 	this.lostPartner;
-
+	this.IPaddress;
 };
 
 PlayerResult.prototype.init = function(userid, amazonId)
@@ -55,6 +55,11 @@ PlayerResult.prototype.updateStatus = function(status)
 PlayerResult.prototype.updateTotalScore = function(score)
 {
 	this.totalScore = score;
+};
+
+PlayerResult.prototype.updateIP = function(ip)
+{
+	this.IPaddress = ip;
 };
 
 PlayerResult.prototype.addGameResultRabbits = function(gameid,currentRepetition, isSharer,total, given, kept, presentScore,timesMissed,distanceSeesaw,balloonsPopped, gameLength)
