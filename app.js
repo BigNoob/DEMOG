@@ -378,8 +378,9 @@ if(sio != undefined)
         client.player = new player();
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("waiting for games");
-	    client.player.result.updateIP(addr.address);
-        wrap_server.addClient(client);
+	    //client.player.result.updateIP(addr.address);
+		client.player.result.updateIP(client.request.connection.remoteAddress);      
+		wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){
             client.player.result.amazonId = m;
