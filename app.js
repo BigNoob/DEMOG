@@ -80,7 +80,7 @@ var mailSenderPassw = 'wivyxuvo';                           //password of the gm
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('space',"web",1,"rabbits","en"),
+    current_experiment = CreateExperiment('space',"web",1,"space_coop","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)
@@ -389,8 +389,7 @@ if(sio != undefined)
         });
 
         client.on('disconnect', function (){
-			var tmpGame = wrap_server.findGame(client);
-			var tmpPartner = wrap_server.findPartner(tmpGame,client)
+
 			
             if(wrap_server.isClientInLobby(client))
             {
@@ -399,6 +398,8 @@ if(sio != undefined)
             }
             else if(wrap_server.isClientInGame(client))
             {
+				var tmpGame = wrap_server.findGame(client);
+				wrap_server.findPartner(tmpGame,client)
                 wrap_server.endGame(wrap_server.findGame(client));
                 wrap_server.removeClientFromLobby(client);
                 wrap_server.removeClient(client);
