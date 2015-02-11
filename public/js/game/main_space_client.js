@@ -291,14 +291,48 @@ function startServerListen_Space()
   var tmpAddress = document.URL;
   var serverAddress = tmpAddress.substring(0,tmpAddress.lastIndexOf('/'));
   socket = io.connect(serverAddress);
+
+  var QueryString = function () {
+	  // This function is anonymous, is executed immediately and 
+	  // the return value is assigned to QueryString!
+		// used to get the mturk id of the player entered in an html form on the previous page
+	  var query_string = {};
+	  var query = window.location.search.substring(1);
+	  var vars = query.split("&");
+	  for (var i=0;i<vars.length;i++) {
+		var pair = vars[i].split("=");
+		    // If first entry with this name
+		if (typeof query_string[pair[0]] === "undefined") {
+		  query_string[pair[0]] = pair[1];
+		    // If second entry with this name
+		} else if (typeof query_string[pair[0]] === "string") {
+		  var arr = [ query_string[pair[0]], pair[1] ];
+		  query_string[pair[0]] = arr;
+		    // If third or later entry with this name
+		} else {
+		  query_string[pair[0]].push(pair[1]);
+		}
+	  } 
+    return query_string;
+	} ();
+
+  socket.emit('playerLogin',QueryString.playerid);
+	
+	/* // old code to use a pop up to get mturk id
   if(xpType == "amazona")
   {
+	
+	
     loginPrompt  = prompt(stringsArray[str_loginPrompt]);
     if(loginPrompt != null)
     {
       socket.emit('playerLogin',loginPrompt);
     }
+	
   }
+	*/
+
+ 
   //Socket Server Listener
   socket.on("message",function(data){
         serverMessageParser_Space(data);

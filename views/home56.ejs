@@ -8,9 +8,7 @@
 				document.getElementById("notFilled").innerHTML = "Mturk ID must be filled out!";
 				return false;
 			}
-			else {
-				socket.emit('playerLogin',x);
-			}
+
 		}
 	</script>
 	</head>
@@ -38,7 +36,7 @@
 					<p class="bold">You need to finish the two repetitions and give your feedback at the end in order for us to be able to pay you.<br /><br /></p>
 
 		
-		<form name="forma" action="/home57" onsubmit="return validateMyForm()" method="get">
+		<form name="forma" action="/game" onsubmit="return validateMyForm()" method="get">
 
 		<p>Please enter your mturk id: <input type="text" name="playerid">
 		</p>

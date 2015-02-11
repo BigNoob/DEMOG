@@ -16,7 +16,7 @@
 		return M.join(' ');
 		})();
 	    var myNavigator = navigator.sayswho;
-		//if ((myNavigator.indexOf("Chrome") == -1) && (myNavigator.indexOf("Firefox") == -1)) //if it doesn't find Chrome
+		if ((myNavigator.indexOf("Chrome") == -1) && (myNavigator.indexOf("Firefox") == -1)) //if it doesn't find Chrome
 		//{
 		//	document.getElementById("selection").innerHTML = "This game only works in a Chrome browser. Please switch to Chrome and try again.";
 		//	document.getElementById("toHide").style.display = 'none';	

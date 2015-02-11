@@ -31,8 +31,17 @@
 require('./player.js');
 require('./experiment');
 require('./sioserver.js');
-require('newrelic');
 
+//require('newrelic');
+
+/*
+lines to comment for the app to run locally on ubuntu:
+    require('newrelic');
+	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
+    smtpTransport = require('nodemailer-smtp-transport'),
+    sgTransport = require('nodemailer-sendgrid-transport'),
+	localTransport
+*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Variables Declaration
@@ -48,9 +57,12 @@ var
 	http 		= require('http'),							//
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
-    nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
+
+    /*
+	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
-    sgTransport = require('nodemailer-sendgrid-transport'),
+    sgTransport = require('nodemailer-sendgrid-transport'), */
+
     sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD),
     sio         = undefined,
     wrap_server = undefined;
@@ -98,6 +110,7 @@ function CreateExperiment(name,type,iter,game,lang)
 // Mail sender set up
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 var LocalTransport = nodeMailer.createTransport("SMTP",{
    service: "Gmail",
    auth: {
@@ -105,7 +118,7 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
        pass: mailSenderPassw
    }
 });
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -196,6 +209,7 @@ app.post('/dictateur/stop/:xpName', function(req, res) {
     }
     res.redirect('/dictateur');
 });
+
 app.post('/dictateur/write/:xpName', function(req, res) {
     var xpName = req.param('xpName');
     if (xpName != '') {
@@ -254,6 +268,8 @@ app.post('/dictateur/write/:xpName', function(req, res) {
     }
     res.redirect('/dictateur');
 });
+
+
 
 app.get('/game', function(req, res){
     res.render('client.ejs', {exp: current_experiment});
@@ -370,16 +386,28 @@ CreateSIOServer();
 
 if(sio != undefined)
 {
+/*
+	sio.on('connection', function(client){
+		var client_ip_address = sio.request.connection.remoteAddress;
+		console.log(client_ip_address);
+	} */
     sio.sockets.on('connection', function (client){
+		//var socketId = client.id;
+		var clientIp = client.handshake.address;
+	    clientIp = client.manager.handshaken[client.id].address;
+		console.log(clientIp)
         var tmpClient = client;
 		var addr = client.handshake.address;
-        
+        //console.log(sio);
+		//var sHeaders = client.handshake.headers;
+		//console.log(sHeaders.host);
+	   
         client.userid = UUID();
         client.player = new player();
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("waiting for games");
 	    //client.player.result.updateIP(addr.address);
-		client.player.result.updateIP(sio.request.connection.remoteAddress);      
+		//client.player.result.updateIP(sio.request.connection.remoteAddress);      
 		wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){
