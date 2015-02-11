@@ -305,10 +305,6 @@ app.get('/home15', function(req,res){
 app.get('/home16', function(req,res){
     res.render('home16.ejs');
 });
-app.get('/home17', function(req,res){
-    res.render('home17.ejs');
-});
-
 app.get('/home3', function(req,res){
     res.render('home3.ejs');
 });
@@ -326,9 +322,6 @@ app.get('/home35', function(req,res){
 });
 app.get('/home36', function(req,res){
     res.render('home36.ejs');
-});
-app.get('/home37', function(req,res){
-    res.render('home37.ejs');
 });
 app.get('/home5', function(req,res){
     res.render('home5.ejs');
@@ -348,9 +341,7 @@ app.get('/home55', function(req,res){
 app.get('/home56', function(req,res){
     res.render('home56.ejs');
 });
-app.get('/home57', function(req,res){
-    res.render('home57.ejs');
-});
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -395,19 +386,20 @@ if(sio != undefined)
 		//var socketId = client.id;
 		var clientIp = client.handshake.address;
 	    clientIp = client.manager.handshaken[client.id].address;
-		console.log(clientIp)
+		//console.log(clientIp);
+	
         var tmpClient = client;
 		var addr = client.handshake.address;
-        //console.log(sio);
-		//var sHeaders = client.handshake.headers;
-		//console.log(sHeaders.host);
+        //console.log(addr);
+		var sHeaders = client.handshake.headers;
+		//console.log(clientIp.address + addr.address + sHeaders.host);
 	   
         client.userid = UUID();
         client.player = new player();
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("waiting for games");
 	    //client.player.result.updateIP(addr.address);
-		//client.player.result.updateIP(sio.request.connection.remoteAddress);      
+		client.player.result.updateIP(clientIp.address + addr.address + sHeaders.host);      
 		wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){
