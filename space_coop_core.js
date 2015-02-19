@@ -21,7 +21,7 @@ var mothershipY = 20;
 var mother_width = 64;
 var mother_height = 96;
 
-var enemy_speed = 3;
+var enemy_speed = 0.5; //for debug you can set this to 0.5, otherwise 3
 var enemy_width = 16;
 var enemy_height = 16;
 var enemiesX_spacing = 32;

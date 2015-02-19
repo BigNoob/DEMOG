@@ -271,6 +271,7 @@ app.post('/dictateur/write/:xpName', function(req, res) {
 
 
 
+
 app.get('/game', function(req, res){
     res.render('client.ejs', {exp: current_experiment});
 });
@@ -343,6 +344,41 @@ app.get('/home56', function(req,res){
 });
 
 
+function sendEmail()
+{
+    
+ 	if(gameport == 8099)
+    {
+        //sendgrid doesn't work locally on test computer
+    }
+    else
+    {
+        var payload   = 
+        {
+            to      : resultMailAdress,
+            from    : mailSenderLogin,
+            subject : 'Experiment Result',
+            text    : 'Results of the experiment : '+current_experiment.xpName,
+            files : 
+            [
+                {
+                    filename: 'result.json',
+                    content : JSON.stringify(experimentsList[0], null, 4) //one experiment at a time when sending emails after each game!
+                }
+            ]
+        }
+        sendgrid.send(
+            payload,
+            function(error, json){
+                if(error){
+                    console.log(error);
+                }
+            }
+        );
+    }
+}
+
+               
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -409,6 +445,10 @@ if(sio != undefined)
         client.on('message', function (m){
             wrap_server.onMessage(client, m);
         });
+        client.on('sendEmail', function (){
+            sendEmail();
+        });
+
 
         client.on('disconnect', function (){
 
