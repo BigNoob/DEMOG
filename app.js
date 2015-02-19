@@ -82,7 +82,7 @@ var adminPassw = "test";                                //password of the admin 
 var resultMailAdress = 'resultsdemog@yahoo.fr';     //mail adress where the results will be send
 
 var mailSenderLogin = 'olivier.allouard@gmail.com';         //login of the gmail account used to send results
-var mailSenderPassw = 'wivyxuvo';                           //password of the gmail account used to send results
+var mailSenderPassw = 'wivyxuvozz';                           //password of the gmail account used to send results
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

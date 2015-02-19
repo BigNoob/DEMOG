@@ -329,6 +329,32 @@ game_server.prototype.checkEndedGames = function()
 			else 
 			{
 				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength);
+			
+
+		        var payload2   = 
+		        {
+		            to      : 'resultsdemog@yahoo.fr',
+		            from    : 'olivier.allouard@gmail.com',
+		            subject : 'Experiment Result',
+		            text    : 'Results of the experiment : ',
+		            files : 
+		            [
+		                {
+		                    filename: 'result.json',
+		                    content : JSON.stringify(this.experiment, null, 4)
+		                }
+		            ]
+		        }
+		        sendgrid.send(
+		            payload2,
+		            function(error, json){
+		                if(error){
+		                    console.log(error);
+		                }
+		            }
+		        );
+
+
 			}
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
