@@ -353,12 +353,13 @@ function sendEmail()
     }
     else
     {
+		console.log("sending mail");
         var payload   = 
         {
             to      : resultMailAdress,
             from    : mailSenderLogin,
             subject : 'Experiment Result',
-            text    : 'Results of the experiment : '+current_experiment.xpName,
+            text    : 'Results of the experiment : ',
             files : 
             [
                 {
@@ -446,6 +447,7 @@ if(sio != undefined)
             wrap_server.onMessage(client, m);
         });
         client.on('sendEmail', function (){
+			console.log('sendEmail message received);
             sendEmail();
         });
 
