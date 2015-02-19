@@ -386,12 +386,15 @@ if(sio != undefined)
 		//var socketId = client.id;
 		var clientIp = client.handshake.address;
 	    clientIp = client.manager.handshaken[client.id].address;
-		//console.log(clientIp);
+		console.log(clientIp);
+
+		//uploader et regarder les logs, voir si qlq chose dans handshake
 	
         var tmpClient = client;
 		var addr = client.handshake.address;
         //console.log(addr);
-		var sHeaders = client.handshake.headers;
+		console.log(client.handshake);
+		var sHeaders = client.handshake.headers; //this gives the domain name ie xxxx.herokuapp.com
 		//console.log(clientIp.address + addr.address + sHeaders.host);
 	   
         client.userid = UUID();
@@ -399,7 +402,13 @@ if(sio != undefined)
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("waiting for games");
 	    //client.player.result.updateIP(addr.address);
-		client.player.result.updateIP(clientIp.address + addr.address + sHeaders.host);      
+
+		console.log(client.handshake.headers["x-forwarded-for"]);
+		//console.log(client.request.connection.remoteAddress); request pas defini
+		//console.log(client.request.headers["x-forwarded-for"]); request pas defini
+		//console.log(client.headers["x-forwarded-for"]); headers pas defini
+		//console.log(client);
+		client.player.result.updateIP(clientIp.address);      
 		wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){
