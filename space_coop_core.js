@@ -21,7 +21,7 @@ var mothershipY = 20;
 var mother_width = 64;
 var mother_height = 96;
 
-var enemy_speed = 0.01; //for debug you can set this to 0.01, otherwise realistic speed is 3
+var enemy_speed = 0.2; //for debug you can set this to 0.2, otherwise realistic speed is 3
 var enemy_width = 16;
 var enemy_height = 16;
 var enemiesX_spacing = 32;
@@ -628,8 +628,13 @@ space_game_core.prototype.PlayerEnded = function(client , data)
 space_game_core.prototype.EndGame = function()
 {
     this.p1.player.currentRepetition ++;
+
+ 
+	
+	this.p1.emit('sendEmail'); // this goes to main_space_client.js, which has to send it to app.js through socket.emit then
     this.p2.player.currentRepetition ++;
     this.isEnded = true;
+	
 };
 space_game_core.prototype.Share = function(client, data)
 {

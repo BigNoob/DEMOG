@@ -337,6 +337,10 @@ function startServerListen_Space()
   socket.on("message",function(data){
         serverMessageParser_Space(data);
   });   
+
+  socket.on("sendEmail",function(){
+        socket.emit('sendEmail');
+  });
 }
 
 function serverMessageParser_Space(data)

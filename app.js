@@ -421,7 +421,7 @@ if(sio != undefined)
 	} */
     sio.sockets.on('connection', function (client){
 		//var socketId = client.id;
-		var clientIp = client.handshake.headers["x-forwarded-for"]; //undefined locally
+		var clientIp = client.handshake.headers["x-forwarded-for"]; //undefined locally, works on heroku but could not work with newer versions of Nodejs/expressjs
 	
 		// var sHeaders = client.handshake.headers; //this gives the domain name ie xxxx.herokuapp.com
 	   

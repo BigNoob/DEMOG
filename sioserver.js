@@ -320,6 +320,7 @@ game_server.prototype.checkEndedGames = function()
 	{
 		if(this.games[i].isEnded)
 		{
+			
 	        this.updateClient(this.games[i].p1);
 	        this.updateClient(this.games[i].p2);
 			if (this.experiment.xpGame == "rabbits")
@@ -331,7 +332,7 @@ game_server.prototype.checkEndedGames = function()
 				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength);
 			
 
-				this.games[i].p1.emit('sendEmail');
+				
 
 
 			}
