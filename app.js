@@ -384,31 +384,20 @@ if(sio != undefined)
 	} */
     sio.sockets.on('connection', function (client){
 		//var socketId = client.id;
-		var clientIp = client.handshake.address;
-	    clientIp = client.manager.handshaken[client.id].address;
-		console.log(clientIp);
-
-		//uploader et regarder les logs, voir si qlq chose dans handshake
+		var clientIp = client.handshake.headers["x-forwarded-for"]; //undefined locally
 	
-        var tmpClient = client;
-		var addr = client.handshake.address;
-        //console.log(addr);
-		console.log(client.handshake);
-		var sHeaders = client.handshake.headers; //this gives the domain name ie xxxx.herokuapp.com
-		//console.log(clientIp.address + addr.address + sHeaders.host);
+		// var sHeaders = client.handshake.headers; //this gives the domain name ie xxxx.herokuapp.com
 	   
         client.userid = UUID();
         client.player = new player();
         client.player.InitResult(client.userid,undefined);
         client.player.result.updateStatus("waiting for games");
-	    //client.player.result.updateIP(addr.address);
-
-		console.log(client.handshake.headers["x-forwarded-for"]);
-		//console.log(client.request.connection.remoteAddress); request pas defini
-		//console.log(client.request.headers["x-forwarded-for"]); request pas defini
-		//console.log(client.headers["x-forwarded-for"]); headers pas defini
-		//console.log(client);
-		client.player.result.updateIP(clientIp.address);      
+	   
+		//console.log(client.request.connection.remoteAddress); request undefined
+		//console.log(client.request.headers["x-forwarded-for"]); request undefined LOCALLY, but OK on Heroku. 
+		//console.log(client.headers["x-forwarded-for"]); headers undefined
+	
+		client.player.result.updateIP(clientIp);      // this way to get IP could not work with newer versions of Nodejs/expressjs
 		wrap_server.addClient(client);
         
         client.on('playerLogin', function (m){
