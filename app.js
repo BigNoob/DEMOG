@@ -447,7 +447,7 @@ if(sio != undefined)
             wrap_server.onMessage(client, m);
         });
         client.on('sendEmail', function (){
-			console.log('sendEmail message received);
+			console.log('sendEmail message received');
             sendEmail();
         });
 
