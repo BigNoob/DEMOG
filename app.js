@@ -32,7 +32,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-//require('newrelic');
+require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -353,7 +353,7 @@ function sendEmail()
     }
     else
     {
-		console.log("sending mail");
+		
         var payload   = 
         {
             to      : resultMailAdress,
@@ -447,7 +447,6 @@ if(sio != undefined)
             wrap_server.onMessage(client, m);
         });
         client.on('sendEmail', function (){
-			console.log('sendEmail message received');
             sendEmail();
         });
 
