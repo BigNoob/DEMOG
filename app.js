@@ -32,7 +32,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-//require('newrelic');
+require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -73,8 +73,10 @@ var
 // In sioserver.js, add to function addGameResults in prototype.checkEndedGames
 // In experiment.js, add to prototype.addGameResults and var gameResult
 
-var frame_time = 60;
-var physic_time = 15;
+// CPU use is heavily dependent on createjs.Ticker.setFPS(20); in main_space_client.js and main_rabbits_clients.js
+
+var frame_time = 60; //60
+var physic_time = 15; //15
 
 var adminLogin = "demog";                                  //Login of the admin page
 var adminPassw = "test";                                //password of the admin page
@@ -92,7 +94,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('rabbits name',"web",1,"dg","en"),
+    current_experiment = CreateExperiment('rabbits name',"web",2,"space_coop","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)

@@ -80,7 +80,7 @@ var slider;
 
 var share = -1;
 var canfire = true;
-var cooldown = 240;
+var cooldown = 240; //240
 var bulletArray = [];
 
 //Preloader
@@ -102,8 +102,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
-var lines = 1;    //must be changed in space_coop_core.js also, 4 in real test
-var number = 1;   //must be changed in space_coop_core.js also, 10 in real test
+var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
+var number = 10;   //must be changed in space_coop_core.js also, 10 in real test
 
 
 //Constants
@@ -126,7 +126,7 @@ function Main_Space(type,game) {
   stageheight = stage.canvas.height;
 
   //Game Loop Listener
-  createjs.Ticker.setFPS(60);
+  createjs.Ticker.setFPS(20); //60
   createjs.Ticker.on("tick", tick_Space); 
   window.addEventListener('keydown', function(event) { handleKeyDown_Space(event); }, false);
   canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
@@ -379,7 +379,8 @@ function serverMessageParser_Space(data)
           ClearGameState_Space();    
           ClearShareState_Space();
           ClearWaitState_Space();     
-          InitLobbyState_Space(splittedData);
+          //InitLobbyState_Space(splittedData); this doesn't work, needs undefined as argument instead, dont know why
+		  InitLobbyState_Space(undefined); 
         break;
         case 'NO_XP':
           isXPRunning = false;
@@ -454,6 +455,7 @@ function InitGameState_Space()
 
 function InitLobbyState_Space(data)
 {
+
   if(data == undefined)
   {
     var score = 0;
@@ -478,6 +480,8 @@ function InitLobbyState_Space(data)
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
+
+
 
   var circleSize = 80;
   var elemSize = 20;
@@ -527,9 +531,12 @@ function InitLobbyState_Space(data)
         WaitWheel.getChildAt(i).alpha = 0.75;
       }
     }
-  },60);
+  },100);
+
   state = state_lobby;  
 }
+
+
 
 function InitNoXP_Space()
 {
@@ -546,7 +553,7 @@ function InitNoXP_Space()
 function InitShareState_Space()
 {
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role of giver.\n\n Please share the points with the other person. \n\n\n\nIndicate how much you want to give by clicking on the scale below.\n\n\n\n\n\n\n\n\n I want to GIVE:";
+  {progressText.text = "You have been randomly attributed the role of giver.\n\n Please share the points with the other person. \n\n\n\nIndicate how much you want to give by clicking on the scale below.\n\n\n\n\n\n\n\n I want to GIVE:";
   progressText2.text = "Validate by pressing space.";
   }
   else 
@@ -601,7 +608,7 @@ function InitShareState_Space()
 
 function InitShareWait_Space()
 {
-  
+
   if (xpGame == "dg")
   {progressText.text = "You have been randomly attributed the role of receiver.\n \n Please wait while the other person is sharing the points.";}
   else 
@@ -650,9 +657,9 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 	  if (xpGame == "dg")
-	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other person.\n Your points for this experiment are thus "+data+".\n \n Click to continue and wait for the next experiment to start."; }
+	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other person.\n\n Your points for this experiment are thus "+data+".\n\n\n Click to continue and wait for the next experiment to start."; }
 	  else 
-	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n \n Click to continue and wait for the next game to start."; } 
+	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n\n Your points for this game are thus "+data+".\n\n\n Click to continue and wait for the next game to start."; } 
 	
 	  progressText.y = 20;
 	  progressText.x = 400 ;
@@ -681,6 +688,7 @@ function DrawGivenAmmount(data, role)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function ClearGameState_Space()
 {
+  stage.removeChild(WaitWheel);
   stage.removeChild(progressText);
   stage.removeChild(ship);
   stage.removeChild(allyShip);
@@ -740,7 +748,8 @@ function ClearDrawGivenAmmount_Space()
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function tick_Space(event) {
-  stage.update(event);
+  stage.update(event); 
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

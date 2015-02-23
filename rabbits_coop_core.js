@@ -590,10 +590,12 @@ rabbits_game_core.prototype.PlayerEnded = function(client , data)
     if(client.userid == this.p1.userid)
     {
         this.p1Ended = true;
+		this.p1.emit('message','LOBBY');
     }
     else
     {
         this.p2Ended = true;
+		this.p2.emit('message','LOBBY');
     }
 
     if(this.p1Ended && this.p2Ended)

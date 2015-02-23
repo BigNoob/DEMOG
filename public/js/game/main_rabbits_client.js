@@ -133,7 +133,7 @@ function Main_Rabbits(type) {
   stageheight = stage.canvas.height;
 
   //Game Loop Listener
-  createjs.Ticker.setFPS(60);
+  createjs.Ticker.setFPS(20);
   createjs.Ticker.on("tick", tick); 
   window.addEventListener('keydown', function(event) { handleKeyDown(event); }, false);
   canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
@@ -420,8 +420,11 @@ function serverMessageParser(data)
         break;
         case 'LOBBY':
           //ClearLobbyState();
-          ClearGameState();
-          InitLobbyState(splittedData);
+          ClearGameState();    
+          ClearShareState();
+          ClearWaitState();     
+          //InitLobbyState_Space(splittedData); this doesn't work, needs undefined as argument instead, dont know why
+		  InitLobbyState(undefined); 
         break;
         case 'NO_XP':
           isXPRunning = false;
@@ -565,7 +568,7 @@ function InitLobbyState(data)
         WaitWheel.getChildAt(i).alpha = 0.75;
       }
     }
-  },60);
+  },100);
   state = state_lobby;  
 }
 
@@ -672,7 +675,7 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 
-	progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n Your points for this game are thus "+data+".\n \n Click to continue and wait for the next game to start."; 
+	progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n\n Your points for this game are thus "+data+".\n \n \nClick to continue and wait for the next game to start."; 
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";
@@ -700,6 +703,7 @@ function DrawGivenAmmount(data, role)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function ClearGameState()
 {
+  stage.removeChild(WaitWheel);
   stage.removeChild(progressText);
   stage.removeChild(launcher);
   stage.removeChild(EnemiesCont);

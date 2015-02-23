@@ -28,8 +28,8 @@ var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 100;
-var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
-var number = 1;  //must be changed in main_space_client.js also, 10 for real test
+var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
+var number = 10;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
@@ -613,10 +613,12 @@ space_game_core.prototype.PlayerEnded = function(client , data)
     if(client.userid == this.p1.userid)
     {
         this.p1Ended = true;
+		this.p1.emit('message','LOBBY');
     }
     else
     {
         this.p2Ended = true;
+		this.p2.emit('message','LOBBY');
     }
 
     if(this.p1Ended && this.p2Ended)
@@ -627,10 +629,7 @@ space_game_core.prototype.PlayerEnded = function(client , data)
 };
 space_game_core.prototype.EndGame = function()
 {
-    this.p1.player.currentRepetition ++;
-
- 
-	
+    this.p1.player.currentRepetition ++;	
 	this.p1.emit('sendEmail'); // this goes to main_space_client.js, which has to send it to app.js through socket.emit then
     this.p2.player.currentRepetition ++;
     this.isEnded = true;
