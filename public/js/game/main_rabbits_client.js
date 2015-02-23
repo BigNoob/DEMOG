@@ -583,7 +583,7 @@ function InitNoXP()
 
 function InitShareState()
 {
-  progressText.text = stringsArray[str_doShare]; 
+  progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n\n I want to GIVE:"; 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
@@ -649,7 +649,7 @@ function DrawGivenAmmount(data, role)
   var recieved = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-	  progressText.text = "The other player shared the loot and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; 
+	  progressText.text = "The other player shared the points and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; 
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";

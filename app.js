@@ -32,7 +32,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-require('newrelic');
+//require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -92,7 +92,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('space',"web",1,"space_coop","en"),
+    current_experiment = CreateExperiment('rabbits name',"web",1,"dg","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)

@@ -102,8 +102,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
-var lines = 4;    //must be changed in space_coop_core.js also
-var number = 10;   //must be changed in space_coop_core.js also
+var lines = 1;    //must be changed in space_coop_core.js also, 4 in real test
+var number = 1;   //must be changed in space_coop_core.js also, 10 in real test
 
 
 //Constants
@@ -546,19 +546,19 @@ function InitNoXP_Space()
 function InitShareState_Space()
 {
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role of giver.\n \n Indicate how much you want to give by clicking on the scale below.\n You can use the left and right keys to adjust.\n\nWhen you are done, validate by pressing the space key.";
-  progressText2.text = "";
-}
+  {progressText.text = "You have been randomly attributed the role of giver.\n\n Please share the points with the other person. \n\n\n\nIndicate how much you want to give by clicking on the scale below.\n\n\n\n\n\n\n\n\n I want to GIVE:";
+  progressText2.text = "Validate by pressing space.";
+  }
   else 
   {
-	progressText.text = stringsArray[str_doShare];
-	progressText2.text = "Validate by pressing space";
+	progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n\n I want to GIVE:";
+	progressText2.text = "Validate by pressing space.";
   }
   progressText.y = 20;
-  progressText.x = 400 ;
+  progressText.x = 400;
   progressText.textAlign = "center";
   progressText2.y = 500;
-  progressText2.x = 400 ;
+  progressText2.x = 400;
   progressText2.textAlign = "center";
 
   maxAmmount.x = 700;
@@ -603,7 +603,7 @@ function InitShareWait_Space()
 {
   
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role of receiver.\n \n Please wait while the other person makes his decision.";}
+  {progressText.text = "You have been randomly attributed the role of receiver.\n \n Please wait while the other person is sharing the points.";}
   else 
   {progressText.text = stringsArray[str_waitShare];} 
   progressText.y = 20;
@@ -624,9 +624,9 @@ function DrawGivenAmmount(data, role)
   { 
 
 	  if (xpGame == "dg")
-	  {progressText.text = "The other person decided to give you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next experiment to start."; }
+	  {progressText.text = "The other person shared the points and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next experiment to start."; }
 	  else 
-	  {progressText.text = "The other player shared the loot and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; } 
+	  {progressText.text = "The other player shared the points and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; } 
 	  
 	  progressText.y = 20;
 	  progressText.x = 400 ;
@@ -851,7 +851,7 @@ function UpdateShareAmmount_Space(x)
 		  arrow.x= parseInt((share / score_value) * 600 + 100) - 9;
 		  
 	  }
-	  console.log(share);
+	  //console.log(share);
 	  maxAmmount.text = score_value;
 	  minAmmount.text = 0;
 	  givenAmmount.text = share;
@@ -872,7 +872,7 @@ function sendInputs_Space(left,right,shoot)
 function sendMouseInput(x)
 {
   var X = x;
-  console.log(X);
+  //console.log(X);
   if(X < 100){X = 100;}
   if(X > 700-18){X = 700-18;}
   socket.emit("message",'MOUSE_INPUT,'+ X);
