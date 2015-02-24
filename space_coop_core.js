@@ -335,6 +335,8 @@ space_game_core.prototype.generateShotsString = function()
 //Set the directions of the enemy lines, to avoid colliding with the wall
 space_game_core.prototype.setDirections = function()
 {
+
+
     if(this.enemies.x > (this.world.width - 50 - enemiesX_spacing * number) && !this.enemiesLeft)
     {
         this.enemiesLeft = true;
@@ -361,10 +363,10 @@ space_game_core.prototype.setDirections = function()
 //Move the enemy lines
 space_game_core.prototype.moveEnemies = function()
 {
-    /*if(Math.random() > 0.99)
+    if(Math.random() > 0.99)
     {
         enemy_speed *= -1; // change direction
-    }*/
+    }
 
     this.enemies.Move(enemy_speed);
   
