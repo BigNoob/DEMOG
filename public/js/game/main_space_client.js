@@ -80,6 +80,7 @@ var slider;
 
 var share = -1;
 var canfire = true;
+var canMoveArrow = true;
 var cooldown = 240; //240
 var bulletArray = [];
 
@@ -106,6 +107,10 @@ var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
 var number = 10;   //must be changed in space_coop_core.js also, 10 in real test
 
 
+//----------------
+
+var keys=[];
+
 //Constants
 var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;
@@ -128,8 +133,17 @@ function Main_Space(type,game) {
   //Game Loop Listener
   createjs.Ticker.setFPS(20); //60
   createjs.Ticker.on("tick", tick_Space); 
-  window.addEventListener('keydown', function(event) { handleKeyDown_Space(event); }, false);
+
+
   canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
+  window.addEventListener("keydown", function (event) {
+      keys[event.keyCode] = true;
+  });
+
+  window.addEventListener("keyup", function (event) {
+      keys[event.keyCode] = false;
+  });
+
 
   StartLoading_Space();
 }
@@ -619,6 +633,7 @@ function InitShareState_Space()
   stage.addChild(arrow);
   stage.update();
   state = state_share;  
+  handleKeyDown_Space2();
 }
 
 function InitShareWait_Space()
@@ -772,22 +787,18 @@ function tick_Space(event) {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function handleKeyDown_Space(e)
+function handleKeyDown_Space2()
 {
   if(state == state_game)
   {
-    switch (e.keyCode) {
-      case KEYCODE_LEFT:
+
+    if (keys[KEYCODE_LEFT]) {
         sendInputs_Space(1,0,0);
-        break;
-
-      case KEYCODE_RIGHT:
-        sendInputs_Space(0,1,0);
-        break;
     }
-
-    if(e.keyCode == KEYCODE_SPACE)
-    {
+    if (keys[KEYCODE_RIGHT]) {
+        sendInputs_Space(0,1,0);
+    }
+    if (keys[KEYCODE_SPACE]) {
       if(canfire)
       {
         sendInputs_Space(0,0,1);
@@ -799,26 +810,35 @@ function handleKeyDown_Space(e)
   }
   else if (state == state_share)
   {
-    switch (e.keyCode) {
-      case KEYCODE_LEFT:
+
+    if (keys[KEYCODE_LEFT]) {
+      if(canMoveArrow)
+      {
         sendInputs_Space(1,0,0);
-        UpdateShareAmmount_Space(-1);
-        break;
-
-      case KEYCODE_RIGHT:
+		UpdateShareAmmount_Space(-1);
+        canMoveArrow = false;
+        setTimeout(function(){canMoveArrow = true},150);
+      }
+    }
+    if (keys[KEYCODE_RIGHT]) {
+      if(canMoveArrow)
+      {
         sendInputs_Space(0,1,0);
-        UpdateShareAmmount_Space(-2);
-        break;
-
-      case KEYCODE_SPACE:
+		UpdateShareAmmount_Space(-2);
+        canMoveArrow = false;
+        setTimeout(function(){canMoveArrow = true},150);
+      }
+    }
+    if (keys[KEYCODE_SPACE]) {
         if(share >= 0)
         {
           SendShareAmmount_Space();
         }
-      break;
     }
+
   }
 }
+
 
 function handleClick(e)
 {
@@ -929,6 +949,7 @@ function sendMouseInput(x)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function updateScreen_Space(data)
 {
+  handleKeyDown_Space2();
   drawOwnShip_Space(data[1]);
   drawAllyShip_Space(data[2]);
   drawEnemies_Space(data[3]);
