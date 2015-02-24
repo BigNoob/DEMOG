@@ -20,7 +20,7 @@ var goalballoonY = 20;
 var goal_width = 39;
 var goal_height = 56;
 
-var balloon_speed = 5;
+var balloon_speed = 4;
 var balloon_width = 39;
 var balloon_height = 56;
 var balloonsX_spacing = 60;

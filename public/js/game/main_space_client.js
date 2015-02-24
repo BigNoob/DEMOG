@@ -500,7 +500,7 @@ function InitLobbyState_Space(data)
     tmpCircle.alpha = 0.75;
     WaitWheel.addChild(tmpCircle);
   }
-  WaitWheel.x = stageCenterX - circleSize/2;
+  WaitWheel.x = stageCenterX + 30 - circleSize/2;
   WaitWheel.y = stageCenterY - circleSize/2;
   stage.addChild(WaitWheel);
   stage.addChild(progressText);

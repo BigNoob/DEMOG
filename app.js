@@ -32,7 +32,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-require('newrelic');
+//require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
