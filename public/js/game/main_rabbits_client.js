@@ -85,6 +85,9 @@ var launcherNumber;
 
 var share = -1;
 var canfire = true;
+var canMoveArrow = true;
+var canMoveLeft = true;
+var canMoveRight = true;
 var cooldown = 20;
 var reloadTime = 2000;
 var isFlyer;
@@ -112,6 +115,7 @@ var enemiesY_spacing = 60;
 var lines = 4;  //must be changed in rabbits_coop_core.js also
 var number = 10; //must be changed in rabbits_coop_core.js also
 
+var keys=[];
 
 //Constants
 var KEYCODE_LEFT = 37;
@@ -135,8 +139,15 @@ function Main_Rabbits(type) {
   //Game Loop Listener
   createjs.Ticker.setFPS(20);
   createjs.Ticker.on("tick", tick); 
-  window.addEventListener('keydown', function(event) { handleKeyDown(event); }, false);
+
   canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
+  window.addEventListener("keydown", function (event) {
+      keys[event.keyCode] = true;
+  });
+
+  window.addEventListener("keyup", function (event) {
+      keys[event.keyCode] = false;
+  });
 
   StartLoading();
 }
@@ -441,6 +452,7 @@ function serverMessageParser(data)
           ClearGameState();
           //ClearLobbyState();
           InitShareState();
+		  handleKeyDown2();
         break;
         case 'SHARE_WAIT':
           ClearGameState();
@@ -781,42 +793,61 @@ function tick(event) {
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function handleKeyDown(e)
-{
-  if(state == state_game || state == state_reload || state == state_fall)
-  {
-    switch (e.keyCode) {
-      case KEYCODE_LEFT:
-        sendInputs(1,0,0);
-        break;
 
-      case KEYCODE_RIGHT:
-        sendInputs(0,1,0);
-        break;
+function handleKeyDown2()
+{
+  if(state == state_game)
+  {
+
+    if (keys[KEYCODE_LEFT]) {
+      if(canMoveLeft)
+      {
+        sendInputs(1,0,0);
+        canMoveLeft = false;
+        setTimeout(function(){canMoveLeft = true},20);
+      }    
     }
+    if (keys[KEYCODE_RIGHT]) {
+      if(canMoveRight)
+      {
+        sendInputs(0,1,0);
+        canMoveRight = false;
+        setTimeout(function(){canMoveRight = true},20);
+      } 
+    }
+
   }
   else if (state == state_share)
   {
-    switch (e.keyCode) {
-      case KEYCODE_LEFT:
+
+    if (keys[KEYCODE_LEFT]) {
+      if(canMoveArrow)
+      {
         sendInputs(1,0,0);
-        UpdateShareAmmount(-1);
-        break;
-
-      case KEYCODE_RIGHT:
+		UpdateShareAmmount(-1);
+        canMoveArrow = false;
+        setTimeout(function(){canMoveArrow = true},150);
+      }
+    }
+    if (keys[KEYCODE_RIGHT]) {
+      if(canMoveArrow)
+      {
         sendInputs(0,1,0);
-        UpdateShareAmmount(-2);
-        break;
-
-      case KEYCODE_SPACE:
+		UpdateShareAmmount(-2);
+        canMoveArrow = false;
+        setTimeout(function(){canMoveArrow = true},150);
+      }
+    }
+    if (keys[KEYCODE_SPACE]) {
         if(share >= 0)
         {
           SendShareAmmount();
         }
-      break;
     }
+
   }
 }
+
 
 function handleClick(e)
 {
@@ -953,6 +984,7 @@ function updateScreen(data)
   drawMothership(data[5]);
   drawScore(data[6]);
   ownNumber = parseInt(data[7]);
+  handleKeyDown2();
   //console.log(ownNumber +'/'+launcherNumber);
 }
 
