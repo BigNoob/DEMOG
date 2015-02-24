@@ -54,7 +54,7 @@ game_server.prototype.stopServer = function()
 	for(var i = this.clients.length-1 ; i >= 0; i --)
 	{
 		//console.log('Client forced to lobby : '+ this.clients[i].userid);
-		this.sendClientToLobby(this.clients[i]);
+		this.sendClientToLobby(this.clients[i],'');
 	}
 
 
@@ -135,14 +135,14 @@ game_server.prototype.getClientIndexFromGame = function(client)
 };
 
 //Send a client from a game to the lobby
-game_server.prototype.sendClientToLobby = function(client)
+game_server.prototype.sendClientToLobby = function(client,disconnection)
 {
 	this.clients.splice(this.getClientIndexFromGame(client),1);
 	client.player.isInLobby = true;
 	this.clientsinLobby.push(client);
 
 
-	client.emit('message', 'LOBBY,'+client);
+	client.emit('message', 'LOBBY,'+client+','+disconnection);
 
 
 	
@@ -173,7 +173,7 @@ game_server.prototype.addClient = function(client)
 //this function removes a client from the server
 game_server.prototype.removeClient = function(client)
 {
-	this.sendClientToLobby(client);
+	this.sendClientToLobby(client,'');
 	this.clientsinLobby.splice(this.getClientIndexFromLobby(client),1);
 };
 
@@ -252,17 +252,17 @@ game_server.prototype.createGame = function(client1, client2)
 };
 
 //this function stops a selected core game server instance
-game_server.prototype.endGame = function(game)
+game_server.prototype.endGame = function(game,disconnection)
 {
 	this.updateClient('ALL');
 
 	if(this.games[this.getGameIndex(game)].p1 != null)
 	{
-		this.sendClientToLobby(this.games[this.getGameIndex(game)].p1);
+		this.sendClientToLobby(this.games[this.getGameIndex(game)].p1,disconnection);
 	}
 	if(this.games[this.getGameIndex(game)].p2 != null)
 	{
-		this.sendClientToLobby(this.games[this.getGameIndex(game)].p2);
+		this.sendClientToLobby(this.games[this.getGameIndex(game)].p2,disconnection);
 	}
 	
 	this.games.splice(this.getGameIndex(game),1);
@@ -354,7 +354,7 @@ game_server.prototype.checkEndedGames = function()
 		        this.removeClient(this.games[i].p2);
 		        this.games[i].p2 = null;
 		    }
-			this.endGame(this.games[i]);
+			this.endGame(this.games[i],'');
 		}
 	}
 };

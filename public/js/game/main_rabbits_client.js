@@ -289,7 +289,7 @@ function handleComplete (event)
   flyer = new createjs.Sprite(flyerSpriteSheet);
   */
   startServerListen();  //We start listening to the server after the loading of all the assets
-  InitLobbyState(undefined); 
+  InitLobbyState(',,'); 
 }
 
 function reloadSprites(color)
@@ -422,9 +422,14 @@ function serverMessageParser(data)
           //ClearLobbyState();
           ClearGameState();    
           ClearShareState();
-          ClearWaitState();     
-          //InitLobbyState_Space(splittedData); this doesn't work, needs undefined as argument instead, dont know why
-		  InitLobbyState(undefined); 
+          ClearWaitState();
+          if (state == state_displayShare) //important to remove buttons if disconnection happens at displayAmount state
+		  {
+			stage.removeChild(button);
+		    stage.update();
+		  }     
+          InitLobbyState(splittedData); 
+		  //InitLobbyState(undefined); 
         break;
         case 'NO_XP':
           isXPRunning = false;
@@ -499,6 +504,7 @@ function InitGameState()
 
 function InitLobbyState(data)
 {
+/*
   if(data == undefined || data==null)
   {
     var score = 0;
@@ -515,6 +521,15 @@ function InitLobbyState(data)
   else
   {
     progressText.text = stringsArray[str_lobby]+'\n You have '+score+' points';
+  }
+*/
+  progressText.text = "";
+  if (typeof data[2] !== 'undefined' && data[2] == 'disconnection')
+  {
+	progressText.text = "Your partner has disconnected. \n\n Please wait for another person to join.";
+  } else
+  {
+	progressText.text = "Please wait for another person to join.";
   }
   progressText.y = 20;
   progressText.x = 400 ;

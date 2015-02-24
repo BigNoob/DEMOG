@@ -276,7 +276,7 @@ function handleComplete_Space (event)
 {
      startServerListen_Space();  //We start listening to the server after the loading of all the assets
 	 
-     InitLobbyState_Space(undefined); 
+     InitLobbyState_Space(',,'); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -364,7 +364,7 @@ function serverMessageParser_Space(data)
         break;
         case 'GIVEN_AMMOUNT':
           ClearShareState_Space();
-          ClearWaitState_Space();
+          ClearShareWait_Space();
           DrawGivenAmmount(splittedData[1], splittedData[2]);
         break;
         case 'GAME_START':
@@ -378,9 +378,15 @@ function serverMessageParser_Space(data)
           //ClearLobbyState_Space();
           ClearGameState_Space();    
           ClearShareState_Space();
-          ClearWaitState_Space();     
-          //InitLobbyState_Space(splittedData); this doesn't work, needs undefined as argument instead, dont know why
-		  InitLobbyState_Space(undefined); 
+          ClearShareWait_Space();     
+          if (state == state_displayShare) //important to remove buttons if disconnection happens at displayAmount state
+		  {
+			stage.removeChild(button);
+		    stage.update();
+		  }
+		  //ClearDrawGivenAmmount_Space();
+		  InitLobbyState_Space(splittedData); 
+		  //InitLobbyState_Space(undefined); 
         break;
         case 'NO_XP':
           isXPRunning = false;
@@ -455,7 +461,7 @@ function InitGameState_Space()
 
 function InitLobbyState_Space(data)
 {
-
+/*
   if(data == undefined)
   {
     var score = 0;
@@ -464,7 +470,7 @@ function InitLobbyState_Space(data)
   {
     var score = data[1].player.score;   
   }
- 
+
   if ((xpGame == 'dg') && (score == 0))
   {
     progressText.text = "Please wait for another person to join.";
@@ -476,6 +482,15 @@ function InitLobbyState_Space(data)
   else
   {
     progressText.text = stringsArray[str_lobby]+'\n You have '+score+' points';
+  }
+*/ 
+  progressText.text = "auie";
+  if (typeof data[2] !== 'undefined' && data[2] == 'disconnection')
+  {
+	progressText.text = "Your partner has disconnected. \n\n Please wait for another person to join.";
+  } else
+  {
+	progressText.text = "Please wait for another person to join.";
   }
   progressText.y = 20;
   progressText.x = 400 ;
@@ -729,15 +744,14 @@ function ClearShareState_Space()
   stage.removeChild(progressText);
   stage.removeChild(progressText2);
   stage.removeChild(arrow);
+  stage.update();
 }
-function ClearWaitState_Space()
-{
-  stage.removeChild(progressText);
-}
+
 
 function ClearDrawGivenAmmount_Space()
 {
-  stage.removeChild(progressText);
+  //stage.removeChild(progressText);
+  
   stage.removeChild(button);
   stage.removeChild(buttonText);
   stage.update();

@@ -637,7 +637,7 @@ space_game_core.prototype.EndGame = function()
 };
 space_game_core.prototype.Share = function(client, data)
 {
-    console.log(client.userid + data);
+    //console.log(client.userid + data);
     if(client.userid == this.p1.userid)
     {
         this.sharer = this.p1;
@@ -685,7 +685,7 @@ space_game_core.prototype.onMessage = function(client, data){
             this.onInput(client, splittedData);
         break;
         case 'MOUSE_INPUT':
-            console.log(splittedData[1]);
+            //console.log(splittedData[1]);
             this.shareInput(client, splittedData);
         break;
         case 'ANIM_END':

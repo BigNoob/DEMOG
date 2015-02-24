@@ -94,7 +94,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('rabbits name',"web",2,"space_coop","en"),
+    current_experiment = CreateExperiment('rabbits name',"web",2,"rabbits","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)
@@ -459,12 +459,12 @@ if(sio != undefined)
             if(wrap_server.isClientInLobby(client))
             {
                 wrap_server.removeClientFromLobby(client);
-                wrap_server.removeClient(client); 
+                //wrap_server.removeClient(client); 
             }
             else if(wrap_server.isClientInGame(client))
             {
 				wrap_server.findPartner(wrap_server.findGame(client),client) // asks partner to emit message "partnerLost"
-                wrap_server.endGame(wrap_server.findGame(client));
+                wrap_server.endGame(wrap_server.findGame(client),'disconnection');
                 wrap_server.removeClientFromLobby(client);
                 wrap_server.removeClient(client);
             }
