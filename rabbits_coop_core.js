@@ -471,7 +471,7 @@ rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
 	deltaX = deltaX / (this.launcher.x + this.launcher.w/2);    
     	
-	if ((this.launcher.x < 100) || (this.launcher.x + this.launcher.w > 700)) {var ordonnees = 0.4;} // to get away from the edges
+	if ((this.launcher.x < 100) || (this.launcher.x + this.launcher.w > 650)) {var ordonnees = 0.4;} // to get away from the edges
 	else {var ordonnees = 0;}
 	this.init_speed = 3 * deltaX + 0.3 + ordonnees;
     this.init_angle = 3 * deltaX + 0.1 + ordonnees;
