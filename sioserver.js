@@ -271,12 +271,12 @@ game_server.prototype.endGame = function(game)
 //this function finds partner of player
 game_server.prototype.findPartner = function(game,client)
 {
-		if(this.game.p1.userid == client.userid)
+		if(game.p1.userid == client.userid)
 		{
-			this.game.p2.emit('partnerLost');
+			game.p2.emit('partnerLost');
 		} else
 		{
-			this.game.p1.emit('partnerLost');
+			game.p1.emit('partnerLost');
 		}	
 };
 
