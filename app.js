@@ -32,7 +32,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-//require('newrelic');
+require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -58,10 +58,10 @@ var
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
 
-    /*
+    ///*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
-    sgTransport = require('nodemailer-sendgrid-transport'), */
+    sgTransport = require('nodemailer-sendgrid-transport'), //*/
 
     sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD),
     sio         = undefined,
@@ -112,7 +112,7 @@ function CreateExperiment(name,type,iter,game,lang)
 // Mail sender set up
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
+///*
 var LocalTransport = nodeMailer.createTransport("SMTP",{
    service: "Gmail",
    auth: {
@@ -120,7 +120,7 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
        pass: mailSenderPassw
    }
 });
-*/
+//*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
