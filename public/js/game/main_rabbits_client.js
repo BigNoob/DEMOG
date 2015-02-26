@@ -448,7 +448,8 @@ function serverMessageParser(data)
           ClearGameState();    
           ClearShareState();
           ClearWaitState();
-          if (state == state_displayShare) //important to remove buttons if disconnection happens at displayAmount state
+          ClearDrawGivenAmmount();
+		  if (state == state_displayShare) //important to remove buttons if disconnection happens at displayAmount state
 		  {
 			stage.removeChild(button);
 		    stage.update();
@@ -789,6 +790,8 @@ function ClearDrawGivenAmmount()
   stage.removeChild(progressText);
   stage.removeChild(button);
   stage.removeChild(buttonText);
+  stage.removeChild(button); //sometimes the button and button text is not removed (about 1 out of ten 10). don't know why. removing it twice is an unelegant but effective way to deal with this problem
+  stage.removeChild(buttonText);
   stage.update();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -876,7 +879,7 @@ function handleClick(e)
 	var mousePos = getMousePos(canvas,e);
     if ((mousePos.x >= 325) && (mousePos.x <= 425) && (mousePos.y >= 400) && (mousePos.y <= 450)) //if click on button
 	{
-		ClearDrawGivenAmmount();
+		//ClearDrawGivenAmmount();
 		socket.emit("message",'ENDED');
 	}
 

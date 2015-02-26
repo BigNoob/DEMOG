@@ -58,7 +58,7 @@ var
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
 
-    ///*
+  //  /*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
     sgTransport = require('nodemailer-sendgrid-transport'), //*/
@@ -446,20 +446,25 @@ if(sio != undefined)
 			if (client.player.result.currentGame == 1)
 			{
 				client.player.result.WaitingTimeLobby1 = (new Date().getTime()) - client.player.result.WaitingTimeLobby1;
-				console.log('1: '+client.player.result.WaitingTimeLobby1);	
-				console.log('2: '+client.player.result.WaitingTimeLobby2);	
+				//console.log('1: '+client.player.result.WaitingTimeLobby1);	
+				//console.log('2: '+client.player.result.WaitingTimeLobby2);	
 			} else if (client.player.result.currentGame == 2)
 			{
 				if (client.player.result.WaitingTimeLobby2 != 0) {client.player.result.currentGame = 3;} //stops all ulterior calls to updateTime that would break the waiting time
 				client.player.result.WaitingTimeLobby2 = (new Date().getTime()) - client.player.result.WaitingTimeLobby2;
-				console.log('1: '+client.player.result.WaitingTimeLobby1);	
-				console.log('2: '+client.player.result.WaitingTimeLobby2);
+				//console.log('1: '+client.player.result.WaitingTimeLobby1);	
+				//console.log('2: '+client.player.result.WaitingTimeLobby2);
 			} 		
         });  
       
         client.on('playerLogin', function (m){
             client.player.result.amazonId = m;
         });
+
+        client.on('ici', function (){
+            console.log('ici');
+        });
+
         client.on('partnerLost', function (){
             client.player.result.lostPartner = 1;
 			if (client.player.result.currentGame == 1)
