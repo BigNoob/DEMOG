@@ -28,8 +28,8 @@ var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 100;
-var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
-var number = 10;  //must be changed in main_space_client.js also, 10 for real test
+var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
+var number = 1;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';

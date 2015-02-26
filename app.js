@@ -32,7 +32,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-//require('newrelic');
+require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -58,10 +58,10 @@ var
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
 
-    /*
+    ///*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
-    sgTransport = require('nodemailer-sendgrid-transport'), */
+    sgTransport = require('nodemailer-sendgrid-transport'), //*/
 
     sendgrid  = require('sendgrid')(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD),
     sio         = undefined,
@@ -82,7 +82,8 @@ var physic_time = 15; //15
 var adminLogin = "demog";                                  //Login of the admin page
 var adminPassw = "test";                                //password of the admin page
 
-var resultMailAdress = 'resultsdemog@yahoo.fr';     //mail adress where the results will be send
+//var resultMailAdress = 'resultsdemog@yahoo.fr';     //mail adress where the results will be send
+var resultMailAdress = 'debove.stephane@gmail.com';     //mail adress where the results will be send
 
 var mailSenderLogin = 'olivier.allouard@gmail.com';         //login of the gmail account used to send results
 var mailSenderPassw = 'wivyxuvozz';                           //password of the gmail account used to send results
@@ -113,7 +114,7 @@ function CreateExperiment(name,type,iter,game,lang)
 // Mail sender set up
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
+///*
 var LocalTransport = nodeMailer.createTransport("SMTP",{
    service: "Gmail",
    auth: {
@@ -121,7 +122,7 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
        pass: mailSenderPassw
    }
 });
-*/
+//*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -103,8 +103,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
-var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
-var number = 10;   //must be changed in space_coop_core.js also, 10 in real test
+var lines = 1;    //must be changed in space_coop_core.js also, 4 in real test
+var number = 1;   //must be changed in space_coop_core.js also, 10 in real test
 
 
 //----------------
