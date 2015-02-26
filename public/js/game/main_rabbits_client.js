@@ -88,6 +88,7 @@ var canfire = true;
 var canMoveArrow = true;
 var canMoveLeft = true;
 var canMoveRight = true;
+var canEndGame = true;
 var cooldown = 20;
 var reloadTime = 2000;
 var isFlyer;
@@ -448,12 +449,13 @@ function serverMessageParser(data)
           ClearGameState();    
           ClearShareState();
           ClearWaitState();
-
+		/*
 		  if (state == state_displayShare) //important to remove buttons if disconnection happens at displayAmount state
 		  {
 			stage.removeChild(button);
 		    stage.update();
-		  }     
+		  }
+		*/     
           InitLobbyState(splittedData); 
 		  //InitLobbyState(undefined); 
         break;
@@ -628,6 +630,8 @@ function InitNoXP()
 
 function InitShareState()
 {
+  share = -1;
+  canEndGame = true;
   progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n\n I want to GIVE:"; 
   progressText.y = 20;
   progressText.x = 400 ;
@@ -679,6 +683,8 @@ function InitShareState()
 
 function InitShareWait()
 {
+  share = -1;
+  canEndGame = true;
   progressText.text = stringsArray[str_waitShare];  
   progressText.y = 20;
   progressText.x = 400 ;
@@ -694,11 +700,11 @@ function DrawGivenAmmount(data, role)
   var recieved = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-	  progressText.text = "The other player shared the points and gave you "+recieved+" out of 1000 points. \n \n Click to continue and wait for the next game to start."; 
+	  progressText.text = "The other player shared the points and gave you "+recieved+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";
-
+/*
 	  button = new createjs.Shape();
 	  button.graphics.beginFill("white").drawRect(325,400,150,50);
       buttonText = new createjs.Text("", "20px Arial", "#000000");
@@ -706,10 +712,11 @@ function DrawGivenAmmount(data, role)
 	  buttonText.text = "Continue";
 	  buttonText.y = 415;
 	  buttonText.x = 400;
-
 	  stage.addChild(button);
-	  stage.addChild(progressText);
 	  stage.addChild(buttonText);
+*/
+
+	  stage.addChild(progressText);
 	  stage.update();
 	  state = state_displayShare; 
     
@@ -717,10 +724,11 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 
-	progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n\n Your points for this game are thus "+data+".\n \n \nClick to continue and wait for the next game to start."; 
+	progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n\n Your points for this game are thus "+data+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";
+/*
 	  button = new createjs.Shape();
 	  button.graphics.beginFill("white").drawRect(325,400,150,50);
       buttonText = new createjs.Text("", "20px Arial", "#000000");
@@ -731,6 +739,7 @@ function DrawGivenAmmount(data, role)
 
 	  stage.addChild(button);
 	  stage.addChild(buttonText);
+*/
 	  stage.addChild(progressText);
 	  stage.update();
 	  state = state_displayShare; 
@@ -788,10 +797,10 @@ function ClearFlyer()
 function ClearDrawGivenAmmount()
 {
   stage.removeChild(progressText);
-  stage.removeChild(button);
+  /*stage.removeChild(button);
   stage.removeChild(buttonText);
   stage.removeChild(button); //sometimes the button and button text is not removed (about 1 out of ten 10). don't know why. removing it twice is an unelegant but effective way to deal with this problem
-  stage.removeChild(buttonText);
+  stage.removeChild(buttonText);*/
   stage.update();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -863,6 +872,16 @@ function handleKeyDown2()
     }
 
   }
+  else if (state == state_displayShare)
+  {
+    setTimeout(function(){ //to prevent skipping this stage with the space key presses of the previous stage
+		if (keys[KEYCODE_SPACE] && canEndGame) { 
+			canEndGame = false;
+			socket.emit("message",'ENDED');              
+		}
+	},1000);
+
+  }
 }
 
 
@@ -876,13 +895,13 @@ function handleClick(e)
   } 
   else if (state == state_displayShare)
   {
-	var mousePos = getMousePos(canvas,e);
+	/*var mousePos = getMousePos(canvas,e);
     if ((mousePos.x >= 325) && (mousePos.x <= 425) && (mousePos.y >= 400) && (mousePos.y <= 450)) //if click on button
 	{
 		ClearDrawGivenAmmount();
 		socket.emit("message",'ENDED');
 	}
-
+    */
   }
 }
 function getMousePos(canvas, evt) {
