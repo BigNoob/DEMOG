@@ -2,7 +2,6 @@ var player = function()
 {
 	this.score = 0;
 	this.currentRepetition = 1;
-	this.resultsAddedToExperiment = false;
 	this.result = new PlayerResult();
 };
 

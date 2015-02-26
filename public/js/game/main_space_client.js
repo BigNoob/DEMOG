@@ -82,6 +82,7 @@ var share = -1;
 var canfire = true;
 var canMoveArrow = true;
 var canEndGame = true;
+var canSendAmount = true;
 var cooldown = 240; //240
 var bulletArray = [];
 
@@ -598,6 +599,7 @@ function InitShareState_Space()
 {
   share = -1;
   canEndGame = true;
+  canSendAmount = true;
   if (xpGame == "dg")
   {progressText.text = "You have been randomly attributed the role of giver.\n\n Please share the points with the other person. \n\n\n\nIndicate how much you want to give by clicking on the scale below.\n\n\n\n\n\n\n\n I want to GIVE:";
   progressText2.text = "Validate by pressing space.";
@@ -657,6 +659,7 @@ function InitShareWait_Space()
 {
   share = -1;
   canEndGame = true;
+  canSendAmount = true;
   if (xpGame == "dg")
   {progressText.text = "You have been randomly attributed the role of receiver.\n \n Please wait while the other person is sharing the points.";}
   else 
@@ -853,8 +856,9 @@ function handleKeyDown_Space2()
       }
     }
     if (keys[KEYCODE_SPACE]) {
-        if(share >= 0)
+        if(share >= 0 && canSendAmount)
         {
+		  canSendAmount = false;
           SendShareAmmount_Space();
         }
     }

@@ -89,6 +89,7 @@ var canMoveArrow = true;
 var canMoveLeft = true;
 var canMoveRight = true;
 var canEndGame = true;
+var canSendAmount = true;
 var cooldown = 20;
 var reloadTime = 2000;
 var isFlyer;
@@ -632,6 +633,7 @@ function InitShareState()
 {
   share = -1;
   canEndGame = true;
+  canSendAmount = true;
   progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n\n I want to GIVE:"; 
   progressText.y = 20;
   progressText.x = 400 ;
@@ -685,6 +687,7 @@ function InitShareWait()
 {
   share = -1;
   canEndGame = true;
+  canSendAmount = true;
   progressText.text = stringsArray[str_waitShare];  
   progressText.y = 20;
   progressText.x = 400 ;
@@ -865,8 +868,9 @@ function handleKeyDown2()
       }
     }
     if (keys[KEYCODE_SPACE]) {
-        if(share >= 0)
+        if(share >= 0 && canSendAmount)
         {
+		  canSendAmount = false;
           SendShareAmmount();
         }
     }
