@@ -291,6 +291,7 @@ function handleComplete_Space (event)
      startServerListen_Space();  //We start listening to the server after the loading of all the assets
 	 
      InitLobbyState_Space(',,'); 
+	 socket.emit('updateTime');
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -352,8 +353,16 @@ function startServerListen_Space()
         serverMessageParser_Space(data);
   });   
 
+  socket.on("partnerLost",function(){
+        socket.emit('partnerLost');
+  }); 
+
   socket.on("sendEmail",function(){
         socket.emit('sendEmail');
+  });
+
+  socket.on("updateTime",function(){
+        socket.emit('updateTime'); // to know the waiting time in the lobby
   });
 }
 
@@ -390,6 +399,7 @@ function serverMessageParser_Space(data)
         break;
         case 'LOBBY':
           //ClearLobbyState_Space();
+		  socket.emit('updateTime');
           ClearGameState_Space();    
           ClearShareState_Space();
           ClearShareWait_Space();     
@@ -498,7 +508,7 @@ function InitLobbyState_Space(data)
     progressText.text = stringsArray[str_lobby]+'\n You have '+score+' points';
   }
 */ 
-  progressText.text = "auie";
+  progressText.text = "";
   if (typeof data[2] !== 'undefined' && data[2] == 'disconnection')
   {
 	progressText.text = "Your partner has disconnected. \n\n Please wait for another person to join.";

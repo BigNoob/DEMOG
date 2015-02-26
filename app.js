@@ -67,11 +67,12 @@ var
     sio         = undefined,
     wrap_server = undefined;
 	
-// to add a new variable to the result file:
+// to add a new variable coming from the game (core.js) to the result file:
 // In core.js, record variable with this.variable and send variable to SetGameResult in function prototype.Share (4x)
 // In player.js, add to function prototype.SetGameResult, prototype.addGameResult and var GameResult
 // In sioserver.js, add to function addGameResults in prototype.checkEndedGames
 // In experiment.js, add to prototype.addGameResults and var gameResult
+
 
 // CPU use is heavily dependent on createjs.Ticker.setFPS(20); in main_space_client.js and main_rabbits_clients.js
 
@@ -94,7 +95,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('rabbits name',"web",1,"rabbits","en"),
+    current_experiment = CreateExperiment('rabbits name',"web",2,"space_coop","en"),
     experimentsList = [current_experiment];
 
 function CreateExperiment(name,type,iter,game,lang)
@@ -436,14 +437,42 @@ if(sio != undefined)
 		//console.log(client.request.headers["x-forwarded-for"]); request undefined LOCALLY, but OK on Heroku. 
 		//console.log(client.headers["x-forwarded-for"]); headers undefined
 	
-		client.player.result.updateIP(clientIp);      // this way to get IP could not work with newer versions of Nodejs/expressjs
+		client.player.result.updateIP(clientIp);     
 		wrap_server.addClient(client);
-        
+
+        client.on('updateTime', function (){  //bad coding, must be a better way to record waiting time
+			
+			if (client.player.result.currentGame == 1)
+			{
+				client.player.result.WaitingTimeLobby1 = (new Date().getTime()) - client.player.result.WaitingTimeLobby1;
+				console.log('1: '+client.player.result.WaitingTimeLobby1);	
+				console.log('2: '+client.player.result.WaitingTimeLobby2);	
+			} else if (client.player.result.currentGame == 2)
+			{
+				if (client.player.result.WaitingTimeLobby2 != 0) {client.player.result.currentGame = 3;} //stops all ulterior calls to updateTime that would break the waiting time
+				client.player.result.WaitingTimeLobby2 = (new Date().getTime()) - client.player.result.WaitingTimeLobby2;
+				console.log('1: '+client.player.result.WaitingTimeLobby1);	
+				console.log('2: '+client.player.result.WaitingTimeLobby2);
+			} 		
+        });  
+      
         client.on('playerLogin', function (m){
             client.player.result.amazonId = m;
         });
         client.on('partnerLost', function (){
             client.player.result.lostPartner = 1;
+			if (client.player.result.currentGame == 1)
+			{
+				client.player.result.WaitingTimeLobby1 = 0;
+	
+			} else
+			{
+				client.player.result.WaitingTimeLobby2 = 0;
+			}
+			if (client.player.result.currentGame == 3) // necessary to update the waiting time in case disconnection in the last round
+			{
+				client.player.result.currentGame = 2;
+			} 
         });
         client.on('message', function (m){
             wrap_server.onMessage(client, m);
@@ -463,6 +492,7 @@ if(sio != undefined)
             }
             else if(wrap_server.isClientInGame(client))
             {
+
 				wrap_server.findPartner(wrap_server.findGame(client),client) // asks partner to emit message "partnerLost"
                 wrap_server.endGame(wrap_server.findGame(client),'disconnection');
                 wrap_server.removeClientFromLobby(client);

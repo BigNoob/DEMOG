@@ -301,6 +301,7 @@ function handleComplete (event)
   */
   startServerListen();  //We start listening to the server after the loading of all the assets
   InitLobbyState(',,'); 
+  socket.emit('updateTime');
 }
 
 function reloadSprites(color)
@@ -393,6 +394,18 @@ function startServerListen()
       serverMessageParser(data);
   });   
 
+  socket.on("partnerLost",function(){
+        socket.emit('partnerLost');
+  }); 
+
+  socket.on("sendEmail",function(){
+        socket.emit('sendEmail');
+  });
+
+  socket.on("updateTime",function(){
+        socket.emit('updateTime'); // to know the waiting time in the lobby
+  });
+
 }
 
 function serverMessageParser(data)
@@ -431,6 +444,7 @@ function serverMessageParser(data)
         break;
         case 'LOBBY':
           //ClearLobbyState();
+		  socket.emit('updateTime');
           ClearGameState();    
           ClearShareState();
           ClearWaitState();
@@ -804,7 +818,7 @@ function handleKeyDown2()
       {
         sendInputs(1,0,0);
         canMoveLeft = false;
-        setTimeout(function(){canMoveLeft = true},20);
+        setTimeout(function(){canMoveLeft = true},30);
       }    
     }
     if (keys[KEYCODE_RIGHT]) {
@@ -812,7 +826,7 @@ function handleKeyDown2()
       {
         sendInputs(0,1,0);
         canMoveRight = false;
-        setTimeout(function(){canMoveRight = true},20);
+        setTimeout(function(){canMoveRight = true},30);
       } 
     }
 

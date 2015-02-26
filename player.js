@@ -35,6 +35,9 @@ var PlayerResult = function()
 	this.gameLog;
 	this.lostPartner;
 	this.IPaddress;
+	this.WaitingTimeLobby1;
+	this.WaitingTimeLobby2;
+	this.currentGame;
 };
 
 PlayerResult.prototype.init = function(userid, amazonId)
@@ -45,6 +48,9 @@ PlayerResult.prototype.init = function(userid, amazonId)
 	this.gameLog = [];
 	this.lostPartner = 0;
 	this.IPaddress = -1;
+	this.WaitingTimeLobby1 = 0;
+	this.WaitingTimeLobby2 = 0;
+	this.currentGame = 1;
 };
 
 PlayerResult.prototype.updateStatus = function(status)

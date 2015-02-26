@@ -273,11 +273,13 @@ game_server.prototype.findPartner = function(game,client)
 {
 		if(game.p1.userid == client.userid)
 		{
-			game.p2.emit('partnerLost');
+			game.p2.emit('partnerLost'); //those messages go to app.js through main_..._client.js in which they need to be relayed
+
 		} else
 		{
 			game.p1.emit('partnerLost');
 		}	
+
 };
 
 //this function finds a selected core game server instance based one of its client
@@ -331,10 +333,6 @@ game_server.prototype.checkEndedGames = function()
 			{
 				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength);
 			
-
-				
-
-
 			}
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {

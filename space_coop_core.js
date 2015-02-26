@@ -192,6 +192,12 @@ var Rect = function(x,y,w,h)
 space_game_core.prototype.beginInit = function()
 {
     this.enemies.Init();
+	this.startMilliseconds = new Date().getTime();
+
+	this.p1.emit('updateTime');
+	this.p2.emit('updateTime');
+	
+
 	if(this.isDG == "dg")  // skip the game stage and go to share state directly
 	{
 		this.score = 1000; // this.score cannot be determined in the game
@@ -208,7 +214,6 @@ space_game_core.prototype.beginInit = function()
     }
 	else
 	{
-		this.startMilliseconds = new Date().getTime();
 		this.beginGame();
 	}
     
@@ -612,15 +617,19 @@ space_game_core.prototype.shoot = function(x,whichPlayer)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 space_game_core.prototype.PlayerEnded = function(client , data)
 {
+
     if(client.userid == this.p1.userid)
     {
         this.p1Ended = true;
+		this.p1.player.result.currentGame++;	
 		this.p1.emit('message','LOBBY');
     }
     else
     {
         this.p2Ended = true;
+	    this.p2.player.result.currentGame++;
 		this.p2.emit('message','LOBBY');
+
     }
 
     if(this.p1Ended && this.p2Ended)
@@ -639,6 +648,11 @@ space_game_core.prototype.EndGame = function()
 };
 space_game_core.prototype.Share = function(client, data)
 {
+	if(this.isDG == "dg")  
+	{
+		this.gameLength = (new Date().getTime()) - this.startMilliseconds;
+    }
+
     //console.log(client.userid + data);
     if(client.userid == this.p1.userid)
     {

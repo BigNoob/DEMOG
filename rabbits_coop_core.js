@@ -183,6 +183,11 @@ rabbits_game_core.prototype.beginInit = function()
     this.p1.emit("message",'COLOR,1'); //says what sprites client should use (so that the two clients control a rabbit of the same color)
     this.p2.emit("message",'COLOR,2');
 	this.startMilliseconds = new Date().getTime();
+
+
+	this.p1.emit('updateTime');
+	this.p2.emit('updateTime');
+	
     this.balloons.Init();
     this.beginGame();
 };
@@ -590,11 +595,13 @@ rabbits_game_core.prototype.PlayerEnded = function(client , data)
     if(client.userid == this.p1.userid)
     {
         this.p1Ended = true;
+		this.p1.player.result.currentGame++;
 		this.p1.emit('message','LOBBY');
     }
     else
     {
         this.p2Ended = true;
+		this.p2.player.result.currentGame++;
 		this.p2.emit('message','LOBBY');
     }
 
@@ -609,6 +616,7 @@ rabbits_game_core.prototype.EndGame = function()
 {
     this.p1.player.currentRepetition ++;
     this.p2.player.currentRepetition ++;
+	this.p1.emit('sendEmail'); // this goes to main_..._client.js, which has to send it to app.js through socket.emit then 
     this.isEnded = true;
 };
 rabbits_game_core.prototype.Share = function(client, data)
