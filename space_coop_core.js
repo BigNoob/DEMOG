@@ -60,6 +60,7 @@ var space_game_core = function(maxIter,isDG)
     this.p1 = undefined;
     this.p2 = undefined;
 
+
     this.inputsP1 = [];
     this.inputsP2 = [];
 

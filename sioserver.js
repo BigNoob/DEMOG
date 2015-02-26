@@ -336,8 +336,11 @@ game_server.prototype.checkEndedGames = function()
 			}
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
-		    	this.experiment.addPlayerResults(this.games[i].p1.player.GetResult());
-
+				if(this.games[i].p1.player.resultsAddedToExperiment == false) 
+				{
+		    		this.experiment.addPlayerResults(this.games[i].p1.player.GetResult());
+					this.games[i].p1.player.resultsAddedToExperiment = true;
+				}
 		    	this.games[i].p1.emit('message','REDIRECT');
 
 		        this.removeClient(this.games[i].p1);
@@ -345,7 +348,12 @@ game_server.prototype.checkEndedGames = function()
 		    }
 		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
-		    	this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
+				if(this.games[i].p2.player.resultsAddedToExperiment == false) 
+				{
+			    	this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
+					this.games[i].p2.player.resultsAddedToExperiment = true;
+				}
+
 
 		    	this.games[i].p2.emit('message','REDIRECT');
 
