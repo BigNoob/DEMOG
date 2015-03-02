@@ -677,14 +677,15 @@ function InitShareWait_Space()
 
 function DrawGivenAmmount(data, role)
 {
-  var recieved = 1000 - parseInt(data);
+  var given = parseInt(data);
+  var left = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
 
 	  if (xpGame == "dg")
-	  {progressText.text = "The other person shared the points and gave you "+recieved+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
+	  {progressText.text = "The other person shared the points and gave you "+given+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
 	  else 
-	  {progressText.text = "The other player shared the points and gave you "+recieved+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
+	  {progressText.text = "The other player shared the points and gave you "+given+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
 	  
 	  progressText.y = 20;
 	  progressText.x = 400 ;
@@ -710,9 +711,9 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 	  if (xpGame == "dg")
-	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other person.\n\n Your points for this experiment are thus "+data+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
+	  {progressText.text = "You have given "+given+" out of 1000 points to the other person.\n\n Your points for this experiment are thus "+left+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
 	  else 
-	  {progressText.text = "You have given "+recieved+" out of 1000 points to the other player.\n\n Your points for this game are thus "+data+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
+	  {progressText.text = "You have given "+given+" out of 1000 points to the other player.\n\n Your points for this game are thus "+left+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
 	
 	  progressText.y = 20;
 	  progressText.x = 400 ;

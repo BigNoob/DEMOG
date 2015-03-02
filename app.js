@@ -32,7 +32,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-require('newrelic');
+//require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -57,8 +57,9 @@ var
 	http 		= require('http'),							//
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
+    util = require('util');									//used to display full object in console.log
 
-    ///*
+    /*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
     sgTransport = require('nodemailer-sendgrid-transport'), //*/
@@ -70,9 +71,13 @@ var
 // to add a new variable coming from the game (core.js) to the result file:
 // In core.js, record variable with this.variable and send variable to SetGameResult in function prototype.Share (4x)
 // In player.js, add to function prototype.SetGameResult, prototype.addGameResult and var GameResult
+//
+// and if the variable also makes sense in the context of the game:
+//
 // In sioserver.js, add to function addGameResults in prototype.checkEndedGames
 // In experiment.js, add to prototype.addGameResults and var gameResult
-
+//
+// to record all input by players: in core.js line 536 540
 
 // CPU use is heavily dependent on createjs.Ticker.setFPS(20); in main_space_client.js and main_rabbits_clients.js
 
@@ -114,7 +119,7 @@ function CreateExperiment(name,type,iter,game,lang)
 // Mail sender set up
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///*
+/*
 var LocalTransport = nodeMailer.createTransport("SMTP",{
    service: "Gmail",
    auth: {
@@ -236,11 +241,14 @@ app.post('/dictateur/write/:xpName', function(req, res) {
 
                 if(gameport == 8099)
                 {
-                    LocalTransport.sendMail(mailOptions, function(error, info){
+                    /*LocalTransport.sendMail(mailOptions, function(error, info){
                         if(error){
                             console.log(error);
                         }
-                    });
+                    });*/
+					//console.log(experimentsList[i].result.playerResults);
+					console.log(util.inspect(experimentsList[i], false, null));
+
                 }
                 else
                 {
@@ -266,7 +274,7 @@ app.post('/dictateur/write/:xpName', function(req, res) {
                             }
                         }
                     );*/
-					console.log(experimentsList[i].result);
+					console.log(experimentsList[i].result.playerResults);
                 }  
             }
         }
@@ -453,7 +461,7 @@ if(sio != undefined)
 				//console.log('2: '+client.player.result.WaitingTimeLobby2);	
 			} else if (client.player.result.currentGame == 2)
 			{
-				if (client.player.result.WaitingTimeLobby2 != 0) {client.player.result.currentGame = 3;} //stops all ulterior calls to updateTime that would break the waiting time
+				if (client.player.result.WaitingTimeLobby2 != -1) {client.player.result.currentGame = 3;} //stops all ulterior calls to updateTime that would break the waiting time
 				client.player.result.WaitingTimeLobby2 = (new Date().getTime()) - client.player.result.WaitingTimeLobby2;
 				//console.log('1: '+client.player.result.WaitingTimeLobby1);	
 				//console.log('2: '+client.player.result.WaitingTimeLobby2);

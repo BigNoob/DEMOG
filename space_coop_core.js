@@ -67,8 +67,8 @@ var space_game_core = function(maxIter,isDG)
     this.enemies = new Enemies(enemiesX,lines,number);
     this.motherShip = undefined;
     this.score = 0;
-    this.given = 0;
-    this.kept = 0;
+    this.given = -1;
+    this.kept = -1;
     this.sharer = undefined;
     this.inputs = [];
     this.p1ShipX = 370;
@@ -533,11 +533,11 @@ space_game_core.prototype.onInput = function(client, data){
 
     if(client.userid == this.p1.userid)
     {
-        this.inputsP1.push(data);
+        //this.inputsP1.push(data);
     }
     else if(client.userid == this.p2.userid)
     {
-        this.inputsP2.push(data);
+        //this.inputsP2.push(data);
     }
     
     if(this.state == state_game)
@@ -658,12 +658,12 @@ space_game_core.prototype.Share = function(client, data)
     if(client.userid == this.p1.userid)
     {
         this.sharer = this.p1;
-        this.given = this.score - parseInt(data[1]);
-        this.kept = parseInt(data[1]);
+        this.given = parseInt(data[1]);
+        this.kept = this.score - parseInt(data[1]);
         this.p1.player.score += this.score - parseInt(data[1]);
         this.p2.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);
-        this.p2.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);        
+        this.p1.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,true);
+        this.p2.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,false);        
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
@@ -671,12 +671,12 @@ space_game_core.prototype.Share = function(client, data)
     else
     {
         this.sharer = this.p2;
-        this.given = this.score - parseInt(data[1]);
-        this.kept = parseInt(data[1]);
+        this.given = parseInt(data[1]);
+        this.kept = this.score - parseInt(data[1]);
         this.p2.player.score += this.score - parseInt(data[1]);
         this.p1.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);
-        this.p2.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength);
+        this.p1.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,true);
+        this.p2.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,false);
         
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
