@@ -616,7 +616,7 @@ rabbits_game_core.prototype.EndGame = function()
 {
     this.p1.player.currentRepetition ++;
     this.p2.player.currentRepetition ++;
-	this.p1.emit('sendEmail'); // this goes to main_..._client.js, which has to send it to app.js through socket.emit then 
+	//this.p1.emit('sendEmail'); // this goes to main_..._client.js, which has to send it to app.js through socket.emit then 
     this.isEnded = true;
 };
 rabbits_game_core.prototype.Share = function(client, data)

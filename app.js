@@ -258,14 +258,15 @@ app.post('/dictateur/write/:xpName', function(req, res) {
                             }
                         ]
                     }
-                    sendgrid.send(
+                    /*sendgrid.send(
                         payload,
                         function(error, json){
                             if(error){
                                 console.log(error);
                             }
                         }
-                    );
+                    );*/
+					console.log(payload);
                 }  
             }
         }
