@@ -266,7 +266,7 @@ app.post('/dictateur/write/:xpName', function(req, res) {
                             }
                         }
                     );*/
-					console.log(payload);
+					console.log(experimentsList[i]);
                 }  
             }
         }
