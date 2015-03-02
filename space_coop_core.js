@@ -642,7 +642,7 @@ space_game_core.prototype.PlayerEnded = function(client , data)
 space_game_core.prototype.EndGame = function()
 {
     this.p1.player.currentRepetition ++;	
-	//this.p1.emit('sendEmail'); // this goes to main_space_client.js, which has to send it to app.js through socket.emit then
+	this.p1.emit('sendEmail'); // this goes to main_space_client.js, which has to send it to app.js through socket.emit then
     this.p2.player.currentRepetition ++;
     this.isEnded = true;
 	

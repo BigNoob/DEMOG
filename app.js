@@ -357,7 +357,7 @@ function sendEmail()
     }
     else
     {
-		
+		/*
         var payload   = 
         {
             to      : resultMailAdress,
@@ -380,6 +380,8 @@ function sendEmail()
                 }
             }
         );
+		*/
+		console.log(experimentsList[0]);
     }
 }
 
