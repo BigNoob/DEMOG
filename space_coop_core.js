@@ -7,9 +7,18 @@ var UUID        = require('node-uuid');
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var ship_speed = 6; //for real xp = 6
+var ship_speed = 6; //player's speed, for real xp = 6
 var ship_width = 16;
 var ship_height = 16;
+
+var recordInputEach = 250;
+
+var canfire1 = true;
+var canfire2 = true;
+var cooldown = 240; //240
+
+var writeResults1 = true;
+var writeResults2 = true;
 
 var shot_speed = 6;
 var shot_width = 8;
@@ -21,7 +30,7 @@ var mothershipY = 20;
 var mother_width = 64;
 var mother_height = 96;
 
-var enemy_speed = 3; //for debug you can set this to 0.2, otherwise realistic speed is 3
+var enemy_speed = 0.3; //for debug you can set this to 0.2, otherwise realistic speed is 3
 var enemy_width = 16;
 var enemy_height = 16;
 var enemiesX_spacing = 32;
@@ -533,12 +542,26 @@ space_game_core.prototype.onInput = function(client, data){
 
     if(client.userid == this.p1.userid)
     {
-        //this.inputsP1.push(data);
+      if(writeResults1)
+      {
+        this.inputsP1.push(data+','+Math.round(this.enemies.x*100)/100+','+this.mothershipX);
+        writeResults1 = false;
+        setTimeout(function(){writeResults1 = true},recordInputEach);
+      }
+
     }
     else if(client.userid == this.p2.userid)
     {
-        //this.inputsP2.push(data);
+      if(writeResults2)
+      {
+        this.inputsP2.push(data+','+Math.round(this.enemies.x*100)/100+','+this.mothershipX);
+        writeResults2 = false;
+        setTimeout(function(){writeResults2 = true},recordInputEach);
+      }
+
     }
+
+
     
     if(this.state == state_game)
     {
@@ -561,8 +584,14 @@ space_game_core.prototype.onInput = function(client, data){
             }
             if(data[3] == '1')
             {
+			  if(canfire1)
+			  {  
                 this.shoot(this.p1ShipX + ship_width / 2 - shot_width/2,"p1");
 				this.p1ShotsFired += 1;
+				canfire1 = false;
+				setTimeout(function(){canfire1 = true},cooldown);
+			  }
+
             }
         }
         else
@@ -583,8 +612,14 @@ space_game_core.prototype.onInput = function(client, data){
             }
             if(data[3] == '1')
             {
+			  if(canfire2)
+			  {  
                 this.shoot(this.p2ShipX + ship_width / 2 - shot_width/2,"p2");
 				this.p2ShotsFired += 1;
+				canfire2 = false;
+				setTimeout(function(){canfire2 = true},cooldown);
+			  }
+
             }
         }
     }

@@ -11,14 +11,26 @@ var UUID        = require('node-uuid');
 //var balloon_width = 16;
 //var balloon_height = 16;
 
+
+
 var shot_speed = 6;
 var shot_width = 8;
 var shot_height = 8;
+
+var timerMove = 30; 
+var canMoveLeft = true;
+var canMoveRight = true;
+
+var recordInputEach = 250;
 
 var goal_speed = 2;
 var goalballoonY = 20;
 var goal_width = 39;
 var goal_height = 56;
+
+
+var writeResults1 = true;
+var writeResults2 = true;
 
 var balloon_speed = 4;
 var balloon_width = 39;
@@ -527,11 +539,21 @@ rabbits_game_core.prototype.onInput = function(client, data){
     
     if(client.userid == this.p1.userid)
     {
-        this.inputsP1.push(data);
+      if(writeResults1)
+      {
+        this.inputsP1.push(data+','+Math.round(this.balloons.x*100)/100+','+this.goalballoonX);
+        writeResults1 = false;
+        setTimeout(function(){writeResults1 = true},recordInputEach);
+      }
     }
     else if(client.userid == this.p2.userid)
     {
-        this.inputsP2.push(data);
+      if(writeResults2)
+      {
+        this.inputsP2.push(data+','+Math.round(this.balloons.x*100)/100+','+this.goalballoonX);
+        writeResults2 = false;
+        setTimeout(function(){writeResults2 = true},recordInputEach);
+      }
     }
 
     if(this.state == state_game || this.state == state_reload)
@@ -539,18 +561,31 @@ rabbits_game_core.prototype.onInput = function(client, data){
 
         if(data[1] == '1')
         {
+		  if(canMoveLeft)
+		  {
             if(this.launcher.x > 0)
             {
               this.launcher.x -= launcherSpeed;  
             }
-            
+		    canMoveLeft = false;
+		    setTimeout(function(){canMoveLeft = true},timerMove);
+		  } 
+         
         }
         if(data[2] == '1')
         {
+
+		  if(canMoveRight)
+		  {
             if(this.launcher.x < this.world.width -96)
             {
                 this.launcher.x += launcherSpeed;
             } 
+		    canMoveRight = false;
+		    setTimeout(function(){canMoveRight = true},timerMove);
+		  } 
+
+
         }
     }
     else if(this.state == state_share)

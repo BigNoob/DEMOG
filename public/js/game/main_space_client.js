@@ -79,11 +79,11 @@ var slider;
 
 
 var share = -1;
-var canfire = true;
+
 var canMoveArrow = true;
 var canEndGame = true;
 var canSendAmount = true;
-var cooldown = 240; //240
+
 var bulletArray = [];
 
 //Preloader
@@ -818,21 +818,22 @@ function handleKeyDown_Space2()
 {
   if(state == state_game)
   {
-
+	var tmpLeft = 0;
+	var tmpRight = 0;
+	var tmpSpace = 0;
     if (keys[KEYCODE_LEFT]) {
-        sendInputs_Space(1,0,0);
+        tmpLeft = 1;
     }
     if (keys[KEYCODE_RIGHT]) {
-        sendInputs_Space(0,1,0);
+        tmpRight = 1;
     }
     if (keys[KEYCODE_SPACE]) {
-      if(canfire)
-      {
-        sendInputs_Space(0,0,1);
-        canfire = false;
-        setTimeout(function(){canfire = true},cooldown);
-      }
+	  tmpSpace = 1;      
     }
+    if (tmpLeft+tmpRight+tmpSpace != 0) {
+		sendInputs_Space(tmpLeft,tmpRight,tmpSpace);
+    }
+
 
   }
   else if (state == state_share)
@@ -841,7 +842,7 @@ function handleKeyDown_Space2()
     if (keys[KEYCODE_LEFT]) {
       if(canMoveArrow)
       {
-        sendInputs_Space(1,0,0);
+        //sendInputs_Space(1,0,0);
 		UpdateShareAmmount_Space(-1);
         canMoveArrow = false;
         setTimeout(function(){canMoveArrow = true},150);
@@ -850,7 +851,7 @@ function handleKeyDown_Space2()
     if (keys[KEYCODE_RIGHT]) {
       if(canMoveArrow)
       {
-        sendInputs_Space(0,1,0);
+        //sendInputs_Space(0,1,0);
 		UpdateShareAmmount_Space(-2);
         canMoveArrow = false;
         setTimeout(function(){canMoveArrow = true},150);

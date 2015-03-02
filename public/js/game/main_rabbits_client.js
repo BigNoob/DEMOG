@@ -86,8 +86,6 @@ var launcherNumber;
 var share = -1;
 var canfire = true;
 var canMoveArrow = true;
-var canMoveLeft = true;
-var canMoveRight = true;
 var canEndGame = true;
 var canSendAmount = true;
 var cooldown = 20;
@@ -828,22 +826,19 @@ function handleKeyDown2()
   if(state == state_game)
   {
 
+	var tmpLeft = 0;
+	var tmpRight = 0;
     if (keys[KEYCODE_LEFT]) {
-      if(canMoveLeft)
-      {
-        sendInputs(1,0,0);
-        canMoveLeft = false;
-        setTimeout(function(){canMoveLeft = true},30);
-      }    
+        tmpLeft = 1;
     }
     if (keys[KEYCODE_RIGHT]) {
-      if(canMoveRight)
-      {
-        sendInputs(0,1,0);
-        canMoveRight = false;
-        setTimeout(function(){canMoveRight = true},30);
-      } 
+        tmpRight = 1;
     }
+
+    if (tmpLeft+tmpRight != 0) {
+		sendInputs(tmpLeft,tmpRight,0);
+    }
+
 
   }
   else if (state == state_share)
@@ -852,7 +847,7 @@ function handleKeyDown2()
     if (keys[KEYCODE_LEFT]) {
       if(canMoveArrow)
       {
-        sendInputs(1,0,0);
+        //sendInputs(1,0,0);
 		UpdateShareAmmount(-1);
         canMoveArrow = false;
         setTimeout(function(){canMoveArrow = true},150);
@@ -861,7 +856,7 @@ function handleKeyDown2()
     if (keys[KEYCODE_RIGHT]) {
       if(canMoveArrow)
       {
-        sendInputs(0,1,0);
+        //sendInputs(0,1,0);
 		UpdateShareAmmount(-2);
         canMoveArrow = false;
         setTimeout(function(){canMoveArrow = true},150);
