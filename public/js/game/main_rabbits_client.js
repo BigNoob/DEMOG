@@ -113,7 +113,7 @@ var enemiesX = 100;
 var enemiesX_spacing = 60;
 var enemiesY_spacing = 60;
 var lines = 1;  //must be changed in rabbits_coop_core.js also
-var number = 1; //must be changed in rabbits_coop_core.js also
+var number = 4; //must be changed in rabbits_coop_core.js also
 
 var keys=[];
 
