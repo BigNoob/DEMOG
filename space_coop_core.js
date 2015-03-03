@@ -38,7 +38,7 @@ var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 100;
 var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
-var number = 1;  //must be changed in main_space_client.js also, 10 for real test
+var number = 10;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
@@ -689,16 +689,18 @@ space_game_core.prototype.Share = function(client, data)
 		this.gameLength = (new Date().getTime()) - this.startMilliseconds;
     }
 
+    this.given = parseInt(data[1]);
+    this.kept = 1000 - parseInt(data[1]);
+
     //console.log(client.userid + data);
     if(client.userid == this.p1.userid)
     {
         this.sharer = this.p1;
-        this.given = parseInt(data[1]);
-        this.kept = this.score - parseInt(data[1]);
-        this.p1.player.score += this.score - parseInt(data[1]);
-        this.p2.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,true);
-        this.p2.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,false);        
+
+        this.p1.player.score += this.kept;
+        this.p2.player.score += this.given;
+        this.p1.player.SetGameResultSpace(this.id,true,this.score,this.given,this.kept,this.p1ShotsFired, this.p1EnemyKilled, this.p1DistanceToMothership, this.gameLength,true);
+        this.p2.player.SetGameResultSpace(this.id,false,this.score,this.given,this.kept,this.p2ShotsFired, this.p2EnemyKilled,  this.p2DistanceToMothership, this.gameLength, false);        
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
@@ -706,12 +708,11 @@ space_game_core.prototype.Share = function(client, data)
     else
     {
         this.sharer = this.p2;
-        this.given = parseInt(data[1]);
-        this.kept = this.score - parseInt(data[1]);
-        this.p2.player.score += this.score - parseInt(data[1]);
-        this.p1.player.score += parseInt(data[1]);
-        this.p1.player.SetGameResultSpace(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,true);
-        this.p2.player.SetGameResultSpace(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1ShotsFired,this.p2ShotsFired, this.p1EnemyKilled, this.p2EnemyKilled,this.p1DistanceToMothership, this.p2DistanceToMothership,this.gameLength,false);
+
+        this.p2.player.score += this.kept;
+        this.p1.player.score += this.given;
+        this.p1.player.SetGameResultSpace(this.id,false,this.score,this.given,this.kept,this.p1ShotsFired, this.p1EnemyKilled, this.p1DistanceToMothership, this.gameLength,true);
+        this.p2.player.SetGameResultSpace(this.id,true,this.score,this.given,this.kept,this.p2ShotsFired, this.p2EnemyKilled, this.p2DistanceToMothership,this.gameLength,false);
         
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');

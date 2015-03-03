@@ -656,20 +656,20 @@ rabbits_game_core.prototype.EndGame = function()
 };
 rabbits_game_core.prototype.Share = function(client, data)
 {
+    this.given = parseInt(data[1]);
+    this.kept = 1000 - parseInt(data[1]);
+	this.p1DistanceSeesaw /= this.p1DistanceTimes;		
+	this.p2DistanceSeesaw /= this.p2DistanceTimes;	
     //console.log(client.userid + data);
     if(client.userid == this.p2.userid)
     {
-        this.sharer = this.p1;
-        this.given = parseInt(data[1]);
-        this.kept = this.score - parseInt(data[1]);
-        this.p1.player.score += this.score - parseInt(data[1]);
-        this.p2.player.score += parseInt(data[1]);
+        this.sharer = this.p2;
 
-		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
-		this.p2DistanceSeesaw /= this.p2DistanceTimes;		
+        this.p1.player.score += this.given;
+        this.p2.player.score += this.kept;
 
-        this.p1.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped,this.gameLength,true);
-        this.p2.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength,false);
+        this.p1.player.SetGameResultRabbits(this.id,false,this.score,this.given,this.kept,this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped,this.gameLength,true);
+        this.p2.player.SetGameResultRabbits(this.id,true,this.score,this.given,this.kept,this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength,false);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
@@ -677,17 +677,13 @@ rabbits_game_core.prototype.Share = function(client, data)
     }
     else
     {
-        this.sharer = this.p2;
-        this.given = parseInt(data[1]);
-        this.kept = this.score - parseInt(data[1]);
-        this.p2.player.score += this.score - parseInt(data[1]);
-        this.p1.player.score += parseInt(data[1]);
+        this.sharer = this.p1;
 
-		this.p1DistanceSeesaw /= this.p1DistanceTimes;		
-		this.p2DistanceSeesaw /= this.p2DistanceTimes;	
+        this.p2.player.score += this.given;
+        this.p1.player.score += this.kept;
 
-        this.p1.player.SetGameResultRabbits(this.id,false,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped,this.gameLength,true);
-        this.p2.player.SetGameResultRabbits(this.id,true,this.score,parseInt(data[1]),this.score - parseInt(data[1]),this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength,false);
+        this.p1.player.SetGameResultRabbits(this.id,true,this.score,this.given,this.kept,this.p1MissedSeesaw,this.p1DistanceSeesaw,this.p1BalloonsPopped,this.gameLength,true);
+        this.p2.player.SetGameResultRabbits(this.id,false,this.score,this.given,this.kept,this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength,false);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
         this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
