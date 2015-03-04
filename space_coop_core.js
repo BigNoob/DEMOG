@@ -30,14 +30,14 @@ var mothershipY = 20;
 var mother_width = 64;
 var mother_height = 96;
 
-var enemy_speed = 0.3; //for debug you can set this to 0.2, otherwise realistic speed is 3
+var enemy_speed = 3; //for debug you can set this to 0.2, otherwise realistic speed is 3
 var enemy_width = 16;
 var enemy_height = 16;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 100;
-var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
+var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
 var number = 10;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
