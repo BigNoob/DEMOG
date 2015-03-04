@@ -27,6 +27,7 @@
 //whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the Software.
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+WEB_MEMORY=1024
 
 require('./player.js');
 require('./experiment');
@@ -59,7 +60,7 @@ var
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
     util = require('util');									//used to display full object in console.log
 
-//    /*
+  //  /*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
     sgTransport = require('nodemailer-sendgrid-transport'), //*/
