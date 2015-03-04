@@ -27,7 +27,7 @@
 //whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the Software.
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-WEB_MEMORY=1024
+
 
 require('./player.js');
 require('./experiment');
@@ -58,7 +58,8 @@ var
 	http 		= require('http'),							//
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
-    util = require('util');									//used to display full object in console.log
+    util = require('util'),									//used to display full object in console.log
+    process.env.WEB_MEMORY=1024;
 
   //  /*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
