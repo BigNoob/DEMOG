@@ -49,6 +49,8 @@ lines to comment for the app to run locally on ubuntu:
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+process.env.WEB_MEMORY=1024;
+
 var 
 	gameport 	= process.env.PORT || 8099,					// Listen port of the server (8099 or a specific port declared by the host machine)
 	io          = require("socket.io"),                     //
@@ -58,8 +60,8 @@ var
 	http 		= require('http'),							//
 	app 		= express(),								//
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
-    util = require('util'),									//used to display full object in console.log
-    process.env.WEB_MEMORY=1024;
+    util = require('util');									//used to display full object in console.log
+    
 
   //  /*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
