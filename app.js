@@ -49,7 +49,8 @@ lines to comment for the app to run locally on ubuntu:
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-process.env.WEB_MEMORY=1024;
+process.env['WEB_MEMORY'] = 1024;
+
 
 var 
 	gameport 	= process.env.PORT || 8099,					// Listen port of the server (8099 or a specific port declared by the host machine)
