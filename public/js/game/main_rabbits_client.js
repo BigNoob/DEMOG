@@ -436,7 +436,7 @@ function serverMessageParser(data)
           DrawGivenAmmount(splittedData[1], splittedData[2]);
         break;
         case 'GAME_START':
-        console.log("gamestart");
+          
           isXPRunning = true;
           //ClearGameState();
           ClearLobbyState();
