@@ -21,4 +21,9 @@ exports.config = {
      */
     level : 'info'
   }
+  rules : {
+      ignore : [
+        '^/socket.io/.*/xhr-polling'
+      ]
+  }
 };
