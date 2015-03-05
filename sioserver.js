@@ -30,7 +30,7 @@ game_server.prototype.initServer = function(xp)
 {
 	this.experiment = xp;
 	this.experiment.initResults();
-	this.updateClient('ALL');
+	//this.updateClient('ALL');
 };
 game_server.prototype.update = function()
 {
@@ -140,13 +140,10 @@ game_server.prototype.sendClientToLobby = function(client,disconnection)
 	this.clients.splice(this.getClientIndexFromGame(client),1);
 	client.player.isInLobby = true;
 	this.clientsinLobby.push(client);
-
-
 	client.emit('message', 'LOBBY,'+client+','+disconnection);
-
-
-	
 };
+
+
 //Remove a client from the lobby
 game_server.prototype.removeClientFromLobby = function(client)
 {
@@ -162,7 +159,7 @@ game_server.prototype.addClient = function(client)
 	{
 		this.clientsinLobby.push(client);
 		//console.log(client.userid + " has been sent to the lobby");
-		this.updateClient(client);
+		//this.updateClient(client);
 	}
 	else
 	{
@@ -177,33 +174,6 @@ game_server.prototype.removeClient = function(client)
 	this.clientsinLobby.splice(this.getClientIndexFromLobby(client),1);
 };
 
-//this function sends client information to the html client page
-game_server.prototype.updateClient = function(client)
-{
-	if(client != 'ALL')
-	{
-		client.emit('message', 'INFO,'+client.userid+','+client.player.currentRepetition+','+client.player.score+','+this.experiment.xpName+','+this.experiment.xpMaxIter+','+this.experiment.xpGame);
-	}
-	else
-	{
-		for(var i = 0 ; i < this.clientsinLobby.length; i ++)
-		{
-			if(this.clientsinLobby[i] != undefined)
-			{
-				client = this.clientsinLobby[i];
-				client.emit('message', 'INFO,'+client.userid+','+client.player.currentRepetition+','+client.player.score+','+this.experiment.xpName+','+this.experiment.xpMaxIter+','+this.experiment.xpGame);
-			}
-		}
-		for(var j = 0 ; j < this.clients.length; j ++)
-		{
-			if(this.clientsinLobby[i] != undefined)
-			{
-				client = this.clientsinLobby[j];
-				client.emit('message', 'INFO,'+client.userid+','+client.player.currentRepetition+','+client.player.score+','+this.experiment.xpName+','+this.experiment.xpMaxIter+','+this.experiment.xpGame);
-			}
-		}
-	}
-};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -254,7 +224,7 @@ game_server.prototype.createGame = function(client1, client2)
 //this function stops a selected core game server instance
 game_server.prototype.endGame = function(game,disconnection)
 {
-	this.updateClient('ALL');
+	//this.updateClient('ALL');
 
 	if(this.games[this.getGameIndex(game)].p1 != null)
 	{
@@ -323,8 +293,8 @@ game_server.prototype.checkEndedGames = function()
 		if(this.games[i].isEnded)
 		{
 			
-	        this.updateClient(this.games[i].p1);
-	        this.updateClient(this.games[i].p2);
+	        //this.updateClient(this.games[i].p1);
+	        //this.updateClient(this.games[i].p2);
 			if (this.experiment.xpGame == "rabbits")
 			{
 	        	this.experiment.addGameResultsRabbits(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2,this.games[i].p1MissedSeesaw,this.games[i].p2MissedSeesaw,this.games[i].p1DistanceSeesaw,this.games[i].p2DistanceSeesaw,this.games[i].p1BalloonsPopped,this.games[i].p2BalloonsPopped, this.games[i].gameLength);
