@@ -63,7 +63,7 @@ var
     util = require('util');									//used to display full object in console.log
     
 
-  //  /*
+//    /*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
     sgTransport = require('nodemailer-sendgrid-transport'), //*/
@@ -105,8 +105,10 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('rabbits name',"web",2,"rabbits","en"),
-    experimentsList = [current_experiment];
+    current_experiment = CreateExperiment('dg_expe',"web",2,"dg","en"),
+    current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en"),
+    current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en"),
+    experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
 
 function CreateExperiment(name,type,iter,game,lang)
 {
@@ -270,15 +272,15 @@ app.post('/dictateur/write/:xpName', function(req, res) {
                             }
                         ]
                     }
-                    /*sendgrid.send(
+                    sendgrid.send(
                         payload,
                         function(error, json){
                             if(error){
                                 console.log(error);
                             }
                         }
-                    );*/
-					console.log(experimentsList[i].result.playerResults);
+                    );
+					//console.log(experimentsList[i].result.playerResults);
                 }  
             }
         }
