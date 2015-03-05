@@ -54,7 +54,7 @@ game_server.prototype.stopServer = function()
 	for(var i = this.clients.length-1 ; i >= 0; i --)
 	{
 		//console.log('Client forced to lobby : '+ this.clients[i].userid);
-		this.sendClientToLobby(this.clients[i],'');
+		this.fromGameToLobby(this.clients[i],'');
 	}
 
 
@@ -134,8 +134,8 @@ game_server.prototype.getClientIndexFromGame = function(client)
 	}
 };
 
-//Send a client from a game to the lobby
-game_server.prototype.sendClientToLobby = function(client,disconnection)
+//Send a client from a game to the lobby 
+game_server.prototype.fromGameToLobby = function(client,disconnection)
 {
 	this.clients.splice(this.getClientIndexFromGame(client),1);
 	client.player.isInLobby = true;
@@ -144,8 +144,8 @@ game_server.prototype.sendClientToLobby = function(client,disconnection)
 };
 
 
-//Remove a client from the lobby
-game_server.prototype.removeClientFromLobby = function(client)
+//Send a client from the lobby to a game state 
+game_server.prototype.fromLobbyToGame = function(client)
 {
 	client.player.isInLobby = false;
 	this.clients.push(client);
@@ -167,11 +167,16 @@ game_server.prototype.addClient = function(client)
 	}
 };
 
-//this function removes a client from the server
-game_server.prototype.removeClient = function(client)
+//this function removes a client from the server when in the lobby 
+game_server.prototype.fromLobbyToOut = function(client)
 {
-	this.sendClientToLobby(client,'');
 	this.clientsinLobby.splice(this.getClientIndexFromLobby(client),1);
+};
+
+//this function removes a client from the server when in the game 
+game_server.prototype.fromGameToOut = function(client)
+{
+	this.clients.splice(this.getClientIndexFromGame(client),1);
 };
 
 
@@ -216,25 +221,36 @@ game_server.prototype.createGame = function(client1, client2)
 	this.games[this.games.length - 1].p2 = client2;
 	this.games[this.games.length - 1].beginInit();
 	
-	this.removeClientFromLobby(client1);
-	this.removeClientFromLobby(client2);
+	this.fromLobbyToGame(client1);
+	this.fromLobbyToGame(client2);
 	
 };
 
 //this function stops a selected core game server instance
-game_server.prototype.endGame = function(game,disconnection)
+game_server.prototype.endGame = function(game,disconnection,client)
 {
 	//this.updateClient('ALL');
-
-	if(this.games[this.getGameIndex(game)].p1 != null)
+    if (disconnection == 'disconnection')
 	{
-		this.sendClientToLobby(this.games[this.getGameIndex(game)].p1,disconnection);
-	}
-	if(this.games[this.getGameIndex(game)].p2 != null)
+		if(this.games[this.getGameIndex(game)].p1.userid == client.userid) //if player 1 disconnects we send player 2 to lobby
+		{
+			this.fromGameToLobby(this.games[this.getGameIndex(game)].p2,disconnection);
+		}
+		else if(this.games[this.getGameIndex(game)].p2.userid == client.userid)
+		{
+			this.fromGameToLobby(this.games[this.getGameIndex(game)].p1,disconnection);
+		}
+	} else
 	{
-		this.sendClientToLobby(this.games[this.getGameIndex(game)].p2,disconnection);
+		if(this.games[this.getGameIndex(game)].p1 != null)
+		{
+			this.fromGameToLobby(this.games[this.getGameIndex(game)].p1,disconnection);
+		}
+		if(this.games[this.getGameIndex(game)].p2 != null)
+		{
+			this.fromGameToLobby(this.games[this.getGameIndex(game)].p2,disconnection);
+		}
 	}
-	
 	this.games.splice(this.getGameIndex(game),1);
 };
 
@@ -311,7 +327,7 @@ game_server.prototype.checkEndedGames = function()
 					
 		    	this.games[i].p1.emit('message','REDIRECT');
 
-		        this.removeClient(this.games[i].p1);
+		        this.fromGameToOut(this.games[i].p1);
 		        this.games[i].p1 = null;
 		    }
 		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
@@ -320,10 +336,10 @@ game_server.prototype.checkEndedGames = function()
 			    this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
 		    	this.games[i].p2.emit('message','REDIRECT');
 
-		        this.removeClient(this.games[i].p2);
+		        this.fromGameToOut(this.games[i].p2);
 		        this.games[i].p2 = null;
 		    }
-			this.endGame(this.games[i],'');
+			this.endGame(this.games[i],'',undefined);
 		}
 	}
 };

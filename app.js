@@ -510,21 +510,16 @@ if(sio != undefined)
 			
             if(wrap_server.isClientInLobby(client))
             {
-                wrap_server.removeClientFromLobby(client);
-                //wrap_server.removeClient(client); 
+                wrap_server.fromLobbyToOut(client);
             }
             else if(wrap_server.isClientInGame(client))
             {
-
+                wrap_server.fromGameToOut(client);
 				wrap_server.findPartner(wrap_server.findGame(client),client) // asks partner to emit message "partnerLost"
-                wrap_server.endGame(wrap_server.findGame(client),'disconnection');
-                wrap_server.removeClientFromLobby(client);
-                wrap_server.removeClient(client);
+                wrap_server.endGame(wrap_server.findGame(client),'disconnection',client);
+
             }
-            else
-            {
-               wrap_server.removeClient(client);   
-            } 
+
         });
     }); 
 }
