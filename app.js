@@ -114,6 +114,7 @@ var
 
 function CreateExperiment(name,type,iter,game,lang)
 {
+	console.log("create");
     try{
         return(new Experiment(name,type,iter,game,lang));
     }catch(err)
