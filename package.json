@@ -20,6 +20,10 @@
     "socket.io": "~0.9.6",
     "urlencode": "~0.2.0"
   },
+  "engines": {
+    "npm": "2.7.0",
+    "node": "0.12.0"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "node app.js"

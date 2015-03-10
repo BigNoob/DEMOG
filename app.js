@@ -10,6 +10,8 @@
 // Description:
 //					The Express server handles passing the content to the browser. It's the router
 //					The Socket.io server handles real time communications between clients and server
+// Nodejs version used at the first time of developping: 0.6.12
+// npm version used first: 1.1.4
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

@@ -192,7 +192,7 @@ var Rect = function(x,y,w,h)
 
 rabbits_game_core.prototype.beginInit = function()
 {
-	console.log('inside begin init1');
+	//console.log('inside begin init1');
     this.p1.emit("message",'COLOR,1'); //says what sprites client should use (so that the two clients control a rabbit of the same color)
     this.p2.emit("message",'COLOR,2');
 	this.startMilliseconds = new Date().getTime();
@@ -203,13 +203,13 @@ rabbits_game_core.prototype.beginInit = function()
 	
     this.balloons.Init();
     this.beginGame();
-    console.log('inside begin init2');
+    //console.log('inside begin init2');
 };
 rabbits_game_core.prototype.beginGame = function()
 {
     this.p1.emit('message', 'GAME_START');
     this.p2.emit('message', 'GAME_START'); 
-    console.log('inside begin game');
+    //console.log('inside begin game');
 };
 rabbits_game_core.prototype.beginShare = function(client)
 {
