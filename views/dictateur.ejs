@@ -51,7 +51,8 @@
 		<h2>Not Running Experiments</h2>
 		
 		<ul>
-		<% exps.forEach(function(exp, index){ if(!exp.isRunning){ %>
+		<% console.log('\n'); %>
+		<% exps.forEach(function(exp, index){ console.log(exp.isRunning); if(!exp.isRunning){ %>
 			
 			<section class="experiment">
 				<p>Name: <%= exp.xpName %></p>
