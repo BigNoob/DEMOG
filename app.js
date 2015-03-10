@@ -107,7 +107,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dgexpe',"amazon",2,"dg","en"),
+    current_experiment = CreateExperiment('dgexpe',"amazon",2,"rabbits","en"),
     //current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en"),
     //current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en"),
     experimentsList = [current_experiment];
