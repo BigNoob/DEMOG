@@ -35,7 +35,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-require('newrelic');
+//require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -65,7 +65,7 @@ var
     util = require('util');									//used to display full object in console.log
     
 
-  //  /*
+    /*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
     sgTransport = require('nodemailer-sendgrid-transport'), //*/
@@ -108,14 +108,13 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dgexpe',"amazon",2,"dg","en"),
+    current_experiment = CreateExperiment('dg_expe',"web",2,"dg","en"),
     current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en"),
     current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en"),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
 
 function CreateExperiment(name,type,iter,game,lang)
 {
-	console.log("create");
     try{
         return(new Experiment(name,type,iter,game,lang));
     }catch(err)
@@ -129,7 +128,7 @@ function CreateExperiment(name,type,iter,game,lang)
 // Mail sender set up
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///*
+/*
 var LocalTransport = nodeMailer.createTransport("SMTP",{
    service: "Gmail",
    auth: {
@@ -148,7 +147,7 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
 app.configure(function(){
     app.set('views', __dirname + '/views');
     app.use(express.favicon());
-    //app.use(express.logger('dev'));
+    app.use(express.logger('dev'));
     app.use(express.static(__dirname + '/public'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -165,7 +164,7 @@ app.get('/admin',function(req,res){
 })
 
 app.get('/dictateur',function(req,res){
-	console.log(experimentsList);
+	//console.log(experimentsList);
     res.render('dictateur.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length, clientsFinished: wrap_server.experiment.returnOldCLientsNum()});
 });
 
@@ -258,7 +257,7 @@ app.post('/dictateur/write/:xpName', function(req, res) {
                         }
                     });*/
 					//console.log(experimentsList[i].result.playerResults);
-					console.log(util.inspect(experimentsList[i], false, null));
+					//console.log(util.inspect(experimentsList[i], false, null));
 
                 }
                 else
@@ -368,7 +367,7 @@ app.get('/home56', function(req,res){
 });
 
 
-function sendEmail()
+function sendEmail() // this function was used to send an email at the end of each game. see in core.js if it is activated
 {
     
  	if(gameport == 8099)
@@ -419,7 +418,7 @@ function CreateSIOServer()
     
     sio = io.listen(server);
     sio.configure(function (){
-        sio.set('log level', 0);
+        sio.set('log level', 3);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
         });

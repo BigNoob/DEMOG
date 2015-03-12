@@ -220,7 +220,7 @@ game_server.prototype.createGame = function(client1, client2)
 	this.games[this.games.length - 1].p1 = client1;
 	this.games[this.games.length - 1].p2 = client2;
 	this.games[this.games.length - 1].beginInit();
-	console.log('after begin init');
+	//console.log('after begin init');
 	
 	this.fromLobbyToGame(client1);
 	this.fromLobbyToGame(client2);
