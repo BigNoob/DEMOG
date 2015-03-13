@@ -76,7 +76,7 @@ var
 	
 // to add a new variable coming from the game (core.js) to the result file:
 // In core.js, record variable with this.variable and send variable to SetGameResult in function prototype.Share (4x)
-// In player.js, add to function prototype.SetGameResult, prototype.addGameResult and var GameResult
+// In player.js, add to function prototype.SetGameResult, prototype.addGameResult and var GameResultSpace
 //
 // and if the variable also makes sense in the context of the game:
 //
@@ -421,7 +421,7 @@ function CreateSIOServer()
     sio = io.listen(server);
     sio.configure(function (){
 		sio.set('transports', ['websocket']);
-        sio.set('log level', 3);
+        sio.set('log level', 0);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
         });

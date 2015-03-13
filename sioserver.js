@@ -318,14 +318,15 @@ game_server.prototype.checkEndedGames = function()
 			}
 			else 
 			{
-				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength);
+				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength, this.games[i].gotMothership);
 			
 			}
+
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 
 		    	this.experiment.addPlayerResults(this.games[i].p1.player.GetResult());
-					
+
 		    	this.games[i].p1.emit('message','REDIRECT');
 
 		        this.fromGameToOut(this.games[i].p1);
@@ -335,12 +336,15 @@ game_server.prototype.checkEndedGames = function()
 		    {
 				
 			    this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
+
 		    	this.games[i].p2.emit('message','REDIRECT');
 
 		        this.fromGameToOut(this.games[i].p2);
 		        this.games[i].p2 = null;
 		    }
 			this.endGame(this.games[i],'',undefined);
+
+			console.log(this.experiment.result.gameResults);
 		}
 	}
 };

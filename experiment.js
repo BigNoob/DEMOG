@@ -108,9 +108,9 @@ Experiment.prototype.addGameResultsRabbits = function(gameId, gamescore, player1
 	this.result.gameResults.push(new gameResultRabbits(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength));
 };
 
-Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength)
+Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership)
 {
-	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength));
+	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership));
 };
 
 Experiment.prototype.returnOldCLientsNum = function()
@@ -158,7 +158,7 @@ var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, gi
 	this.gameLength = gameLength;
 };
 
-var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength)
+var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership)
 {
 	this.gameId = gameId;
 	this.gameScore = gameScore;
@@ -176,6 +176,7 @@ var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, give
 	this.p1DistanceToMothership = p1DistanceToMothership;
 	this.p2DistanceToMothership = p2DistanceToMothership;
 	this.gameLength = gameLength;
+	this.gotMothership = gotMothership;
 };
 
 if( 'undefined' != typeof global ) {
