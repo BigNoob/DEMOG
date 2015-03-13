@@ -35,7 +35,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-//require('newrelic');
+require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -65,7 +65,7 @@ var
     util = require('util');									//used to display full object in console.log
     
 
-    /*
+    ///*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
     sgTransport = require('nodemailer-sendgrid-transport'), //*/
@@ -86,6 +86,8 @@ var
 // to record all input by players: in core.js line 536 540
 
 // CPU use is heavily dependent on createjs.Ticker.setFPS(20); in main_space_client.js and main_rabbits_clients.js
+
+// if problems of lag/disconnection: log socket.io outputs (sio.set('log level', 3); below) and see if any "websocket connection invalid" error messages show up. if yes your internet connection might be going through a proxy that doesn't accept websocket.
 
 var frame_time = 60; //60
 var physic_time = 15; //15
@@ -128,7 +130,7 @@ function CreateExperiment(name,type,iter,game,lang)
 // Mail sender set up
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
+///*
 var LocalTransport = nodeMailer.createTransport("SMTP",{
    service: "Gmail",
    auth: {
@@ -147,7 +149,7 @@ var LocalTransport = nodeMailer.createTransport("SMTP",{
 app.configure(function(){
     app.set('views', __dirname + '/views');
     app.use(express.favicon());
-    app.use(express.logger('dev'));
+    //app.use(express.logger('dev'));
     app.use(express.static(__dirname + '/public'));
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -418,6 +420,7 @@ function CreateSIOServer()
     
     sio = io.listen(server);
     sio.configure(function (){
+		sio.set('transports', ['websocket']);
         sio.set('log level', 3);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
