@@ -452,12 +452,11 @@ function serverMessageParser_Space(data)
           ClearLobbyState_Space();
           InitShareWait_Space();
         break;
-
-       
         case 'REDIRECT':
-		if (xpGame == "dg") {window.location.replace('/end5');} 
-		else {window.location.replace('/end1');}
-          
+			if (xpGame == "dg") {window.location.replace('/end5');} 
+			else {window.location.replace('/end1');}
+        case 'EXIT':
+			window.location.replace('/exit');
         break;
       }
 }

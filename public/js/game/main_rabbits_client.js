@@ -500,6 +500,9 @@ function serverMessageParser(data)
  
           window.location.replace('/end3');
         break;
+        case 'EXIT':
+			window.location.replace('/exit');
+		break;
       }
 }
 

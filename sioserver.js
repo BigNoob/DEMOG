@@ -6,6 +6,8 @@ require('./space_coop_core.js');
 require('./rabbits_coop_core.js');
 global.window = global.document = global;
 
+var MAX_WAITING_TIME = 20000; // max waiting time in the lobby, in ms
+
 var game_server = function()
 {
 	this.experiment = undefined;
@@ -295,6 +297,11 @@ game_server.prototype.matchClients = function()
 	this.clientsinLobbyActive = [];
 	for(var i = 0; i < this.clientsinLobby.length; i++)
 	{
+		if ((new Date().getTime()) - this.clientsinLobby[i].player.result.WaitingTimeLobby1 > MAX_WAITING_TIME)
+		{
+		    	this.clientsinLobby[i].emit('message','EXIT');
+		}
+
 		if (this.clientsinLobby[i].player.result.tabActive)
 		{
 			this.clientsinLobbyActive.push(this.clientsinLobby[i]);

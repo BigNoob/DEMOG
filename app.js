@@ -110,7 +110,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",2,"dg","en"),
+    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en"),
     current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en"),
     current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en"),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
@@ -366,6 +366,9 @@ app.get('/home55', function(req,res){
 });
 app.get('/home56', function(req,res){
     res.render('home56.ejs');
+});
+app.get('/exit', function(req,res){
+    res.render('exit.ejs');
 });
 
 
