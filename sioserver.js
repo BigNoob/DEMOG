@@ -288,15 +288,24 @@ game_server.prototype.findGame = function(client)
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//This function is used to match clients in the lobby to create a new games
+//This function is used to match clients in the lobby to create a new game
 game_server.prototype.matchClients = function()
 {
-	if(parseInt(this.clientsinLobby.length / 2) > 0)
+	var activeClients = [];
+	for(var i = 0; i < this.clientsinLobby.length; i++)
 	{
-		for(var i = 0; i < parseInt(this.clientsinLobby.length / 2); i++)
+		if (this.clientsinLobby[i].player.result.tabActive)
+		{
+			activeClients.push(this.clientsinLobby[i]);
+		}
+		
+	}
+	if(parseInt(activeClients.length / 2) > 0)
+	{
+		for(var i = 0; i < parseInt(this.activeClients.length / 2); i++)
 		{
 
-			this.createGame(this.clientsinLobby[i*2],this.clientsinLobby[(i*2)+1]);
+			this.createGame(this.activeClients[i*2],this.activeClients[(i*2)+1]);
 			
 		}
 	}	

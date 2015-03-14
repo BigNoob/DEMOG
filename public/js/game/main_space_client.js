@@ -147,6 +147,16 @@ function Main_Space(type,game) {
   });
 
 
+	window.onfocus = function () { 
+	   socket.emit('active');
+	}; 
+
+	window.onblur = function () { 
+	   socket.emit('inactive');
+	}; 
+
+
+
   StartLoading_Space();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

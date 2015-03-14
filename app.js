@@ -421,7 +421,7 @@ function CreateSIOServer()
     sio = io.listen(server);
     sio.configure(function (){
 		sio.set('transports', ['websocket']);
-        sio.set('log level', 0);
+        sio.set('log level', 3);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
         });
@@ -509,6 +509,14 @@ if(sio != undefined)
         });
         client.on('sendEmail', function (){
             sendEmail();
+        });
+
+        client.on('active', function (){           //this tracks whether or not the client has the tab active in her browser
+            client.player.result.tabActive = true;  // does not start game if not active (see matchClients in sioserver.js)
+        });
+
+        client.on('inactive', function (){
+            client.player.result.tabActive = false;
         });
 
         client.on('disconnect', function (){
