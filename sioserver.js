@@ -300,12 +300,13 @@ game_server.prototype.matchClients = function()
 		}
 		
 	}
+	console.log(parseInt(activeClients.length));
 	if(parseInt(activeClients.length / 2) > 0)
 	{
 		for(var i = 0; i < parseInt(this.activeClients.length / 2); i++)
 		{
 
-			this.createGame(this.activeClients[i*2],this.activeClients[(i*2)+1]);
+			this.createGame(activeClients[i*2],activeClients[(i*2)+1]);
 			
 		}
 	}	
