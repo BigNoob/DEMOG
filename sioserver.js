@@ -303,7 +303,7 @@ game_server.prototype.matchClients = function()
 	console.log(parseInt(activeClients.length));
 	if(parseInt(activeClients.length / 2) > 0)
 	{
-		for(var i = 0; i < parseInt(this.activeClients.length / 2); i++)
+		for(var i = 0; i < parseInt(activeClients.length / 2); i++)
 		{
 
 			this.createGame(activeClients[i*2],activeClients[(i*2)+1]);
