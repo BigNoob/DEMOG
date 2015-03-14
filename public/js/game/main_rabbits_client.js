@@ -149,6 +149,14 @@ function Main_Rabbits(type) {
       keys[event.keyCode] = false;
   });
 
+	window.onfocus = function () { 
+	   socket.emit('active');
+	}; 
+
+	window.onblur = function () { 
+	   socket.emit('inactive');
+	}; 
+
   StartLoading();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -557,7 +565,7 @@ function InitLobbyState(data)
 	progressText.text = "Your partner has disconnected. \n\n Please wait for another person to join.";
   } else
   {
-	progressText.text = "Please wait for another person to join.";
+	progressText.text = "Please wait for another person to join. \n\n Keep this tab active or the game will not start. ";
   }
   progressText.y = 20;
   progressText.x = 400 ;

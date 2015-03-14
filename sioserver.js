@@ -12,6 +12,7 @@ var game_server = function()
 	this.games = [];
 	this.clients = [];
 	this.clientsinLobby = [];
+	this.clientsinLobbyActive = [];
 };
 
 module.exports = global.game_server = game_server;
@@ -291,22 +292,22 @@ game_server.prototype.findGame = function(client)
 //This function is used to match clients in the lobby to create a new game
 game_server.prototype.matchClients = function()
 {
-	var activeClients = [];
+	this.clientsinLobbyActive = [];
 	for(var i = 0; i < this.clientsinLobby.length; i++)
 	{
 		if (this.clientsinLobby[i].player.result.tabActive)
 		{
-			activeClients.push(this.clientsinLobby[i]);
+			this.clientsinLobbyActive.push(this.clientsinLobby[i]);
 		}
 		
 	}
-	console.log(parseInt(activeClients.length));
-	if(parseInt(activeClients.length / 2) > 0)
+
+	if(parseInt(this.clientsinLobbyActive.length / 2) > 0)
 	{
-		for(var i = 0; i < parseInt(activeClients.length / 2); i++)
+		for(var i = 0; i < parseInt(this.clientsinLobbyActive.length / 2); i++)
 		{
 
-			this.createGame(activeClients[i*2],activeClients[(i*2)+1]);
+			this.createGame(this.clientsinLobbyActive[i*2],this.clientsinLobbyActive[(i*2)+1]);
 			
 		}
 	}	

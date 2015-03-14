@@ -167,7 +167,7 @@ app.get('/admin',function(req,res){
 
 app.get('/dictateur',function(req,res){
 	//console.log(experimentsList);
-    res.render('dictateur.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length, clientsFinished: wrap_server.experiment.returnOldCLientsNum()});
+    res.render('dictateur.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length, clientsFinished: wrap_server.experiment.returnOldCLientsNum(), clientsInLobbyActiveNum: wrap_server.clientsinLobbyActive.length,});
 });
 
 app.post('/dictateur/add/', function(req,res){
