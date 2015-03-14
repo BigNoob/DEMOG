@@ -6,7 +6,7 @@ require('./space_coop_core.js');
 require('./rabbits_coop_core.js');
 global.window = global.document = global;
 
-var MAX_WAITING_TIME = 20000; // max waiting time in the lobby, in ms
+var MAX_WAITING_TIME = 100000; // max waiting time in the lobby, in ms
 
 var game_server = function()
 {
@@ -297,11 +297,6 @@ game_server.prototype.matchClients = function()
 	this.clientsinLobbyActive = [];
 	for(var i = 0; i < this.clientsinLobby.length; i++)
 	{
-		if ((new Date().getTime()) - this.clientsinLobby[i].player.result.WaitingTimeLobby1 > MAX_WAITING_TIME)
-		{
-		    	this.clientsinLobby[i].emit('message','EXIT');
-		}
-
 		if (this.clientsinLobby[i].player.result.tabActive)
 		{
 			this.clientsinLobbyActive.push(this.clientsinLobby[i]);
@@ -313,11 +308,19 @@ game_server.prototype.matchClients = function()
 	{
 		for(var i = 0; i < parseInt(this.clientsinLobbyActive.length / 2); i++)
 		{
-
-			this.createGame(this.clientsinLobbyActive[i*2],this.clientsinLobbyActive[(i*2)+1]);
-			
+			this.createGame(this.clientsinLobbyActive[i*2],this.clientsinLobbyActive[(i*2)+1]);	
 		}
-	}	
+	}
+
+	for(var i = 0; i < this.clientsinLobby.length; i++)
+	{
+		if ((new Date().getTime()) - this.clientsinLobby[i].player.result.WaitingTimeLobby1 > MAX_WAITING_TIME)
+		{
+		    	this.clientsinLobby[i].emit('message','EXIT');
+		}
+		
+	}
+	
 };
 
 //Browse the games to check which ones are finished
