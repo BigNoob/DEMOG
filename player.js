@@ -49,8 +49,8 @@ PlayerResult.prototype.init = function(userid, amazonId)
 	this.gameLog = [];
 	this.lostPartner = -1;
 	this.IPaddress = -1;
-	this.WaitingTimeLobby1 = -1;
-	this.WaitingTimeLobby2 = -1;
+	this.WaitingTimeLobby1 = new Date().getTime();
+	this.WaitingTimeLobby2 = new Date().getTime();
 	this.currentGame = 1;
 	this.tabActive = true;
 };

@@ -143,7 +143,8 @@ game_server.prototype.fromGameToLobby = function(client,disconnection)
 	this.clients.splice(this.getClientIndexFromGame(client),1);
 	client.player.isInLobby = true;
 	this.clientsinLobby.push(client);
-	client.emit('message', 'LOBBY,'+client+','+disconnection);
+	if (disconnection == 'disconnection') {client.emit('message', 'LOBBY,'+client+','+disconnection);} // if it's not a disconnection clients are already in the lobby graphically (function PlayerEnded in core.js)
+	client.emit('message', 'CLEARSHARE,'+client+','+disconnection); // BUG: for some reason if enemies' alpha is not reset to 1 at this point, the enemies in the second game are not displayed (although they should have been already reset to 1). 
 };
 
 
@@ -312,11 +313,20 @@ game_server.prototype.matchClients = function()
 		}
 	}
 
-	for(var i = 0; i < this.clientsinLobby.length; i++)
+	for(var i = 0; i < this.clientsinLobby.length; i++) // redirect clients if they wait for too long in the lobby
 	{
-		if ((new Date().getTime()) - this.clientsinLobby[i].player.result.WaitingTimeLobby1 > MAX_WAITING_TIME)
+		if (this.clientsinLobby[i].player.result.currentGame == 1)
 		{
-		    	this.clientsinLobby[i].emit('message','EXIT');
+			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby1) > MAX_WAITING_TIME)
+			{
+					this.clientsinLobby[i].emit('message','EXIT');
+			} 
+		} else if (this.clientsinLobby[i].player.result.currentGame == 2)
+		{
+			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby2) > MAX_WAITING_TIME)
+			{
+					this.clientsinLobby[i].emit('message','EXIT');
+			} 
 		}
 		
 	}
@@ -365,7 +375,7 @@ game_server.prototype.checkEndedGames = function()
 		    }
 			this.endGame(this.games[i],'',undefined);
 
-			console.log(this.experiment.result.gameResults);
+			//console.log(this.experiment.result.gameResults);
 		}
 	}
 };

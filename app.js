@@ -110,7 +110,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en"),
+    current_experiment = CreateExperiment('dg_expe',"web",12,"space_coop","en"),
     current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en"),
     current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en"),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
@@ -259,7 +259,7 @@ app.post('/dictateur/write/:xpName', function(req, res) {
                         }
                     });*/
 					//console.log(experimentsList[i].result.playerResults);
-					//console.log(util.inspect(experimentsList[i], false, null));
+					console.log(util.inspect(experimentsList[i], false, null));
 
                 }
                 else
@@ -424,7 +424,7 @@ function CreateSIOServer()
     sio = io.listen(server);
     sio.configure(function (){
 		sio.set('transports', ['websocket']);
-        sio.set('log level', 3);
+        sio.set('log level', 0);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
         });
@@ -468,17 +468,27 @@ if(sio != undefined)
 		client.player.result.updateIP(clientIp);     
 		wrap_server.addClient(client);
 
-        client.on('updateTime', function (){  //bad coding, must be a better way to record waiting time
-			
+        client.on('updateTime', function (first){  
 			if (client.player.result.currentGame == 1)
 			{
-				client.player.result.WaitingTimeLobby1 = (new Date().getTime()) - client.player.result.WaitingTimeLobby1;
+				if (first) 
+				{
+					client.player.result.WaitingTimeLobby1 = new Date().getTime();
+				} else
+				{
+					client.player.result.WaitingTimeLobby1 = (new Date().getTime()) - client.player.result.WaitingTimeLobby1;
+				}
 				//console.log('1: '+client.player.result.WaitingTimeLobby1);	
 				//console.log('2: '+client.player.result.WaitingTimeLobby2);	
 			} else if (client.player.result.currentGame == 2)
 			{
-				if (client.player.result.WaitingTimeLobby2 != -1) {client.player.result.currentGame = 3;} //stops all ulterior calls to updateTime that would break the waiting time
-				client.player.result.WaitingTimeLobby2 = (new Date().getTime()) - client.player.result.WaitingTimeLobby2;
+				if (first) 
+				{
+					client.player.result.WaitingTimeLobby2 = new Date().getTime();
+				} else
+				{
+					client.player.result.WaitingTimeLobby2 = (new Date().getTime()) - client.player.result.WaitingTimeLobby2;
+				}
 				//console.log('1: '+client.player.result.WaitingTimeLobby1);	
 				//console.log('2: '+client.player.result.WaitingTimeLobby2);
 			} 		
@@ -494,18 +504,6 @@ if(sio != undefined)
 
         client.on('partnerLost', function (){
             client.player.result.lostPartner = 1;
-			if (client.player.result.currentGame == 1)
-			{
-				client.player.result.WaitingTimeLobby1 = 0;
-	
-			} else
-			{
-				client.player.result.WaitingTimeLobby2 = 0;
-			}
-			if (client.player.result.currentGame == 3) // necessary to update the waiting time in case disconnection in the last round
-			{
-				client.player.result.currentGame = 2;
-			} 
         });
         client.on('message', function (m){
             wrap_server.onMessage(client, m);
@@ -519,7 +517,7 @@ if(sio != undefined)
         });
 
         client.on('inactive', function (){
-            client.player.result.tabActive = false;
+            //client.player.result.tabActive = false;
         });
 
         client.on('disconnect', function (){

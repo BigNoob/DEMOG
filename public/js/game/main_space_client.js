@@ -105,8 +105,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
-var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
-var number = 10;   //must be changed in space_coop_core.js also, 10 in real test
+var lines = 1;    //must be changed in space_coop_core.js also, 4 in real test
+var number = 1;   //must be changed in space_coop_core.js also, 10 in real test
 
 
 //----------------
@@ -303,7 +303,7 @@ function handleComplete_Space (event)
      startServerListen_Space();  //We start listening to the server after the loading of all the assets
 	 
      InitLobbyState_Space(',,'); 
-	 socket.emit('updateTime');
+	 socket.emit('updateTime',true);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,8 +373,8 @@ function startServerListen_Space()
         socket.emit('sendEmail');
   });
 
-  socket.on("updateTime",function(){
-        socket.emit('updateTime'); // to know the waiting time in the lobby
+  socket.on("updateTime",function(m){
+        socket.emit('updateTime',m); // to know the waiting time in the lobby
   });
 }
 
@@ -409,19 +409,21 @@ function serverMessageParser_Space(data)
           ClearLobbyState_Space();
           InitGameState_Space();
         break;
+        case 'CLEARSHARE':
+              for(var i = 0 ; i < EnemiesCont.getNumChildren() ; i++)
+			  {
+				EnemiesCont.getChildAt(i).alpha = 1;
+			  }    
+        break;
         case 'LOBBY':
           //ClearLobbyState_Space();
 		  //canEndGame = true;
-		  socket.emit('updateTime');
+		  socket.emit('updateTime',true);
           ClearGameState_Space();    
           ClearShareState_Space();
           ClearShareWait_Space();     
 
-          /*if (state == state_displayShare) //important to remove buttons if disconnection happens at displayAmount state
-		  {
-			stage.removeChild(button);
-		    stage.update();
-		  }*/
+     
 		  //ClearDrawGivenAmmount_Space();
 		  InitLobbyState_Space(splittedData); 
 		  //InitLobbyState_Space(undefined); 
@@ -455,6 +457,7 @@ function serverMessageParser_Space(data)
         case 'REDIRECT':
 			if (xpGame == "dg") {window.location.replace('/end5');} 
 			else {window.location.replace('/end1');}
+		break;
         case 'EXIT':
 			window.location.replace('/exit');
         break;

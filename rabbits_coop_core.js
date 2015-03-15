@@ -39,8 +39,8 @@ var balloonsX_spacing = 60;
 var balloonsY_spacing = 60;
 var balloonsY = 150;
 var balloonsX = 100;
-var lines = 4;  //must be changed in main_rabbits_client.js also
-var number = 10;  //must be changed in main_rabbits_client.js also
+var lines = 1;  //must be changed in main_rabbits_client.js also
+var number = 1;  //must be changed in main_rabbits_client.js also
 var points_per_enemy = 25;
 
 var launcherSpeed = 10;
@@ -198,8 +198,8 @@ rabbits_game_core.prototype.beginInit = function()
 	this.startMilliseconds = new Date().getTime();
 
 
-	this.p1.emit('updateTime');
-	this.p2.emit('updateTime');
+	this.p1.emit('updateTime',false);
+	this.p2.emit('updateTime',false);
 	
     this.balloons.Init();
     this.beginGame();

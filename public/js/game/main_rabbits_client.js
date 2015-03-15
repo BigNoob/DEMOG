@@ -112,8 +112,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 60;
 var enemiesY_spacing = 60;
-var lines = 4;  //must be changed in rabbits_coop_core.js also
-var number = 10; //must be changed in rabbits_coop_core.js also
+var lines = 1;  //must be changed in rabbits_coop_core.js also
+var number = 1; //must be changed in rabbits_coop_core.js also
 
 var keys=[];
 
@@ -309,7 +309,7 @@ function handleComplete (event)
   */
   startServerListen();  //We start listening to the server after the loading of all the assets
   InitLobbyState(',,'); 
-  socket.emit('updateTime');
+  socket.emit('updateTime',true);
 }
 
 function reloadSprites(color)
@@ -410,8 +410,8 @@ function startServerListen()
         socket.emit('sendEmail');
   });
 
-  socket.on("updateTime",function(){
-        socket.emit('updateTime'); // to know the waiting time in the lobby
+  socket.on("updateTime",function(m){
+        socket.emit('updateTime',m); // to know the waiting time in the lobby
   });
 
 }
@@ -452,17 +452,11 @@ function serverMessageParser(data)
         break;
         case 'LOBBY':
           //ClearLobbyState();
-		  socket.emit('updateTime');
+		  socket.emit('updateTime',true);
           ClearGameState();    
           ClearShareState();
           ClearWaitState();
-		/*
-		  if (state == state_displayShare) //important to remove buttons if disconnection happens at displayAmount state
-		  {
-			stage.removeChild(button);
-		    stage.update();
-		  }
-		*/     
+	   
           InitLobbyState(splittedData); 
 		  //InitLobbyState(undefined); 
         break;
@@ -471,6 +465,12 @@ function serverMessageParser(data)
           ClearGameState();
           //ClearLobbyState();
           InitNoXP();
+        break;
+        case 'CLEARSHARE':
+              for(var i = 0 ; i < EnemiesCont.getNumChildren() ; i++)
+			  {
+				EnemiesCont.getChildAt(i).alpha = 1;
+			  } 
         break;
         case 'SHARE_STATE':
           ClearGameState();
@@ -802,6 +802,7 @@ function ClearShareState()
 function ClearWaitState()
 {
   stage.removeChild(progressText);
+  stage.update();
 }
 function ClearFlyer()
 {

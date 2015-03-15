@@ -24,21 +24,21 @@ var shot_speed = 6;
 var shot_width = 8;
 var shot_height = 8;
 
-var mother_speed = 2;
+var mother_speed = 3;
 var mother_speed_fall = 5;
 var mothershipY = 20;
 var mother_width = 64;
 var mother_height = 96;
 
-var enemy_speed = 3; //for debug you can set this to 0.2, otherwise realistic speed is 3
+var enemy_speed = 0.3; //for debug you can set this to 0.2, otherwise realistic speed is 3
 var enemy_width = 16;
 var enemy_height = 16;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 100;
-var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
-var number = 10;  //must be changed in main_space_client.js also, 10 for real test
+var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
+var number = 1;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
@@ -89,6 +89,10 @@ var space_game_core = function(maxIter,isDG)
     this.motherShipAlive = true;
     this.enemiesLeft = false;
     this.mothershipLeft = false;
+	this.explodeY = 580;	
+	this.explodeTouchWall = false;	
+	this.explodeRound = 0;
+
     this.shots = [];
     this.shotNum = 0;
 
@@ -205,8 +209,8 @@ space_game_core.prototype.beginInit = function()
     this.enemies.Init();
 	this.startMilliseconds = new Date().getTime();
 
-	this.p1.emit('updateTime');
-	this.p2.emit('updateTime');
+	this.p1.emit('updateTime',false);
+	this.p2.emit('updateTime',false);
 	
 
 	if(this.isDG == "dg")  // skip the game stage and go to share state directly
@@ -284,7 +288,8 @@ space_game_core.prototype.physic_update = function(deltaT)
             this.sendUpdate();
         break;
         case state_endAnim:
-            this.animMotherFall();
+
+			this.animMotherFall();
             this.sendUpdate();
         break;
         case state_share:
@@ -406,16 +411,18 @@ space_game_core.prototype.moveMother = function()
 space_game_core.prototype.animMotherFall = function()
 {
 
-    if(this.mothershipX > (this.world.width - mother_width) && !this.mothershipLeft)
+    if(this.mothershipX > (this.world.width - mother_width))
     {
-        this.mothershipLeft = true;
+		this.explodeTouchWall = true;
+		this.explodeY = this.mothershipY;
     }
-    if(this.mothershipX < 0 && this.mothershipLeft)
+    if(this.mothershipX < 0)
     {
-        this.mothershipLeft = false;
+		this.explodeTouchWall = true;
+		this.explodeY = this.mothershipY;
     }
     
-    if (this.mothershipY > 500)
+    if (this.mothershipY > 500) // mothership has touched the ground
     {
 
 		var centerP1 = this.p1ShipX + (ship_width / 2);
@@ -429,7 +436,7 @@ space_game_core.prototype.animMotherFall = function()
 			this.p2DistanceToMothership = distanceP2;
 		}
 		this.mothershipFallen = true;
-		if (distanceP2 == 0 || distanceP1 == 0)
+		if (distanceP2 == 0 || distanceP1 == 0) // players have reached the mothership
 		{ 
 			this.p1.emit('message','REMOVE_MOTHERSHIP');
 		    this.p2.emit('message','REMOVE_MOTHERSHIP');
@@ -449,7 +456,7 @@ space_game_core.prototype.animMotherFall = function()
 		        this.p1.emit('message','SHARE_WAIT');
 		    }
 		}
-		else 
+		else // one player moves towards the mothership
 		{
 		    if(distanceP2 > distanceP1)
 		    { //p1 closest
@@ -465,20 +472,36 @@ space_game_core.prototype.animMotherFall = function()
 		    }
 		}
     }
-    else
+    else //mothership is still falling
     {
-        this.mothershipY += mother_speed_fall/3;
-    }
+		if (this.explodeTouchWall) 
+		{
+			this.mothershipY += parseInt(2 + 0.1 * this.explodeRound); // vertical fall
+		} else
+		{
+			this.mothershipY = parseInt(600 - (-0.15 * this.explodeRound * this.explodeRound + this.explodeY)); //parabol fall
+		}
+        //this.mothershipY += mother_speed_fall/3;
+    }	
     if (!this.mothershipFallen)
     {    
 		if(this.mothershipLeft)
 		{
-		    this.mothershipX -= mother_speed_fall;
+			this.explodeDir = -1;
 		}
 		else
 		{
-		    this.mothershipX += mother_speed_fall;
+			this.explodeDir = 1;
 		}
+
+		if (!this.explodeTouchWall) // parabol if mothership has not touched the sides
+		{
+			this.mothershipX = parseInt(this.explodeX + this.explodeDir * mother_speed * 2.5 * this.explodeRound);
+		} 
+		
+
+
+	this.explodeRound++;
 	}
 };    
 
@@ -518,13 +541,15 @@ space_game_core.prototype.checkCollisions = function()
 
         if(this.doCollide(this.shots[i].rect,new Rect(this.mothershipX,mothershipY,mother_width,mother_height))) // collision with mamaship
         {
-            this.shots[i].alive = false;
+            
 			this.gotMothership = this.shots[i].shooter;
-            if(this.enemies.numEnemies == 0)
+			this.explodeX = this.mothershipX;
+            if(this.shots[i].alive && this.enemies.numEnemies == 0)
             {
                 //this.score+= 100;
                 this.state = state_endAnim;
             }
+			this.shots[i].alive = false;
         }   
     }  
 };
