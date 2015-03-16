@@ -6,7 +6,7 @@ require('./space_coop_core.js');
 require('./rabbits_coop_core.js');
 global.window = global.document = global;
 
-var MAX_WAITING_TIME = 100000; // max waiting time in the lobby, in ms
+var MAX_WAITING_TIME = 10000; // max waiting time in the lobby, in ms
 
 var game_server = function()
 {
@@ -320,12 +320,14 @@ game_server.prototype.matchClients = function()
 			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby1) > MAX_WAITING_TIME)
 			{
 					this.clientsinLobby[i].emit('message','EXIT');
+					this.clientsinLobby[i].player.result.timedOut = true;
 			} 
 		} else if (this.clientsinLobby[i].player.result.currentGame == 2)
 		{
 			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby2) > MAX_WAITING_TIME)
 			{
 					this.clientsinLobby[i].emit('message','EXIT');
+					this.clientsinLobby[i].player.result.timedOut = true;
 			} 
 		}
 		

@@ -613,7 +613,7 @@ function InitShareState_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role of giver.\n\n Please share the points with the other person. \n\n\n\nIndicate how much you want to give by clicking on the scale below.\n\n\n\n\n\n\n\n I want to GIVE:";
+  {progressText.text = "You have been randomly attributed the role of giver.\n\n Before going on to the next task, please share the points with the other person. \n\n\n\nIndicate how much you want to give by clicking on the scale below.\n\n\n\n\n\n\n\n I want to GIVE:";
   progressText2.text = "Validate by pressing space.";
   }
   else 

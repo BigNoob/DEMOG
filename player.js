@@ -38,6 +38,7 @@ var PlayerResult = function()
 	this.WaitingTimeLobby1;
 	this.WaitingTimeLobby2;
 	this.currentGame;
+	this.timedOut;
 	this.tabActive;
 };
 
@@ -52,6 +53,7 @@ PlayerResult.prototype.init = function(userid, amazonId)
 	this.WaitingTimeLobby1 = new Date().getTime();
 	this.WaitingTimeLobby2 = new Date().getTime();
 	this.currentGame = 1;
+	this.timedOut = false;
 	this.tabActive = true;
 };
 

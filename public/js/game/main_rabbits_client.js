@@ -518,11 +518,11 @@ function InitGameState()
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
-  launcher.x = 400;
+  launcher.x = 220;
   launcher.y = 550;
   launcher.alpha = 1.0;
 
-  flyer.x = 380;
+  flyer.x = 210;
   flyer.y = 350;
 
   EnemiesCont.x = 100;

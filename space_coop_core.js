@@ -36,7 +36,7 @@ var enemy_height = 16;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
-var enemiesX = 100;
+var enemiesX = 300;
 var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
 var number = 1;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
@@ -84,7 +84,7 @@ var space_game_core = function(maxIter,isDG)
     this.p1ShipX = 370;
     this.p2ShipX = 430;
     
-    this.mothershipX = 100;
+    this.mothershipX = 400 - mother_width / 2;
     this.mothershipY = 20;
     this.motherShipAlive = true;
     this.enemiesLeft = false;
@@ -476,10 +476,10 @@ space_game_core.prototype.animMotherFall = function()
     {
 		if (this.explodeTouchWall) 
 		{
-			this.mothershipY += parseInt(2 + 0.1 * this.explodeRound); // vertical fall
+			this.mothershipY += Math.round(2 + 0.1 * this.explodeRound); // vertical fall
 		} else
 		{
-			this.mothershipY = parseInt(600 - (-0.15 * this.explodeRound * this.explodeRound + this.explodeY)); //parabol fall
+			this.mothershipY = Math.round(600 - (-0.15 * this.explodeRound * this.explodeRound + this.explodeY)); //parabol fall
 		}
         //this.mothershipY += mother_speed_fall/3;
     }	
@@ -496,7 +496,7 @@ space_game_core.prototype.animMotherFall = function()
 
 		if (!this.explodeTouchWall) // parabol if mothership has not touched the sides
 		{
-			this.mothershipX = parseInt(this.explodeX + this.explodeDir * mother_speed * 2.5 * this.explodeRound);
+			this.mothershipX = Math.round(this.explodeX + this.explodeDir * mother_speed * 2.5 * this.explodeRound);
 		} 
 		
 

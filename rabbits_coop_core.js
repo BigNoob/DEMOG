@@ -27,7 +27,7 @@ var goal_speed = 2;
 var goalballoonY = 20;
 var goal_width = 39;
 var goal_height = 56;
-
+var waitEnd = -1;
 
 var writeResults1 = true;
 var writeResults2 = true;
@@ -97,19 +97,20 @@ var rabbits_game_core = function(maxIter)
     this.balloonsLeft = false;
     this.goalballoonLeft = false;
 
-    this.flyer = new Rect(380,350,40,46);
+    this.flyer = new Rect(270,350,40,46);
     this.launcher = new Rect(350,549,96,53);
 
-    this.flyer.x = 400 - this.flyer.w;
-    this.flyer.y = 400;
+    this.flyer.x = 270; //initial value erased by init_abs below
+    this.flyer.y = 500;
         
 	this.startMilliseconds = -1;
 	this.gameLength = -1;
 
-    this.init_speed = 0.2;
+    this.init_speed = 0.1;
     this.init_angle = 0;
-    this.init_abs = 400 - this.flyer.w;
-    this.inAirTime = 1000.0;
+    this.init_abs = 400;
+
+    this.inAirTime = 1200.0;
     this.timeScale = 10;
     this.angleDirection = -1;
 
@@ -385,18 +386,22 @@ rabbits_game_core.prototype.animMotherFall = function()
 {
     if (this.goalballoonY > 500)
     {
-        this.state = state_share;
-		this.gameLength = (new Date().getTime()) - this.startMilliseconds;
-        if(this.launcherNumber == 2)
-        {
-            this.p1.emit('message','SHARE_STATE');
-            this.p2.emit('message','SHARE_WAIT');
-        }
-        else
-        {
-            this.p2.emit('message','SHARE_STATE');
-            this.p1.emit('message','SHARE_WAIT');
-        }
+		waitEnd++;
+		if (waitEnd > 150) //wait a bit when the rabbit reaches floor
+		{
+		    this.state = state_share;
+			this.gameLength = (new Date().getTime()) - this.startMilliseconds;
+		    if(this.launcherNumber == 2)
+		    {
+		        this.p1.emit('message','SHARE_STATE');
+		        this.p2.emit('message','SHARE_WAIT');
+		    }
+		    else
+		    {
+		        this.p2.emit('message','SHARE_STATE');
+		        this.p1.emit('message','SHARE_WAIT');
+		    }
+		}
     }
     else
     {
@@ -444,10 +449,10 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
             //console.log(this.launcherNumber);
             this.inAirTime = 0;
-			deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2);
+			deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2); //distance between the middle of the seesaw and the middle of the flyer
             //console.log(deltaX);
 
-            if((deltaX <= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 2) || (deltaX >= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 1)) // flyer is on the good side of the seesaw
+            if((deltaX <= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 2) || (deltaX >= 0 && Math.abs(deltaX) < (this.launcher.w/2 + this.flyer.w/2) && this.launcherNumber == 1)) // flyer is on the seesaw, and on the good side of the seesaw
             {
 				deltaX = Math.abs(deltaX);
 			    if (this.launcherNumber == 2) 
@@ -482,21 +487,26 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             this.inAirTime += deltaT;
 
             this.flyer.x =   Math.round(this.init_angle * this.angleDirection * this.inAirTime / this.timeScale + this.init_abs);
-            this.flyer.y = 450 -  Math.round( this.init_speed*( 4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime / this.timeScale,2)) / 100));
+            this.flyer.y = 450 - Math.round( this.init_speed*( 4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime /   this.timeScale,2)) / 100));
         } 
     }
 };
 
 rabbits_game_core.prototype.calculateTrajectory = function(deltaX)
 {
-	deltaX = deltaX / (this.launcher.x + this.launcher.w/2);    
-    	
-	if ((this.launcher.x < 100) || (this.launcher.x + this.launcher.w > 650)) {var ordonnees = 0.4;} // to get away from the edges
+	if ((this.launcher.x < 100) || (this.launcher.x + this.launcher.w > 700)) {var ordonnees = 0.4;} // to get away from the edges, we boost init_speed and init_angle when the launcher is close from the edges
 	else {var ordonnees = 0;}
-	this.init_speed = 3 * deltaX + 0.3 + ordonnees;
-    this.init_angle = 3 * deltaX + 0.1 + ordonnees;
+	this.init_speed = 0.01 * deltaX + 0.3 + ordonnees;
+    this.init_angle = 0.01 * deltaX + 0.1 + ordonnees;
     this.angleDirection = (this.launcherNumber == 1)? -1 : 1;
-    this.init_abs = this.launcher.x + this.angleDirection + this.launcher.w / 2;
+	if (this.angleDirection == 1)
+	{
+    	this.init_abs = this.launcher.x; // give the x position of the not-flying player
+	} else
+	{
+		this.init_abs = this.launcher.x + this.launcher.w - this.flyer.w;
+	}
+
 };
 
 rabbits_game_core.prototype.checkCollisions = function()
