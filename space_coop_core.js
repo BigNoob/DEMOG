@@ -210,22 +210,30 @@ space_game_core.prototype.beginInit = function()
 	this.startMilliseconds = new Date().getTime();
 
 	this.p1.emit('updateTime',false);
-	this.p2.emit('updateTime',false);
-	
+	if (!this.p1.player.result.timedOut)
+	{
+		this.p2.emit('updateTime',false);
+	}
 
 	if(this.isDG == "dg")  // skip the game stage and go to share state directly
 	{
-		this.score = 1000; // this.score cannot be determined in the game
-        if(Math.random() < 0.5)
-        {
-            this.p1.emit('message','SHARE_STATE,dg');
-            this.p2.emit('message','SHARE_WAIT,dg');
-        }
-        else
-        {
-            this.p2.emit('message','SHARE_STATE,dg');
-            this.p1.emit('message','SHARE_WAIT,dg');
-        }
+		if (this.p1.player.result.timedOut)
+		{
+		     this.p1.emit('message','SHARE_STATE,dg');
+		} else
+		{
+			this.score = 1000; // this.score cannot be determined in the game
+		    if(Math.random() < 0.5)
+		    {
+		        this.p1.emit('message','SHARE_STATE,dg');
+		        this.p2.emit('message','SHARE_WAIT,dg');
+		    }
+		    else
+		    {
+		        this.p2.emit('message','SHARE_STATE,dg');
+		        this.p1.emit('message','SHARE_WAIT,dg');
+		    }
+		}
     }
 	else
 	{
@@ -313,7 +321,11 @@ space_game_core.prototype.sendUpdate = function()
     var shotString = this.generateShotsString()+',';
     var scoreString = this.score;
     this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString+scoreString);
-    this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
+	if (!this.p1.player.result.timedOut)
+	{
+    	this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
+	}
+
 };
 
 space_game_core.prototype.generateEnemyString = function()
@@ -694,8 +706,8 @@ space_game_core.prototype.PlayerEnded = function(client , data)
 		this.p2.emit('message','LOBBY');
 
     }
-
-    if(this.p1Ended && this.p2Ended)
+		
+    if(this.p1Ended && this.p2Ended || this.p1.player.result.timedOut)
     {
         console.log('ended game');
         this.EndGame();
@@ -727,12 +739,17 @@ space_game_core.prototype.Share = function(client, data)
 
         this.p1.player.score += this.kept;
         this.p2.player.score += this.given;
+
+
         this.p1.player.SetGameResultSpace(this.id,true,this.score,this.given,this.kept,this.p1ShotsFired, this.p1EnemyKilled, this.p1DistanceToMothership, this.gameLength,true,gotMother);
 
         this.p2.player.SetGameResultSpace(this.id,false,this.score,this.given,this.kept,this.p2ShotsFired, this.p2EnemyKilled,  this.p2DistanceToMothership, this.gameLength, false,!gotMother);        
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
+		if (!this.p1.player.result.timedOut)
+		{
+        	this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
+		}
     }
     else
     {

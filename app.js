@@ -110,7 +110,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",2,"rabbits","en"),
+    current_experiment = CreateExperiment('dg_expe',"web",2,"dg","en"),
     current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en"),
     current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en"),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
@@ -167,7 +167,7 @@ app.get('/admin',function(req,res){
 
 app.get('/dictateur',function(req,res){
 	//console.log(experimentsList);
-    res.render('dictateur.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length, clientsFinished: wrap_server.experiment.returnOldCLientsNum(), clientsInLobbyActiveNum: wrap_server.clientsinLobbyActive.length,});
+    res.render('dictateur.ejs', {exps: experimentsList, clientsInGameNum: wrap_server.clients.length, clientsInLobbyNum: wrap_server.clientsinLobby.length, clientsFinished: wrap_server.experiment.returnOldCLientsNum(), clientsInLobbyActiveNum: wrap_server.clientsinLobbyActive.length, gamesPlayedByAI: wrap_server.gamesPlayedByAI});
 });
 
 app.post('/dictateur/add/', function(req,res){
@@ -455,7 +455,7 @@ if(sio != undefined)
 		var clientIp = client.handshake.headers["x-forwarded-for"]; //undefined locally, works on heroku but could not work with newer versions of Nodejs/expressjs
 	
 		// var sHeaders = client.handshake.headers; //this gives the domain name ie xxxx.herokuapp.com
-	   
+
         client.userid = UUID();
         client.player = new player();
         client.player.InitResult(client.userid,undefined);

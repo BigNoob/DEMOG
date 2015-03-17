@@ -6,7 +6,7 @@ require('./space_coop_core.js');
 require('./rabbits_coop_core.js');
 global.window = global.document = global;
 
-var MAX_WAITING_TIME = 10000; // max waiting time in the lobby, in ms
+var MAX_WAITING_TIME = 1000; // max waiting time in the lobby, in ms
 
 var game_server = function()
 {
@@ -15,6 +15,7 @@ var game_server = function()
 	this.clients = [];
 	this.clientsinLobby = [];
 	this.clientsinLobbyActive = [];
+	this.gamesPlayedByAI = 0;
 };
 
 module.exports = global.game_server = game_server;
@@ -142,6 +143,7 @@ game_server.prototype.fromGameToLobby = function(client,disconnection)
 {
 	this.clients.splice(this.getClientIndexFromGame(client),1);
 	client.player.isInLobby = true;
+
 	this.clientsinLobby.push(client);
 	if (disconnection == 'disconnection') {client.emit('message', 'LOBBY,'+client+','+disconnection);} // if it's not a disconnection clients are already in the lobby graphically (function PlayerEnded in core.js)
 	client.emit('message', 'CLEARSHARE,'+client+','+disconnection); // BUG: for some reason if enemies' alpha is not reset to 1 at this point, the enemies in the second game are not displayed (although they should have been already reset to 1). 
@@ -222,13 +224,26 @@ game_server.prototype.createGame = function(client1, client2)
 	this.games.push(tmpGame);
 	this.games[this.games.length - 1].id = UUID();
 	this.games[this.games.length - 1].p1 = client1;
-	this.games[this.games.length - 1].p2 = client2;
+
+	if (client1.player.result.timedOut)
+	{
+		//this.games[this.games.length - 1].p2 = client1;
+		this.games[this.games.length - 1].p2 = {};
+		var myID = "AIrobot_"+UUID();
+		this.games[this.games.length - 1].p2.userid = myID;
+		this.games[this.games.length - 1].p2.player = new player();
+        this.games[this.games.length - 1].p2.player.InitResult(myID,undefined);
+		//this.games[this.games.length - 1].p2.player.InitResult(this.games[this.games.length - 1].p2	.userid,undefined);
+		this.games[this.games.length - 1].p2.player.result.amazonId = "AIrobot";
+	}
 	this.games[this.games.length - 1].beginInit();
 	//console.log('after begin init');
 	
 	this.fromLobbyToGame(client1);
-	this.fromLobbyToGame(client2);
-	
+	if (!client1.player.result.timedOut)
+	{
+		this.fromLobbyToGame(client2);
+	}
 };
 
 //this function stops a selected core game server instance
@@ -237,9 +252,16 @@ game_server.prototype.endGame = function(game,disconnection,client)
 	//this.updateClient('ALL');
     if (disconnection == 'disconnection')
 	{
-		if(this.games[this.getGameIndex(game)].p1.userid == client.userid) //if player 1 disconnects we send player 2 to lobby
+		if(this.games[this.getGameIndex(game)].p1.userid == client.userid) //if player 1 disconnects we send player 2 to lobby, or out if it's an AI
 		{
-			this.fromGameToLobby(this.games[this.getGameIndex(game)].p2,disconnection);
+			if(this.games[this.getGameIndex(game)].p1.player.result.timedOut)
+			{
+				this.fromGameToOut(this.games[this.getGameIndex(game)].p2);
+			} else
+			{
+				this.fromGameToLobby(this.games[this.getGameIndex(game)].p2,disconnection);
+			}
+
 		}
 		else if(this.games[this.getGameIndex(game)].p2.userid == client.userid)
 		{
@@ -319,15 +341,17 @@ game_server.prototype.matchClients = function()
 		{
 			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby1) > MAX_WAITING_TIME)
 			{
-					this.clientsinLobby[i].emit('message','EXIT');
+					//this.clientsinLobby[i].emit('message','EXIT');
 					this.clientsinLobby[i].player.result.timedOut = true;
+					this.createGame(this.clientsinLobby[i],"fake");
 			} 
 		} else if (this.clientsinLobby[i].player.result.currentGame == 2)
 		{
 			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby2) > MAX_WAITING_TIME)
 			{
-					this.clientsinLobby[i].emit('message','EXIT');
+					//this.clientsinLobby[i].emit('message','EXIT');
 					this.clientsinLobby[i].player.result.timedOut = true;
+					this.createGame(this.clientsinLobby[i],"fake");
 			} 
 		}
 		
@@ -354,7 +378,23 @@ game_server.prototype.checkEndedGames = function()
 				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength, this.games[i].gotMothership);
 			
 			}
+			if (this.games[i].p1.player.result.timedOut)
+			{
+				this.gamesPlayedByAI++;
+			}
+		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter || this.games[i].p1.player.result.timedOut)
+		    {
+				
+			    this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
+				if (!this.games[i].p1.player.result.timedOut)
+				{
+			    	this.games[i].p2.emit('message','REDIRECT');
+				}
 
+		        this.fromGameToOut(this.games[i].p2);
+		        this.games[i].p2 = null;
+		    }
+			this.games[i].p1.player.result.timedOut = false;
 			if(this.games[i].p1.player.currentRepetition > this.experiment.xpMaxIter)
 		    {
 
@@ -365,16 +405,7 @@ game_server.prototype.checkEndedGames = function()
 		        this.fromGameToOut(this.games[i].p1);
 		        this.games[i].p1 = null;
 		    }
-		    if(this.games[i].p2.player.currentRepetition > this.experiment.xpMaxIter)
-		    {
-				
-			    this.experiment.addPlayerResults(this.games[i].p2.player.GetResult());
 
-		    	this.games[i].p2.emit('message','REDIRECT');
-
-		        this.fromGameToOut(this.games[i].p2);
-		        this.games[i].p2 = null;
-		    }
 			this.endGame(this.games[i],'',undefined);
 
 			//console.log(this.experiment.result.gameResults);
