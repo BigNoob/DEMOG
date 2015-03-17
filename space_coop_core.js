@@ -318,7 +318,7 @@ space_game_core.prototype.physic_update = function(deltaT)
             this.moveShots(); 
             this.checkCollisions();
             this.sendUpdate();
-			if (this.p1.player.result.timedOut)
+			if (this.p1.player.result.timedOut && this.isDG != "dg")
 			{
 				this.moveAI();
 			}	

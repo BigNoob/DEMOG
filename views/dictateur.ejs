@@ -33,6 +33,7 @@
 				<p>Game: <%= exp.xpGame %></p>
 				<p>Link: <script>document.write(localUrl);</script><%=  exp.xpLink %></p>
 				<p>Iterations: <%= exp.xpMaxIter %></p>
+				<p>Timeout: <%= exp.timeout / 1000 %>s</p>
 				<p>Is Running : <%= exp.isRunning %></p>
 				<p>Start Date : <%= exp.launchDate %></p>
 				
@@ -62,6 +63,7 @@
 				<p>Game: <%= exp.xpGame %></p>
 				<p>Link: <script>document.write(localUrl);</script><%= exp.xpLink %></p>
 				<p>Iterations: <%= exp.xpMaxIter %></p>
+				<p>Timeout: <%= exp.timeout / 1000 %> s</p>
 				<p>Is Running : <%= exp.isRunning %></p>
 				<p>Start Date : <%= exp.launchDate %></p>
 			
@@ -105,13 +107,17 @@
 					<option value="dg">DG</option>
 				</select>
                 <br>
-                <br>
+                
 				<label for="lang">Language</label>
 				<select name="lang">
 					<option value="en">English</option>
 					<option value="fr">French</option>
 				</select>
+				<br>				
+                <label for="xpName">Lobby Timeout (in seconds)</label>
+                <input type="number" name="timeout" id="timeout"/>
                 <br>
+				<br>
                 <input class="button" type="submit" />
 			</p>
 		</form>

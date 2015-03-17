@@ -1,6 +1,6 @@
 
 
-var Experiment = function (xpName, xpType, xpMaxIter,xpGame,lang)
+var Experiment = function (xpName, xpType, xpMaxIter,xpGame,lang,timeout)
 {
 	this.GAME_TYPES = ["space_coop","rabbits","dg"];
 	this.TYPES = ["local","amazon","web"];
@@ -11,7 +11,7 @@ var Experiment = function (xpName, xpType, xpMaxIter,xpGame,lang)
 	this.xpGame = undefined;
 	this.isRunning = false;
 	this.launchDate = undefined;
-	
+	this.timeout = timeout * 1000; // to get timeout in ms
 	this.language = this.LANG[1];
 
 	this.result = new XPResults();

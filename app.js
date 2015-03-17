@@ -110,15 +110,15 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",1,"space_coop","en"),
-    current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en"),
-    current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en"),
+    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en",1),
+    current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en",1),
+    current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en",1),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
 
-function CreateExperiment(name,type,iter,game,lang)
+function CreateExperiment(name,type,iter,game,lang,timeout)
 {
     try{
-        return(new Experiment(name,type,iter,game,lang));
+        return(new Experiment(name,type,iter,game,lang,timeout));
     }catch(err)
     {
         console.log(err);
@@ -176,9 +176,10 @@ app.post('/dictateur/add/', function(req,res){
     var xpGame = req.param('xpGame');
     var Iter = req.param('Iter');
     var lang = req.param('lang');
-    if(xpName != '')
+    var timeout = req.param('timeout');
+    if(xpName != '')	
     {
-        experimentsList.push(CreateExperiment(xpName,xpType,Iter,xpGame,lang));
+        experimentsList.push(CreateExperiment(xpName,xpType,Iter,xpGame,lang,timeout));
     }
     res.redirect('/dictateur');
 });
@@ -424,7 +425,7 @@ function CreateSIOServer()
     sio = io.listen(server);
     sio.configure(function (){
 		sio.set('transports', ['websocket']);
-        sio.set('log level', 0);
+        sio.set('log level', 3);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
         });
@@ -517,7 +518,7 @@ if(sio != undefined)
         });
 
         client.on('inactive', function (){
-            //client.player.result.tabActive = false;
+            client.player.result.tabActive = false;
         });
 
         client.on('disconnect', function (){
