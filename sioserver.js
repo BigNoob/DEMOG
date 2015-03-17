@@ -284,7 +284,7 @@ game_server.prototype.endGame = function(game,disconnection,client)
 //this function finds partner of player
 game_server.prototype.findPartner = function(game,client)
 {
-		if(game.p1.userid == client.userid)
+		if(game.p1.userid == client.userid && !game.p1.player.result.timedOut)
 		{
 			game.p2.emit('partnerLost'); //those messages go to app.js through main_..._client.js in which they need to be relayed
 

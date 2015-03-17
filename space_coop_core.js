@@ -15,6 +15,7 @@ var recordInputEach = 250;
 
 var canfire1 = true;
 var canfire2 = true;
+var canAImove = true;
 var cooldown = 240; //240
 
 var writeResults1 = true;
@@ -37,8 +38,8 @@ var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 300;
-var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
-var number = 1;  //must be changed in main_space_client.js also, 10 for real test
+var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
+var number = 10;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
@@ -47,6 +48,10 @@ var state_share = 'STATE_SHARE';
 
 var distanceP1 = 0;
 var distanceP2 = 0;
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -83,7 +88,7 @@ var space_game_core = function(maxIter,isDG)
     this.inputs = [];
     this.p1ShipX = 370;
     this.p2ShipX = 430;
-    
+    this.focusEnemyForAI = this.enemies
     this.mothershipX = 400 - mother_width / 2;
     this.mothershipY = 20;
     this.motherShipAlive = true;
@@ -177,6 +182,18 @@ Enemies.prototype.KillEnemy = function(i)
     this.array[i].alive = false;
     this.numEnemies --;
 };
+Enemies.prototype.returnEnemyAlive = function()
+{
+	var enemiesAlive = [];
+    for(var i = 0; i < this.array.length; i ++)
+    {
+        if(this.array[i].alive)
+        {
+			enemiesAlive.push(this.array[i]);
+        }
+    }
+    return enemiesAlive[getRandomInt(0,enemiesAlive.length-1)];
+};
 var Enemy = function(x,y)
 {
     this.rect = new Rect(x,y,enemy_width,enemy_height);
@@ -207,6 +224,8 @@ var Rect = function(x,y,w,h)
 space_game_core.prototype.beginInit = function()
 {
     this.enemies.Init();
+	this.focusEnemyForAI = this.enemies.returnEnemyAlive();
+
 	this.startMilliseconds = new Date().getTime();
 
 	this.p1.emit('updateTime',false);
@@ -245,8 +264,13 @@ space_game_core.prototype.beginInit = function()
 space_game_core.prototype.beginGame = function()
 {
     this.p1.emit('message', 'GAME_START');
-    this.p2.emit('message', 'GAME_START'); 
+	if (!this.p1.player.result.timedOut)
+	{
+    	this.p2.emit('message', 'GAME_START'); 
+	}
+
 };
+/*
 space_game_core.prototype.beginShare = function(client)
 {
     if(client.userid == this.p1.userid)
@@ -260,7 +284,7 @@ space_game_core.prototype.beginShare = function(client)
         this.p2.emit('message', 'SHARE_STATE');
     }
 };
-
+*/
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -294,6 +318,10 @@ space_game_core.prototype.physic_update = function(deltaT)
             this.moveShots(); 
             this.checkCollisions();
             this.sendUpdate();
+			if (this.p1.player.result.timedOut)
+			{
+				this.moveAI();
+			}	
         break;
         case state_endAnim:
 
@@ -419,6 +447,48 @@ space_game_core.prototype.moveMother = function()
 		}
 	}
 };
+//Move AI if player is in solo mode
+space_game_core.prototype.moveAI = function()
+{
+    if(this.enemies.numEnemies > 0 && (Math.random() > 0.99 || !this.focusEnemyForAI.alive)) //change focus enemy
+    {
+        this.focusEnemyForAI = this.enemies.returnEnemyAlive();
+		
+    } else if (this.enemies.numEnemies == 0)
+	{
+		this.focusEnemyForAI.rect.x = this.mothershipX;
+	}
+	if(canAImove)
+	{  
+		if (Math.abs(this.focusEnemyForAI.rect.x - this.p2ShipX) < 3)
+		{
+			var stopTimespan = getRandomInt(1000,2000);
+			canAImove = false;
+			setTimeout(function(){canAImove = true},stopTimespan);
+		}
+		else if (this.focusEnemyForAI.rect.x > this.p2ShipX)
+		{
+			this.onInput(this.p2, ['INPUT','0','1','0']);
+		} else if (this.focusEnemyForAI.rect.x < this.p2ShipX)
+		{
+			this.onInput(this.p2, ['INPUT','1','0','0']);
+		} 
+	}
+
+	if(canfire2)
+	{  
+		if (Math.random() < 0.2)
+		{
+			var stopFireTimespan = getRandomInt(500,1500);
+			canfire2 = false;
+			setTimeout(function(){canfire2 = true},stopFireTimespan);
+		}
+		this.onInput(this.p2, ['INPUT','0','0','1']);
+	}
+
+
+
+};
 //Animate the mothership during its fall
 space_game_core.prototype.animMotherFall = function()
 {
@@ -451,7 +521,11 @@ space_game_core.prototype.animMotherFall = function()
 		if (distanceP2 == 0 || distanceP1 == 0) // players have reached the mothership
 		{ 
 			this.p1.emit('message','REMOVE_MOTHERSHIP');
-		    this.p2.emit('message','REMOVE_MOTHERSHIP');
+			if (!this.p1.player.result.timedOut)
+			{
+			    this.p2.emit('message','REMOVE_MOTHERSHIP');
+			}
+
 		   this.gameLength = (new Date().getTime()) - this.startMilliseconds;
            var currentTime = new Date().getTime();
            while (currentTime + 2000 >= new Date().getTime()) {
@@ -460,11 +534,25 @@ space_game_core.prototype.animMotherFall = function()
 		    if(distanceP2 > distanceP1)
 		    {
 		        this.p1.emit('message','SHARE_STATE');
-		        this.p2.emit('message','SHARE_WAIT');
+				if (!this.p1.player.result.timedOut)
+				{
+					this.p2.emit('message','SHARE_WAIT');
+				}
+		        
 		    }
 		    else
 		    {
-		        this.p2.emit('message','SHARE_STATE');
+				if (!this.p1.player.result.timedOut)
+				{
+		        	this.p2.emit('message','SHARE_STATE');
+				} else //AI will give 500 after 7s
+				{
+					var self = this; //necessary otherwise function Share below is evoked in the context window
+					setInterval(function(){
+						self.Share(self.p2,['SHARE','500']);
+					}, 9223);
+				}
+
 		        this.p1.emit('message','SHARE_WAIT');
 		    }
 		}
@@ -699,7 +787,7 @@ space_game_core.prototype.PlayerEnded = function(client , data)
 		this.p1.player.result.currentGame++;	
 		this.p1.emit('message','LOBBY');
     }
-    else
+    else //this function will never be called by AI
     {
         this.p2Ended = true;
 	    this.p2.player.result.currentGame++;
@@ -761,7 +849,11 @@ space_game_core.prototype.Share = function(client, data)
         this.p2.player.SetGameResultSpace(this.id,true,this.score,this.given,this.kept,this.p2ShotsFired, this.p2EnemyKilled, this.p2DistanceToMothership,this.gameLength,false,gotMother);
         
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+		if (!this.p1.player.result.timedOut)
+		{
+        	this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+		}
+
     }
 		
     //setTimeout(this.EndGame(),2000); 
