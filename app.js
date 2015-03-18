@@ -88,6 +88,8 @@ var
 // CPU use is heavily dependent on createjs.Ticker.setFPS(20); in main_space_client.js and main_rabbits_clients.js
 
 // if problems of lag/disconnection: log socket.io outputs (sio.set('log level', 3); below) and see if any "websocket connection invalid" error messages show up. if yes your internet connection might be going through a proxy that doesn't accept websocket.
+//forcing websocket with sio.set('transports', ['websocket']); will prevent people not using it to enter the game, but they will remain blocked without an error message.
+// not forcing it on the other hand results in poor disconnections dealing by the server, ie see http://stackoverflow.com/questions/17987182/socket-io-xhr-polling-disconnect-event
 
 var frame_time = 60; //60
 var physic_time = 15; //15
@@ -110,9 +112,9 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en",60),
-    current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en",60),
-    current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en",60),
+    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en",90),
+    current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en",90),
+    current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en",90),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
 
 function CreateExperiment(name,type,iter,game,lang,timeout)
@@ -424,7 +426,7 @@ function CreateSIOServer()
     
     sio = io.listen(server);
     sio.configure(function (){
-		//sio.set('transports', ['websocket']);
+		sio.set('transports', ['websocket']);
         sio.set('log level', 3);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
@@ -518,7 +520,8 @@ if(sio != undefined)
         });
 
         client.on('inactive', function (){
-            //client.player.result.tabActive = false;
+            client.player.result.tabActive = false;
+			client.player.result.switchTabNum++;
         });
 
         client.on('disconnect', function (){

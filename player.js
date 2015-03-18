@@ -40,6 +40,7 @@ var PlayerResult = function()
 	this.currentGame;
 	this.timedOut;
 	this.tabActive;
+	this.switchTabNum;
 };
 
 PlayerResult.prototype.init = function(userid, amazonId)
@@ -55,6 +56,7 @@ PlayerResult.prototype.init = function(userid, amazonId)
 	this.currentGame = 1;
 	this.timedOut = false;
 	this.tabActive = true;
+	this.switchTabNum = 0;
 };
 
 PlayerResult.prototype.updateStatus = function(status)
