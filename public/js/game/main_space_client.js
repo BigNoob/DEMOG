@@ -153,6 +153,7 @@ function Main_Space(type,game) {
 
 	window.onblur = function () { 
 	   socket.emit('inactive');
+		alert('inactive');
 	}; 
 
 
@@ -532,7 +533,7 @@ function InitLobbyState_Space(data)
 	progressText.text = "Your partner has disconnected. \n\n Please wait for another person to join.";
   } else
   {
-	progressText.text = "Please wait for another person to join. \n\n Keep this tab active or the game will not start.  ";
+	progressText.text = "Please wait for another person to join. \n\n Keep this tab active or the task will not start.  ";
   }
   progressText.y = 20;
   progressText.x = 400 ;
