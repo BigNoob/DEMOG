@@ -518,7 +518,7 @@ if(sio != undefined)
         });
 
         client.on('inactive', function (){
-            client.player.result.tabActive = false;
+            //client.player.result.tabActive = false;
         });
 
         client.on('disconnect', function (){
