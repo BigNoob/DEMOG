@@ -520,6 +520,7 @@ if(sio != undefined)
         });
 
         client.on('inactive', function (){
+			console.log('inactive');
             client.player.result.tabActive = false;
 			client.player.result.switchTabNum++;
         });
@@ -549,7 +550,7 @@ if(sio != undefined)
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Called every 5 seconds to match waiting players in the lobby
+//Called every second to match waiting players in the lobby
 setInterval(function(){
     if(wrap_server != undefined && wrap_server.experiment.isRunning)
     {
@@ -559,7 +560,7 @@ setInterval(function(){
     {
 
     }
-}, 5000);
+}, 1000);
 //Check ended games in wrap_server
 setInterval(function(){
    wrap_server.update(frame_time);
