@@ -227,6 +227,7 @@ game_server.prototype.createGame = function(client1, client2)
 
 	if (client1.player.result.timedOut)
 	{
+		console.log('entre ici');
 		//this.games[this.games.length - 1].p2 = client1;
 		this.games[this.games.length - 1].p2 = {};
 		var myID = "AIrobot_"+UUID();
@@ -335,7 +336,7 @@ game_server.prototype.matchClients = function()
 		}
 	}
 
-	for(var i = 0; i < this.clientsinLobby.length; i++) // redirect clients if they wait for too long in the lobby
+	for(var i = 0; i < this.clientsinLobby.length; i++) // starts game with AI if clients wait for too long in the lobby
 	{
 		if (this.clientsinLobby[i].player.result.currentGame == 1)
 		{

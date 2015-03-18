@@ -110,9 +110,9 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en",1),
-    current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en",1),
-    current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en",1),
+    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en",60),
+    current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en",60),
+    current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en",60),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
 
 function CreateExperiment(name,type,iter,game,lang,timeout)
