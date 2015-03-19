@@ -348,10 +348,10 @@ space_game_core.prototype.sendUpdate = function()
 
     var shotString = this.generateShotsString()+',';
     var scoreString = this.score;
-    this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString+scoreString);
+	this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString+scoreString);        
 	if (!this.p1.player.result.timedOut)
 	{
-    	this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
+		this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
 	}
 
 };

@@ -398,11 +398,13 @@ function serverMessageParser_Space(data)
           */
         break;
         case 'GIVEN_AMMOUNT':
+
           ClearShareState_Space();
           ClearShareWait_Space();
           DrawGivenAmmount(splittedData[1], splittedData[2]);
         break;
         case 'GAME_START':
+
           isXPRunning = true;
           console.log("gamestart");
           //ClearGameState_Space();
@@ -440,6 +442,7 @@ function serverMessageParser_Space(data)
 			stage.update();
         break;
         case 'SHARE_STATE':
+
 		  if (xpGame == "dg") {score_value = 1000;}
 		  isXPRunning = true;
 		  ClearLobbyState_Space();
@@ -957,6 +960,7 @@ function UpdateShareAmmount_Space(x)
 }
 function SendShareAmmount_Space()
 {
+
   socket.emit("message",'SHARE,'+ share);
 }
 
