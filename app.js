@@ -426,7 +426,7 @@ function CreateSIOServer()
     
     sio = io.listen(server);
     sio.configure(function (){
-		sio.set('transports', ['xhr-polling']);
+		sio.set('transports', ['websocket']);
         sio.set('log level', 3);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
@@ -522,7 +522,7 @@ if(sio != undefined)
 
         client.on('inactive', function (){
 			console.log('inactive');
-            client.player.result.tabActive = false;
+            //client.player.result.tabActive = false;
 			client.player.result.switchTabNum++;
         });
 
