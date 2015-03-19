@@ -153,7 +153,6 @@ function Main_Space(type,game) {
 
 	window.onblur = function () { 
 	   socket.emit('inactive');
-		alert('inactive');
 	}; 
 
 

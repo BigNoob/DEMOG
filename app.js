@@ -517,6 +517,7 @@ if(sio != undefined)
 
         client.on('active', function (){           //this tracks whether or not the client has the tab active in her browser
             client.player.result.tabActive = true;  // does not start game if not active (see matchClients in sioserver.js)
+			console.log('active');
         });
 
         client.on('inactive', function (){
