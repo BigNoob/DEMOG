@@ -140,6 +140,10 @@ function Main_Space(type,game) {
   canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
   window.addEventListener("keydown", function (event) {
       keys[event.keyCode] = true;
+	  if (state != state_game)
+	  {
+		handleKeyDown_Space2();
+	  }
   });
 
   window.addEventListener("keyup", function (event) {
@@ -385,6 +389,7 @@ function serverMessageParser_Space(data)
       {
         case 'UPDATE':
           updateScreen_Space(splittedData);
+		  handleKeyDown_Space2();
         break;
         case 'INFO':
         /*
@@ -667,7 +672,7 @@ function InitShareState_Space()
   stage.addChild(arrow);
   stage.update();
   state = state_share;  
-  handleKeyDown_Space2();
+  //handleKeyDown_Space2();
 }
 
 function InitShareWait_Space()
@@ -883,15 +888,11 @@ function handleKeyDown_Space2()
   }
   else if (state == state_displayShare)
   {
-    setTimeout(function(){ //to prevent skipping this stage with the space key presses of the previous stage
+
 		if (keys[KEYCODE_SPACE] && canEndGame) { 
 			canEndGame = false;
-			//ClearDrawGivenAmmount_Space();
 			socket.emit("message",'ENDED');              
 		}
-	},1000);
-
-
   }
 
 }
@@ -1008,7 +1009,7 @@ function sendMouseInput(x)
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function updateScreen_Space(data)
 {
-  handleKeyDown_Space2();
+  //handleKeyDown_Space2();
   drawOwnShip_Space(data[1]);
   drawAllyShip_Space(data[2]);
   drawEnemies_Space(data[3]);

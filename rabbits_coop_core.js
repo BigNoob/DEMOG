@@ -195,12 +195,20 @@ rabbits_game_core.prototype.beginInit = function()
 {
 	//console.log('inside begin init1');
     this.p1.emit("message",'COLOR,1'); //says what sprites client should use (so that the two clients control a rabbit of the same color)
-    this.p2.emit("message",'COLOR,2');
+	if (!this.p1.player.result.timedOut)
+	{
+    	this.p2.emit("message",'COLOR,2');
+	}
+
 	this.startMilliseconds = new Date().getTime();
 
 
 	this.p1.emit('updateTime',false);
-	this.p2.emit('updateTime',false);
+	if (!this.p1.player.result.timedOut)
+	{
+		this.p2.emit('updateTime',false);
+	}	
+
 	
     this.balloons.Init();
     this.beginGame();
@@ -209,7 +217,11 @@ rabbits_game_core.prototype.beginInit = function()
 rabbits_game_core.prototype.beginGame = function()
 {
     this.p1.emit('message', 'GAME_START');
-    this.p2.emit('message', 'GAME_START'); 
+	if (!this.p1.player.result.timedOut)
+	{
+		this.p2.emit('message', 'GAME_START'); 
+	}	
+    
     //console.log('inside begin game');
 };
 rabbits_game_core.prototype.beginShare = function(client)
@@ -291,8 +303,11 @@ rabbits_game_core.prototype.sendUpdate = function()
     var goalString = this.goalballoonX+'#'+this.goalballoonY+',';
 
     var scoreString = this.score;
-    this.p1.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',1');
-    this.p2.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',2');
+	if (this.state == state_game || this.state == state_endAnim || this.state == state_reload)
+	{
+    	this.p1.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',1');
+    	this.p2.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',2');
+	}
 };
 
 rabbits_game_core.prototype.generateBalloonString = function()

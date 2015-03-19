@@ -143,6 +143,10 @@ function Main_Rabbits(type) {
   canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
   window.addEventListener("keydown", function (event) {
       keys[event.keyCode] = true;
+	  if (state != state_game)
+	  {
+		handleKeyDown2();
+	  }
   });
 
   window.addEventListener("keyup", function (event) {
@@ -426,6 +430,7 @@ function serverMessageParser(data)
           
         case 'UPDATE':
           updateScreen(splittedData);
+		  handleKeyDown2();
         break;
         case 'INFO':
         /*
@@ -476,7 +481,7 @@ function serverMessageParser(data)
           ClearGameState();
           //ClearLobbyState();
           InitShareState();
-		  handleKeyDown2();
+
         break;
         case 'SHARE_WAIT':
           ClearGameState();
@@ -886,12 +891,10 @@ function handleKeyDown2()
   }
   else if (state == state_displayShare)
   {
-    setTimeout(function(){ //to prevent skipping this stage with the space key presses of the previous stage
 		if (keys[KEYCODE_SPACE] && canEndGame) { 
 			canEndGame = false;
 			socket.emit("message",'ENDED');              
 		}
-	},1000);
 
   }
 }
@@ -1032,7 +1035,7 @@ function updateScreen(data)
   drawMothership(data[5]);
   drawScore(data[6]);
   ownNumber = parseInt(data[7]);
-  handleKeyDown2();
+  //handleKeyDown2();
   //console.log(ownNumber +'/'+launcherNumber);
 }
 

@@ -236,6 +236,7 @@ space_game_core.prototype.beginInit = function()
 
 	if(this.isDG == "dg")  // skip the game stage and go to share state directly
 	{
+	    this.state = state_share;
 		if (this.p1.player.result.timedOut)
 		{
 		     this.p1.emit('message','SHARE_STATE,dg');
@@ -340,18 +341,32 @@ space_game_core.prototype.update = function(deltaT) {
 //This function send the updates messages to the players
 space_game_core.prototype.sendUpdate = function()
 {
-    var p1string = this.p1ShipX+',';
-    var p2string = this.p2ShipX+',';
+    var p1string = ',';
+    var p2string = ',';
 
-    var enemiesString = this.generateEnemyString()+',';
-    var motherString = this.mothershipX+'#'+this.mothershipY+',';
+    var enemiesString = ',';
+    var motherString = ',';
 
-    var shotString = this.generateShotsString()+',';
-    var scoreString = this.score;
-	this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString+scoreString);        
-	if (!this.p1.player.result.timedOut)
+    var shotString = ',';
+    var scoreString = '';
+	if (this.isDG != "dg")
 	{
-		this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
+		p1string = this.p1ShipX+',';
+		p2string = this.p2ShipX+',';
+
+		enemiesString = this.generateEnemyString()+',';
+		motherString = this.mothershipX+'#'+this.mothershipY+',';
+
+		shotString = this.generateShotsString()+',';
+		scoreString = this.score;
+	}
+	if (this.state == state_game || this.state == state_endAnim)
+	{
+		this.p1.emit("message",'UPDATE,'+p1string+p2string+enemiesString+motherString+shotString+scoreString);        
+		if (!this.p1.player.result.timedOut)
+		{
+			this.p2.emit("message",'UPDATE,'+p2string+p1string+enemiesString+motherString+shotString+scoreString);
+		}
 	}
 
 };
