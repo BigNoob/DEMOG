@@ -64,7 +64,7 @@ var
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
     util = require('util');									//used to display full object in console.log
     
-
+	console.log(gameport);
     ///*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
