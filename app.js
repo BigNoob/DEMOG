@@ -64,7 +64,7 @@ var
     fs = require('fs'),                                     //Used to write the result json file in the log folder of the server
     util = require('util');									//used to display full object in console.log
     
-	console.log(gameport);
+
     ///*
 	nodeMailer = require('nodemailer'),                     //Used to send results by mail to the admin
     smtpTransport = require('nodemailer-smtp-transport'),
@@ -426,7 +426,7 @@ function CreateSIOServer()
     
     sio = io.listen(server);
     sio.configure(function (){
-		sio.set('transports', ['websocket']);
+		sio.set('transports', ['xhr-polling']);
         sio.set('log level', 3);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
@@ -522,7 +522,7 @@ if(sio != undefined)
 
         client.on('inactive', function (){
 			console.log('inactive');
-            //client.player.result.tabActive = false;
+            client.player.result.tabActive = false;
 			client.player.result.switchTabNum++;
         });
 
