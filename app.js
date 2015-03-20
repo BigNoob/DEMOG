@@ -35,7 +35,7 @@ require('./player.js');
 require('./experiment');
 require('./sioserver.js');
 
-require('newrelic');
+//require('newrelic');
 
 /*
 lines to comment for the app to run locally on ubuntu:
@@ -113,7 +113,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en",90),
+    current_experiment = CreateExperiment('dg_expe',"web",1,"space_coop","en",1),
     current_experiment_space = CreateExperiment('space_expe',"web",2,"space_coop","en",90),
     current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",2,"rabbits","en",90),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
@@ -518,11 +518,11 @@ if(sio != undefined)
 
         client.on('active', function (){           //this tracks whether or not the client has the tab active in her browser
             client.player.result.tabActive = true;  // does not start game if not active (see matchClients in sioserver.js)
-			console.log('active');
+			//console.log('active');
         });
 
         client.on('inactive', function (){
-			console.log('inactive');
+			//console.log('inactive');
             client.player.result.tabActive = false;
 			client.player.result.switchTabNum++;
         });

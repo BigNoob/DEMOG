@@ -38,8 +38,8 @@ var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 300;
-var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
-var number = 10;  //must be changed in main_space_client.js also, 10 for real test
+var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
+var number = 1;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
@@ -66,6 +66,7 @@ var space_game_core = function(maxIter,isDG)
     this.state = state_game;
     this.maxIter = maxIter;
     this.isEnded = false;
+	this.AIshareSent = false;
 	this.world = 
 		{
             width : 800,
@@ -557,18 +558,18 @@ space_game_core.prototype.animMotherFall = function()
 		    }
 		    else
 		    {
+		        this.p1.emit('message','SHARE_WAIT');
 				if (!this.p1.player.result.timedOut)
 				{
 		        	this.p2.emit('message','SHARE_STATE');
 				} else //AI will give 500 after 7s
 				{
-					var self = this; //necessary otherwise function Share below is evoked in the context window
-					setInterval(function(){
-						self.Share(self.p2,['SHARE','500']);
-					}, 9223);
+				   var currentTime = new Date().getTime();
+				   while (currentTime + 9223 >= new Date().getTime()) {}	
+       				this.Share(this.p2,['SHARE','500']);
 				}
 
-		        this.p1.emit('message','SHARE_WAIT');
+
 		    }
 		}
 		else // one player moves towards the mothership
@@ -896,7 +897,6 @@ space_game_core.prototype.onMessage = function(client, data){
             this.shareInput(client, splittedData);
         break;
         case 'ANIM_END':
-
         break;
         case 'SHARE':
             this.Share(client,splittedData);

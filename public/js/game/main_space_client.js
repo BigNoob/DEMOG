@@ -105,8 +105,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
-var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
-var number = 10;   //must be changed in space_coop_core.js also, 10 in real test
+var lines = 1;    //must be changed in space_coop_core.js also, 4 in real test
+var number = 1;   //must be changed in space_coop_core.js also, 10 in real test
 
 
 //----------------
@@ -540,7 +540,13 @@ function InitLobbyState_Space(data)
 	progressText.text = "Your partner has disconnected. \n\n Please wait for another person to join.";
   } else
   {
-	progressText.text = "Please wait for another person to join. \n\n Keep this tab active or the task will not start.  ";
+	if (xpGame == "dg")
+	{
+		progressText.text = "Please wait for another person to join. \n\n Keep this tab active or the task will not start.";
+	} else
+	{
+		progressText.text = "Please wait for another player to join. \n\n Keep this tab active or the game will not start.";
+	}
   }
   progressText.y = 20;
   progressText.x = 400 ;
@@ -731,9 +737,9 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 	  if (xpGame == "dg")
-	  {progressText.text = "You have given "+given+" out of 1000 points to the other person.\n\n Your points for this experiment are thus "+left+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
+	  {progressText.text = "You have given "+given+" out of 1000 points to the other person.\n\n You thus keep "+left+" points.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
 	  else 
-	  {progressText.text = "You have given "+given+" out of 1000 points to the other player.\n\n Your points for this game are thus "+left+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
+	  {progressText.text = "You have given "+given+" out of 1000 points to the other player.\n\n You thus keep "+left+" points.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
 	
 	  progressText.y = 20;
 	  progressText.x = 400 ;

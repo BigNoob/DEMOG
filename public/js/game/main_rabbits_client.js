@@ -742,7 +742,7 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 
-	progressText.text = "You have given "+given+" out of 1000 points to the other player.\n\n Your points for this game are thus "+left+".\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
+	progressText.text = "You have given "+given+" out of 1000 points to the other player.\n\n You thus keep "+left+" points.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";
