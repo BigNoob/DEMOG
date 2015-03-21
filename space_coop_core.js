@@ -38,8 +38,8 @@ var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 300;
-var lines = 1;   //must be changed in main_space_client.js also, 4 for real test
-var number = 1;  //must be changed in main_space_client.js also, 10 for real test
+var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
+var number = 10;  //must be changed in main_space_client.js also, 10 for real test
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
@@ -811,7 +811,7 @@ space_game_core.prototype.PlayerEnded = function(client , data)
 
     }
 		
-    if(this.p1Ended && this.p2Ended || this.p1.player.result.timedOut)
+    if((this.p1Ended && this.p2Ended) || this.p1.player.result.timedOut)
     {
         console.log('ended game');
         this.EndGame();

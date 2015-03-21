@@ -39,8 +39,8 @@ var balloonsX_spacing = 60;
 var balloonsY_spacing = 60;
 var balloonsY = 150;
 var balloonsX = 100;
-var lines = 1;  //must be changed in main_rabbits_client.js also
-var number = 1;  //must be changed in main_rabbits_client.js also
+var lines = 4;  //must be changed in main_rabbits_client.js also
+var number = 10;  //must be changed in main_rabbits_client.js also
 var points_per_enemy = 25;
 
 var launcherSpeed = 10;
@@ -63,6 +63,7 @@ var rabbits_game_core = function(maxIter)
     this.state = state_game;
     this.maxIter = maxIter;
     this.isEnded = false;
+	this.canMoveAI = false;
 	this.world = 
 	{
         width : 800,
@@ -71,6 +72,8 @@ var rabbits_game_core = function(maxIter)
     this.p1 = undefined;
     this.p2 = undefined;
     this.launcherNumber = 1;
+	this.loopNumber = new Date().getTime();
+	this.loopThreshold = 1500;
 
     this.inputsP1 = [];
     this.inputsP2 = [];
@@ -216,6 +219,7 @@ rabbits_game_core.prototype.beginInit = function()
 };
 rabbits_game_core.prototype.beginGame = function()
 {
+
     this.p1.emit('message', 'GAME_START');
 	if (!this.p1.player.result.timedOut)
 	{
@@ -224,6 +228,8 @@ rabbits_game_core.prototype.beginGame = function()
     
     //console.log('inside begin game');
 };
+
+/*
 rabbits_game_core.prototype.beginShare = function(client)
 {
     if(client.userid == this.p1.userid)
@@ -237,6 +243,7 @@ rabbits_game_core.prototype.beginShare = function(client)
         this.p2.emit('message', 'SHARE_STATE');
     }
 };
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -270,6 +277,23 @@ rabbits_game_core.prototype.physic_update = function(deltaT)
             this.moveMother();
             this.moveFlyer(deltaT); 
             this.checkCollisions();
+			
+			if (this.p1.player.result.timedOut && this.launcherNumber == 2 && (new Date().getTime() - this.loopNumber) > this.loopThreshold) 
+			{	
+				this.loopNumber = new Date().getTime();
+				this.canMoveAI = !this.canMoveAI;
+				if (this.canMoveAI)
+				{
+					this.loopThreshold = Math.floor((Math.random() * 500) + 50);
+				} else 
+				{
+					this.loopThreshold = Math.floor((Math.random() * 800) + 400);
+				}
+			}
+			if (this.p1.player.result.timedOut && this.launcherNumber == 2 && this.canMoveAI)
+			{
+				this.moveAI();
+			}
             this.sendUpdate();
         break;
         case state_endAnim:
@@ -306,7 +330,11 @@ rabbits_game_core.prototype.sendUpdate = function()
 	if (this.state == state_game || this.state == state_endAnim || this.state == state_reload)
 	{
     	this.p1.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',1');
-    	this.p2.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',2');
+		if (!this.p1.player.result.timedOut)
+		{
+			this.p2.emit("message",'UPDATE,'+p1string+flyerString+launcherString+balloonsString+goalString+scoreString+',2');
+		}
+    	
 	}
 };
 
@@ -397,6 +425,21 @@ rabbits_game_core.prototype.moveMother = function()
     }
 };
 
+//Move AI if player is in solo mode
+rabbits_game_core.prototype.moveAI = function()
+{
+	var timeToReachFloor = (3.8+Math.random())* 2 * (this.init_speed * this.timeScale + Math.sqrt(2500 * Math.pow(this.timeScale,2) + Math.pow(this.init_speed,2) * Math.pow(this.timeScale,2))); // calculates time necessary to reach y = 550 (solution of equation with this.flyer.y below for this.flyer.y == 550)
+    var xToReach =  Math.round(this.init_angle * this.angleDirection * timeToReachFloor / this.timeScale + this.init_abs);
+	if (xToReach > (this.launcher.x))
+	{
+		this.onInput(this.p2, ['INPUT','0','1','0']);
+	} else 
+	{
+		this.canMoveAI = false;
+	}
+
+};
+
 rabbits_game_core.prototype.animMotherFall = function()
 {
     if (this.goalballoonY > 500)
@@ -409,12 +452,25 @@ rabbits_game_core.prototype.animMotherFall = function()
 		    if(this.launcherNumber == 2)
 		    {
 		        this.p1.emit('message','SHARE_STATE');
-		        this.p2.emit('message','SHARE_WAIT');
+				if (!this.p1.player.result.timedOut)
+				{
+					this.p2.emit('message','SHARE_WAIT');
+				}
+
 		    }
 		    else
 		    {
-		        this.p2.emit('message','SHARE_STATE');
+
 		        this.p1.emit('message','SHARE_WAIT');
+				if (!this.p1.player.result.timedOut)
+				{
+		        	this.p2.emit('message','SHARE_STATE');
+				} else
+				{
+				    var currentTime = new Date().getTime();
+				    while (currentTime + 9223 >= new Date().getTime()) {}	
+       				this.Share(this.p2,['SHARE','500']);
+				}	    
 		    }
 		}
     }
@@ -436,6 +492,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
 		this.init_angle = 0;
 		this.init_speed = 0.2;
 		this.inAirTime = 1000;
+		this.state = state_game;
         //this.inAirTime = 0;
 
         //this.sendUpdate();
@@ -462,6 +519,12 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
         if(this.flyer.y > 550) //flyer touches the ground
         {
             this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
+			if (this.launcherNumber == 2) 
+			{	
+				this.loopNumber = new Date().getTime();
+				this.loopThreshold = Math.floor((Math.random() * 1000) + 700);
+				this.canMoveAI = false;
+			}
             //console.log(this.launcherNumber);
             this.inAirTime = 0;
 			deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2); //distance between the middle of the seesaw and the middle of the flyer
@@ -488,10 +551,19 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
                 if(this.state == state_game)
                 {
 					if (this.launcherNumber == 2) {this.p1MissedSeesaw += 1} else {this.p2MissedSeesaw += 1}
-						
+					if (this.launcherNumber == 2) 
+					{	
+						this.loopNumber = new Date().getTime();
+						this.loopThreshold = 10000; // we allow the AI to move in one step
+						this.canMoveAI = true;
+					}						
                     this.state = state_reload;
-                    this.p1.emit('message',state_reload);
-                    this.p2.emit('message',state_reload);
+                    //this.p1.emit('message',state_reload);
+					if (!this.p1.player.result.timedOut)
+					{
+				    	this.p2.emit('message',state_reload);
+					}
+                    
                 }
             }      
             this.flyer.y = 549;
@@ -500,6 +572,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
         {
             
             this.inAirTime += deltaT;
+			
 
             this.flyer.x =   Math.round(this.init_angle * this.angleDirection * this.inAirTime / this.timeScale + this.init_abs);
             this.flyer.y = 450 - Math.round( this.init_speed*( 4* this.inAirTime / this.timeScale - (Math.pow(this.inAirTime /   this.timeScale,2)) / 100));
@@ -547,7 +620,11 @@ rabbits_game_core.prototype.checkCollisions = function()
             //this.score+= 100;
             this.state = state_endAnim;
             this.p1.emit('message',"ANIM_STATE");
-            this.p2.emit('message',"ANIM_STATE");
+			if (!this.p1.player.result.timedOut)
+			{
+		    	this.p2.emit('message',"ANIM_STATE");
+			}
+            
         }
     }     
 };
@@ -661,14 +738,14 @@ rabbits_game_core.prototype.PlayerEnded = function(client , data)
 		this.p1.player.result.currentGame++;
 		this.p1.emit('message','LOBBY');
     }
-    else
+    else //this function will never be called by AI
     {
         this.p2Ended = true;
 		this.p2.player.result.currentGame++;
 		this.p2.emit('message','LOBBY');
     }
 
-    if(this.p1Ended && this.p2Ended)
+    if((this.p1Ended && this.p2Ended) || this.p1.player.result.timedOut)
     {
         console.log('ended game');
         this.EndGame();
@@ -700,7 +777,11 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p2.player.SetGameResultRabbits(this.id,true,this.score,this.given,this.kept,this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength,false);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+		if (!this.p1.player.result.timedOut)
+		{
+	    	this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
+		}
+        
         
     }
     else
@@ -714,7 +795,11 @@ rabbits_game_core.prototype.Share = function(client, data)
         this.p2.player.SetGameResultRabbits(this.id,false,this.score,this.given,this.kept,this.p2MissedSeesaw,this.p2DistanceSeesaw,this.p2BalloonsPopped,this.gameLength,false);
 
         this.p1.emit('message','GIVEN_AMMOUNT,'+this.given+',SHARER');
-        this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
+		if (!this.p1.player.result.timedOut)
+		{
+	    	this.p2.emit('message','GIVEN_AMMOUNT,'+this.given+',RECIEVER');
+		}
+        
     }
     //setTimeout(this.EndGame(),2000); 
 };
