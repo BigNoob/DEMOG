@@ -74,6 +74,7 @@ var rabbits_game_core = function(maxIter)
     this.launcherNumber = 1;
 	this.loopNumber = new Date().getTime();
 	this.loopThreshold = 1500;
+	this.reloaded = false;
 
     this.inputsP1 = [];
     this.inputsP2 = [];
@@ -433,6 +434,9 @@ rabbits_game_core.prototype.moveAI = function()
 	if (xToReach > (this.launcher.x))
 	{
 		this.onInput(this.p2, ['INPUT','0','1','0']);
+	} else if (xToReach < (this.launcher.x) && this.reloaded == true)
+	{
+		this.onInput(this.p2, ['INPUT','1','0','0']);		
 	} else 
 	{
 		this.canMoveAI = false;
@@ -518,6 +522,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
         }
         if(this.flyer.y > 550) //flyer touches the ground
         {
+			this.reloaded = false;
             this.launcherNumber = (this.launcherNumber == 1)? 2 : 1;
 			if (this.launcherNumber == 2) 
 			{	
@@ -550,6 +555,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
             {
                 if(this.state == state_game)
                 {
+					this.reloaded = true;
 					if (this.launcherNumber == 2) {this.p1MissedSeesaw += 1} else {this.p2MissedSeesaw += 1}
 					if (this.launcherNumber == 2) 
 					{	
