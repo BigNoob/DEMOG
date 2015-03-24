@@ -648,7 +648,7 @@ function InitShareState()
   share = -1;
   canEndGame = true;
   canSendAmount = true;
-  progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n\n I want to GIVE:"; 
+  progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n I want to GIVE:"; 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";

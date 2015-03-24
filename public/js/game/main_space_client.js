@@ -627,12 +627,12 @@ function InitShareState_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role of player A.\n\n You have 1000 points. \n\n\n\n Indicate how many points you want to give to player B by clicking on the scale below.\n\n\n\n\n\n\n\n I want to give:";
+  {progressText.text = "You have been randomly attributed the role A.\n\n Therefore, you have received 1000 points. \n\n\n\n Indicate how many points you want to give to player B by clicking on the scale below.\n\n\n\n\n\n\n\n I want to give:";
   progressText2.text = "Validate by pressing space.";
   }
   else 
   {
-	progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n\n I want to GIVE:";
+	progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n I want to GIVE:";
 	progressText2.text = "Validate by pressing space.";
   }
   progressText.y = 20;
