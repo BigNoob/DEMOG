@@ -81,7 +81,7 @@ var
 // and if the variable also makes sense in the context of the game:
 //
 // In sioserver.js, add to function addGameResults in prototype.checkEndedGames
-// In experiment.js, add to prototype.addGameResults and var gameResult
+// In experiment.js, add to prototype.addGameResults and var gameResult...
 //
 // to record all input by players: in core.js line 536 540
 
@@ -113,7 +113,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",1,"rabbits","en",10),
+    current_experiment = CreateExperiment('dg_expe',"web",1,"rabbits","en",2),
     current_experiment_space = CreateExperiment('space_expe',"web",1,"space_coop","en",10),
     current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",1,"rabbits","en",10),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];

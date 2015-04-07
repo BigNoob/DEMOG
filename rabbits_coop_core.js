@@ -39,8 +39,8 @@ var balloonsX_spacing = 60;
 var balloonsY_spacing = 60;
 var balloonsY = 150;
 var balloonsX = 100;
-var lines = 4;  //must be changed in main_rabbits_client.js also
-var number = 10;  //must be changed in main_rabbits_client.js also
+var lines = 1;  //must be changed in main_rabbits_client.js also
+var number = 1;  //must be changed in main_rabbits_client.js also
 var points_per_enemy = 25;
 
 var launcherSpeed = 10;
@@ -95,6 +95,7 @@ var rabbits_game_core = function(maxIter)
 	this.p1BalloonsPopped = 0;
     this.p2BalloonsPopped = 0;
 
+	this.shareSteps = '';
     this.goalballoonX = 100;
     this.goalballoonY = 100;
     this.goalShipAlive = true;
@@ -771,6 +772,8 @@ rabbits_game_core.prototype.Share = function(client, data)
     this.kept = 1000 - parseInt(data[1]);
 	this.p1DistanceSeesaw /= this.p1DistanceTimes;		
 	this.p2DistanceSeesaw /= this.p2DistanceTimes;	
+	this.shareSteps = data[2];
+
     //console.log(client.userid + data);
     if(client.userid == this.p2.userid)
     {

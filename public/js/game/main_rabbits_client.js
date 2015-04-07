@@ -112,8 +112,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 60;
 var enemiesY_spacing = 60;
-var lines = 4;  //must be changed in rabbits_coop_core.js also
-var number = 10; //must be changed in rabbits_coop_core.js also
+var lines = 1;  //must be changed in rabbits_coop_core.js also
+var number = 1; //must be changed in rabbits_coop_core.js also
 
 var keys=[];
 
@@ -192,6 +192,7 @@ function StartLoading()
   maxAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
   minAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
   givenAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
+  shareSteps = "";
 
   stage.addChild(progressText);
   stage.addChild(progressText2);
@@ -648,12 +649,12 @@ function InitShareState()
   share = -1;
   canEndGame = true;
   canSendAmount = true;
-  progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n I want to GIVE:"; 
+  progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:"; 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
-  progressText2.text = "Validate by pressing space";
+  progressText2.text = "Press space to validate";
   progressText2.y = 500;
   progressText2.x = 400 ;
   progressText2.textAlign = "center";
@@ -904,9 +905,13 @@ function handleClick(e)
 {
   if(state == state_share)
   {
-    var mousePos = getMousePos(canvas,e);
-    sendMouseInput(mousePos.x);
-    UpdateShareAmmount(mousePos.x);
+	var mousePos = getMousePos(canvas,e);
+	if ((mousePos.x >= 100) && (mousePos.x <= 700) && (mousePos.y >= 400) && (mousePos.y <= 420)) //if click on slider
+	{
+		sendMouseInput(mousePos.x);
+		UpdateShareAmmount(mousePos.x);
+	}
+
   } 
   else if (state == state_displayShare)
   {
@@ -958,12 +963,13 @@ function UpdateShareAmmount(x)
 	  maxAmmount.text = score_value;
 	  minAmmount.text = 0;
 	  givenAmmount.text = share;
+	  shareSteps += share + '-';
   }
 }
 
 function SendShareAmmount()
 {
-  socket.emit("message",'SHARE,'+ share);
+  socket.emit("message",'SHARE,'+ share + ',' + shareSteps);
 }
 
 function sendInputs(left,right,shoot)
@@ -980,7 +986,7 @@ function sendMouseInput(x)
   if(X < 100){X = 100;}
   if(X > 700-96){X = 700-96;}
   socket.emit("message",'MOUSE_INPUT,'+ X);
-  UpdateShareAmmount();
+  //UpdateShareAmmount();
   if(arrow.alpha == 0.0)
   {
     arrow.alpha = 1.0;

@@ -106,7 +106,7 @@ var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
-var number = 10;   //must be changed in space_coop_core.js also, 10 in real test
+var number = 10;  //must be changed in space_coop_core.js also, 10 in real test
 
 
 //----------------
@@ -137,7 +137,12 @@ function Main_Space(type,game) {
   createjs.Ticker.on("tick", tick_Space); 
 
 
-  canvas.addEventListener('mousedown',function(event) {handleClick(event); }, false);
+  canvas.addEventListener('mousedown',function(event) {
+	handleClick(event); 
+	
+	}, false);
+
+
   window.addEventListener("keydown", function (event) {
       keys[event.keyCode] = true;
 	  if (state != state_game)
@@ -627,13 +632,13 @@ function InitShareState_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role A.\n\n Therefore, you have received 1000 points. \n\n\n\n Indicate how many points you want to give to player B by clicking on the scale below.\n\n\n\n\n\n\n\n I want to give:";
-  progressText2.text = "Validate by pressing space.";
+  {progressText.text = "You have been attributed role A.\n\n Therefore, you got the 1000 points. \n\n\n\n Indicate how you want to share them with the other player.\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
+  progressText2.text = "Press space to validate.";
   }
   else 
   {
-	progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n I want to GIVE:";
-	progressText2.text = "Validate by pressing space.";
+	progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
+	progressText2.text = "Press space to validate.";
   }
   progressText.y = 20;
   progressText.x = 400;
@@ -657,6 +662,8 @@ function InitShareState_Space()
   givenAmmount.y = 350;
   givenAmmount.width = 100;
   givenAmmount.text = "";
+
+  shareSteps = "";
 
   slider = new createjs.Shape();
   slider.graphics.beginFill("white").drawRect(100,400,600,20);
@@ -687,7 +694,7 @@ function InitShareWait_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been randomly attributed the role of receiver.\n \n Please wait while the other person is sharing the points.";}
+  {progressText.text = "You have been attributed role B.\n \n Please wait while the other person is sharing the points.";}
   else 
   {progressText.text = stringsArray[str_waitShare];} 
   progressText.y = 20;
@@ -908,9 +915,13 @@ function handleClick(e)
 {
   if(state == state_share)
   {
-    var mousePos = getMousePos(canvas,e);
-    sendMouseInput(mousePos.x);
-    UpdateShareAmmount_Space(mousePos.x);
+    var mousePos = getMousePos(canvas,e); // 100,400,600,20
+	if ((mousePos.x >= 100) && (mousePos.x <= 700) && (mousePos.y >= 400) && (mousePos.y <= 420)) //if click on slider
+	{
+		sendMouseInput(mousePos.x);
+    	UpdateShareAmmount_Space(mousePos.x);
+	}
+    
   } 
   else if (state == state_displayShare)
   {
@@ -963,12 +974,13 @@ function UpdateShareAmmount_Space(x)
 	  maxAmmount.text = score_value;
 	  minAmmount.text = 0;
 	  givenAmmount.text = share;
+	  shareSteps += share + '-';
   }
 }
 function SendShareAmmount_Space()
 {
 
-  socket.emit("message",'SHARE,'+ share);
+  socket.emit("message",'SHARE,'+ share + ',' + shareSteps);
 }
 
 function sendInputs_Space(left,right,shoot)
@@ -985,7 +997,7 @@ function sendMouseInput(x)
   if(X < 100){X = 100;}
   if(X > 700-18){X = 700-18;}
   socket.emit("message",'MOUSE_INPUT,'+ X);
-  UpdateShareAmmount_Space();
+  //UpdateShareAmmount_Space();
   if(arrow.alpha == 0.0)
   {
     arrow.alpha = 1.0;

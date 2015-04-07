@@ -107,6 +107,8 @@ var space_game_core = function(maxIter,isDG)
 	this.p1EnemyKilled = 0;
 	this.p2EnemyKilled = 0;
 
+	this.shareSteps = "";
+
 	this.p1DistanceToMothership = -1;
 	this.p2DistanceToMothership = -1;
 
@@ -834,6 +836,7 @@ space_game_core.prototype.Share = function(client, data)
 
     this.given = parseInt(data[1]);
     this.kept = 1000 - parseInt(data[1]);
+	this.shareSteps = data[2];
 	var gotMother = false;
     //console.log(client.userid + data);
     if(client.userid == this.p1.userid)
@@ -843,7 +846,6 @@ space_game_core.prototype.Share = function(client, data)
 
         this.p1.player.score += this.kept;
         this.p2.player.score += this.given;
-
 
         this.p1.player.SetGameResultSpace(this.id,true,this.score,this.given,this.kept,this.p1ShotsFired, this.p1EnemyKilled, this.p1DistanceToMothership, this.gameLength,true,gotMother);
 
@@ -899,6 +901,7 @@ space_game_core.prototype.onMessage = function(client, data){
         case 'ANIM_END':
         break;
         case 'SHARE':
+			//console.log(splittedData);
             this.Share(client,splittedData);
         break;
         case 'ENDED':
