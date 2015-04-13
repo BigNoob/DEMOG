@@ -4,6 +4,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+var lines = 4;  //must be changed in rabbits_coop_core.js also
+var number = 10; //must be changed in rabbits_coop_core.js also
+
 var isXPRunning = false;
 var xpType;
 var canvas;
@@ -112,8 +115,7 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 60;
 var enemiesY_spacing = 60;
-var lines = 0;  //must be changed in rabbits_coop_core.js also
-var number = 0; //must be changed in rabbits_coop_core.js also
+
 
 var keys=[];
 
@@ -752,7 +754,7 @@ function DrawGivenAmmount(data, role)
   var left = 1000 - parseInt(data);
   if(role == "RECIEVER")
   { 
-	  progressText.text = "The other player shared the points and gave you "+given+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
+	  progressText.text = "The other player shared the points and gave you "+given+" points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";
@@ -776,7 +778,7 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 
-	progressText.text = "You have given "+given+" out of 1000 points to the other player.\n\n You thus keep "+left+" points.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
+	progressText.text = "You decided to keep "+left+" points and give "+given+" points to the other player.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; 
 	  progressText.y = 20;
 	  progressText.x = 400 ;
 	  progressText.textAlign = "center";
@@ -1026,6 +1028,7 @@ function UpdateShareAmmount(x)
 
 function SendShareAmmount()
 {
+  share = 1000 - share;
   socket.emit("message",'SHARE,'+ share + ',' + shareSteps);
 }
 

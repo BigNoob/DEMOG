@@ -12,8 +12,8 @@ var UUID        = require('node-uuid');
 //var balloon_height = 16;
 
 var SKIP_GAME = false;
-var lines = 0;  //must be changed in main_rabbits_client.js also
-var number = 0;  //must be changed in main_rabbits_client.js also
+var lines = 4;  //must be changed in main_rabbits_client.js also
+var number = 10;  //must be changed in main_rabbits_client.js also
 
 
 var shot_speed = 6;

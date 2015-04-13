@@ -4,6 +4,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
+var number = 10;  //must be changed in space_coop_core.js also, 10 in real test
+
 var isXPRunning = false;
 var xpType;
 var xpGame;
@@ -109,8 +112,7 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
-var lines = 4;    //must be changed in space_coop_core.js also, 4 in real test
-var number = 10;  //must be changed in space_coop_core.js also, 10 in real test
+
 
 
 //----------------
@@ -663,7 +665,7 @@ function InitShareState_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been attributed Role A.\n\n Therefore, you got the 1000 points. \n\n\n\n Indicate how you want to share them with the other player.\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
+  {progressText.text = "You have been attributed Role A.\n\n Therefore, you got the 1000 points. \n\n\n\n Indicate how you want to share them with the other person.\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
   progressText2.text = "\nPress space to validate.";
   }
   else 
@@ -759,9 +761,9 @@ function DrawGivenAmmount(data, role)
   { 
 
 	  if (xpGame == "dg")
-	  {progressText.text = "The other person shared the points and gave you "+given+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
+	  {progressText.text = "The other person shared the points and gave you "+given+" points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
 	  else 
-	  {progressText.text = "The other player shared the points and gave you "+given+" out of 1000 points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
+	  {progressText.text = "The other player shared the points and gave you "+given+" points. \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
 	  
 	  progressText.y = 20;
 	  progressText.x = 400 ;
@@ -787,9 +789,9 @@ function DrawGivenAmmount(data, role)
   else if(role == "SHARER")
   {
 	  if (xpGame == "dg")
-	  {progressText.text = "You have given "+given+" out of 1000 points to the other person.\n\n You thus keep "+left+" points.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
+	  {progressText.text = "You decided to keep "+left+" points and give "+given+" points to the other person.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; }
 	  else 
-	  {progressText.text = "You have given "+given+" out of 1000 points to the other player.\n\n You thus keep "+left+" points.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
+	  {progressText.text = "You decided to keep "+left+" points and give "+given+" points to the other player.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Press SPACE to continue."; } 
 	
 	  progressText.y = 20;
 	  progressText.x = 400 ;
@@ -1048,7 +1050,7 @@ function UpdateShareAmmount_Space(x)
 }
 function SendShareAmmount_Space()
 {
-
+  share = 1000 - share;
   socket.emit("message",'SHARE,'+ share + ',' + shareSteps);
 }
 
