@@ -667,7 +667,7 @@ function InitShareState_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been attributed role A.\n\n Therefore, you got the 1000 points. \n\n\n\n Indicate how you want to share them with the other player.\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
+  {progressText.text = "You have been attributed Role A.\n\n Therefore, you got the 1000 points. \n\n\n\n Indicate how you want to share them with the other player.\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
   progressText2.text = "\nPress space to validate.";
   }
   else 
@@ -741,7 +741,7 @@ function InitShareWait_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been attributed role B.\n \n Please wait while the other person is sharing the points.";}
+  {progressText.text = "You have been attributed Role B.\n \n Please wait while the other person is sharing the points.";}
   else 
   {progressText.text = stringsArray[str_waitShare];} 
   progressText.y = 20;
