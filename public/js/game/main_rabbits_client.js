@@ -52,7 +52,7 @@ var str_gameTutoRabbit = 15;
 
 //Strings Array
 var stringsArray = [];
-var score_value = 0;
+var score_value = 1000;
 
 //IO Socket
 var socket;
@@ -112,8 +112,8 @@ var enemiesY = 150;
 var enemiesX = 100;
 var enemiesX_spacing = 60;
 var enemiesY_spacing = 60;
-var lines = 1;  //must be changed in rabbits_coop_core.js also
-var number = 1; //must be changed in rabbits_coop_core.js also
+var lines = 0;  //must be changed in rabbits_coop_core.js also
+var number = 0; //must be changed in rabbits_coop_core.js also
 
 var keys=[];
 
@@ -185,7 +185,33 @@ function StartLoading()
   progressText2 = new createjs.Text("", "20px Arial", "#FFFFFF");
   progressText2.textAlign = "center";
   progressText2.y = 500;
-  progressText2.x = 400 ;
+  progressText2.x = 400;
+
+  slider1 = new createjs.Shape();
+  slider1.graphics.beginFill("red").drawRect(80,400,600,20);
+
+  slider2 = new createjs.Shape();
+  slider2.graphics.beginFill("white").drawRect(80,400,600,20);
+
+  me = new createjs.Text("", "20px Arial", "#FFFFFF");
+  me.textAlign = "center";
+  me.x = 50;
+  me.y = 400;
+
+  otherPlayer = new createjs.Text("", "20px Arial", "#FFFFFF");
+  otherPlayer.textAlign = "center";
+  otherPlayer.x = 730;
+  otherPlayer.y = 390;
+
+  meShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  meShare.x = 50;
+  meShare.y = 450;
+  meShare.textAlign = "center";
+
+  otherPlayerShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  otherPlayerShare.textAlign = "center";
+  otherPlayerShare.x = 730;
+  otherPlayerShare.y = 450; 
 
   score = new createjs.Text("Score : 0","20px Arial","#FFFFFF");
 
@@ -649,12 +675,12 @@ function InitShareState()
   share = -1;
   canEndGame = true;
   canSendAmount = true;
-  progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:"; 
+  progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:"; 
   progressText.y = 20;
   progressText.x = 400 ;
   progressText.textAlign = "center";
 
-  progressText2.text = "Press space to validate";
+  progressText2.text = "\nPress space to validate";
   progressText2.y = 500;
   progressText2.x = 400 ;
   progressText2.textAlign = "center";
@@ -673,10 +699,13 @@ function InitShareState()
   givenAmmount.x = 390;
   givenAmmount.y = 350;
   givenAmmount.width = 100;
-  givenAmmount.text = ""
+  givenAmmount.text = "";
 
-  slider = new createjs.Shape();
-  slider.graphics.beginFill("white").drawRect(100,400,600,20);
+  me.text = "ME";
+  otherPlayer.text = "OTHER\nPLAYER";
+
+  //slider = new createjs.Shape();
+  //slider.graphics.beginFill("white").drawRect(100,400,600,20);
   launcher.x = 100;
   launcher.y = 390;
   launcher.alpha = 0.0;
@@ -685,12 +714,16 @@ function InitShareState()
   arrow.y = 400;
   arrow.alpha = 0.0;
 
-  stage.addChild(slider);
-
+  stage.addChild(slider1);
+  stage.addChild(slider2);
+  stage.addChild(meShare);
+  stage.addChild(otherPlayerShare);
+  stage.addChild(me);
+  stage.addChild(otherPlayer);
   stage.addChild(launcher);
-  stage.addChild(maxAmmount);
-  stage.addChild(minAmmount);
-  stage.addChild(givenAmmount);
+  //stage.addChild(maxAmmount);
+  //stage.addChild(minAmmount);
+  //stage.addChild(givenAmmount);
   stage.addChild(progressText);
   stage.addChild(progressText2);
   stage.addChild(arrow);
@@ -796,7 +829,12 @@ function ClearLobbyState()
 }
 function ClearShareState()
 {
-  stage.removeChild(slider);
+  stage.removeChild(slider1);
+  stage.removeChild(slider2);
+  stage.removeChild(me);
+  stage.removeChild(meShare);
+  stage.removeChild(otherPlayer);
+  stage.removeChild(otherPlayerShare);
   stage.removeChild(launcher);
   stage.removeChild(maxAmmount);
   stage.removeChild(minAmmount);
@@ -906,7 +944,7 @@ function handleClick(e)
   if(state == state_share)
   {
 	var mousePos = getMousePos(canvas,e);
-	if ((mousePos.x >= 100) && (mousePos.x <= 700) && (mousePos.y >= 400) && (mousePos.y <= 420)) //if click on slider
+	if ((mousePos.x >= 80) && (mousePos.x <= 680) && (mousePos.y >= 400) && (mousePos.y <= 420)) //if click on slider
 	{
 		sendMouseInput(mousePos.x);
 		UpdateShareAmmount(mousePos.x);
@@ -941,25 +979,44 @@ function UpdateShareAmmount(x)
 	  {
 		share -= 10;
 		if(share < 0){share = 0;}
-		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+		arrow.x = parseInt((share / score_value) * 600 + 80) - 9;
 	  }
 	  else if (x == -2) // if right key is pressed - see above function handleKeyDown
 	  {
 		share += 10;
 		if(share > score_value){share = score_value;}
-		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+		arrow.x = parseInt((share / score_value) * 600 + 80) - 9;
 	  }
 	  else // if click
 	  {
 		  var X = x;
-		  if(X < 100){X = 100;}
-		  if(X > 700){X = 700;}
+		  if(X < 80){X = 80;}
+		  if(X > 680){X = 680;}
 		 
-		  share = parseInt(score_value * (X -100)/(600));
+		  share = parseInt(score_value * (X -80)/(600));
 		  share = Math.round(share / 10) * 10; // round to closest 10
-		  arrow.x= parseInt((share / score_value) * 600 + 100) - 9;
+		  arrow.x= parseInt((share / score_value) * 600 + 80) - 9;
 	  }
-	  console.log(share);
+      stage.removeChild(slider1);
+	  stage.removeChild(slider2);
+	  stage.update();
+	  slider1 = new createjs.Shape();
+	  slider1.graphics.beginFill("#E07265").drawRect(80,400,arrow.x+9-80,20);
+	  slider2 = new createjs.Shape();
+      slider2.graphics.beginFill("#BFCFFF").drawRect(arrow.x+9,400,680-arrow.x-9,20);
+	  me.color = "#E07265";
+	  otherPlayer.color = "#BFCFFF";
+	  meShare.text = share;
+	  meShare.color = "#E07265";
+	  meShare.x = 80 + (arrow.x + 9 - 80) / 2;
+	  
+	  otherPlayerShare.text = 1000 - share;
+      otherPlayerShare.color = "#BFCFFF";
+	  otherPlayerShare.x = arrow.x + 9 + (680 - arrow.x - 9) / 2;
+  	  stage.addChild(slider1);
+      stage.addChild(slider2);
+	  stage.addChild(arrow);
+	  stage.update();
 	  maxAmmount.text = score_value;
 	  minAmmount.text = 0;
 	  givenAmmount.text = share;

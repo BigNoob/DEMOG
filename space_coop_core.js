@@ -7,6 +7,10 @@ var UUID        = require('node-uuid');
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+var SKIP_GAME = false;
+var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
+var number = 10;  //must be changed in main_space_client.js also, 10 for real test
+
 var ship_speed = 6; //player's speed, for real xp = 6
 var ship_width = 16;
 var ship_height = 16;
@@ -38,8 +42,7 @@ var enemiesX_spacing = 32;
 var enemiesY_spacing = 32;
 var enemiesY = 150;
 var enemiesX = 300;
-var lines = 4;   //must be changed in main_space_client.js also, 4 for real test
-var number = 10;  //must be changed in main_space_client.js also, 10 for real test
+
 var points_per_enemy = 25;
 
 var state_game = 'STATE_GAME';
@@ -316,6 +319,11 @@ space_game_core.prototype.physic_update = function(deltaT)
     switch (this.state)
     {
         case state_game:
+			if (SKIP_GAME)
+			{
+				this.state = state_share;
+				this.p1.emit('message','SHARE_STATE');
+			}
             this.setDirections();
             this.moveEnemies();
             this.moveMother();

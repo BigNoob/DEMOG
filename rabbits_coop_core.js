@@ -11,6 +11,9 @@ var UUID        = require('node-uuid');
 //var balloon_width = 16;
 //var balloon_height = 16;
 
+var SKIP_GAME = false;
+var lines = 0;  //must be changed in main_rabbits_client.js also
+var number = 0;  //must be changed in main_rabbits_client.js also
 
 
 var shot_speed = 6;
@@ -39,8 +42,7 @@ var balloonsX_spacing = 60;
 var balloonsY_spacing = 60;
 var balloonsY = 150;
 var balloonsX = 100;
-var lines = 1;  //must be changed in main_rabbits_client.js also
-var number = 1;  //must be changed in main_rabbits_client.js also
+
 var points_per_enemy = 25;
 
 var launcherSpeed = 10;
@@ -198,6 +200,7 @@ var Rect = function(x,y,w,h)
 
 rabbits_game_core.prototype.beginInit = function()
 {
+
 	//console.log('inside begin init1');
     this.p1.emit("message",'COLOR,1'); //says what sprites client should use (so that the two clients control a rabbit of the same color)
 	if (!this.p1.player.result.timedOut)
@@ -221,6 +224,7 @@ rabbits_game_core.prototype.beginInit = function()
 };
 rabbits_game_core.prototype.beginGame = function()
 {
+
 
     this.p1.emit('message', 'GAME_START');
 	if (!this.p1.player.result.timedOut)
@@ -274,6 +278,11 @@ rabbits_game_core.prototype.physic_update = function(deltaT)
     switch (this.state)
     {
         case state_game:
+			if (SKIP_GAME)
+			{
+				this.state = state_share;
+				this.p1.emit('message','SHARE_STATE');
+			}
             this.setDirections();
             this.moveBalloons();
             this.moveMother();
@@ -487,6 +496,7 @@ rabbits_game_core.prototype.animMotherFall = function()
 
 rabbits_game_core.prototype.moveFlyer = function(deltaT)
 {
+
     var deltaX;
 
     if(this.state == state_reload)

@@ -52,7 +52,7 @@ var addy = 0;
 
 //Strings Array
 var stringsArray = [];
-var score_value = 0;
+var score_value = 1000;
 
 //IO Socket
 var socket;
@@ -202,20 +202,16 @@ function StartLoading_Space()
 
   slider2 = new createjs.Shape();
   slider2.graphics.beginFill("white").drawRect(80,400,600,20);
-  //slider2.graphics = new createjs.Graphics().beginFill("white").drawRect(100,400,500,20);
-  //slider2.setBounds(100,400,600,20);
 
   me = new createjs.Text("", "20px Arial", "#FFFFFF");
   me.textAlign = "center";
   me.x = 50;
   me.y = 400;
 
-
   otherPlayer = new createjs.Text("", "20px Arial", "#FFFFFF");
   otherPlayer.textAlign = "center";
   otherPlayer.x = 730;
   otherPlayer.y = 390;
-
 
   meShare = new createjs.Text("", "20px Arial", "#FFFFFF");
   meShare.x = 50;
