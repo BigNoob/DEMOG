@@ -75,6 +75,10 @@ var maxAmmount;
 var minAmmount;
 var givenAmmount;
 var slider;
+var me;
+var otherPlayer;
+var meShare;
+var otherPlayerShare;
 //Game Variables
 
 
@@ -193,6 +197,36 @@ function StartLoading_Space()
   progressText2.y = 500;
   progressText2.x = 400 ;
 
+  slider1 = new createjs.Shape();
+  slider1.graphics.beginFill("red").drawRect(80,400,600,20);
+
+  slider2 = new createjs.Shape();
+  slider2.graphics.beginFill("white").drawRect(80,400,600,20);
+  //slider2.graphics = new createjs.Graphics().beginFill("white").drawRect(100,400,500,20);
+  //slider2.setBounds(100,400,600,20);
+
+  me = new createjs.Text("", "20px Arial", "#FFFFFF");
+  me.textAlign = "center";
+  me.x = 50;
+  me.y = 400;
+
+
+  otherPlayer = new createjs.Text("", "20px Arial", "#FFFFFF");
+  otherPlayer.textAlign = "center";
+  otherPlayer.x = 730;
+  otherPlayer.y = 390;
+
+
+  meShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  meShare.x = 50;
+  meShare.y = 450;
+  meShare.textAlign = "center";
+
+  otherPlayerShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  otherPlayerShare.textAlign = "center";
+  otherPlayerShare.x = 730;
+  otherPlayerShare.y = 450; 
+
   score = new createjs.Text("Score : 0","20px Arial","#FFFFFF");
 
   maxAmmount= new createjs.Text("", "20px Arial", "#FFFFFF");
@@ -201,6 +235,7 @@ function StartLoading_Space()
 
   stage.addChild(progressText);
   stage.addChild(progressText2);
+  stage.addChild(me);
   stage.update();
   //Loading Manifest
   manifest = [
@@ -632,13 +667,13 @@ function InitShareState_Space()
   canEndGame = true;
   canSendAmount = true;
   if (xpGame == "dg")
-  {progressText.text = "You have been attributed role A.\n\n Therefore, you got the 1000 points. \n\n\n\n Indicate how you want to share them with the other player.\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
-  progressText2.text = "Press space to validate.";
+  {progressText.text = "You have been attributed role A.\n\n Therefore, you got the 1000 points. \n\n\n\n Indicate how you want to share them with the other player.\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
+  progressText2.text = "\nPress space to validate.";
   }
   else 
   {
-	progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
-	progressText2.text = "Press space to validate.";
+	progressText.text = stringsArray[str_doShare] + "\n\n\n\n\n\n\n\n\n\n\n Click on the scale below and use the arrows to adjust:";
+	progressText2.text = "\nPress space to validate.";
   }
   progressText.y = 20;
   progressText.x = 400;
@@ -665,24 +700,36 @@ function InitShareState_Space()
 
   shareSteps = "";
 
-  slider = new createjs.Shape();
-  slider.graphics.beginFill("white").drawRect(100,400,600,20);
+
+
   ship.x = 100;
   ship.y = 390;
   ship.alpha = 0.0;
+
+  me.text = "ME";
+  if (xpGame == "dg")
+  {otherPlayer.text = "OTHER\nPERSON";}
+  else 
+  {otherPlayer.text = "OTHER\nPLAYER";} 
+  
 
   arrow.x=100;
   arrow.y = 400;
   arrow.alpha = 0.0;
   
-  stage.addChild(slider);
+  stage.addChild(slider1);
+  stage.addChild(slider2);
   stage.addChild(ship);
-  stage.addChild(maxAmmount);
-  stage.addChild(minAmmount);
-  stage.addChild(givenAmmount);
+  //stage.addChild(maxAmmount);
+  //stage.addChild(minAmmount);
+  //stage.addChild(givenAmmount);
+  stage.addChild(meShare);
+  stage.addChild(otherPlayerShare);
   stage.addChild(progressText);
   stage.addChild(progressText2);
   stage.addChild(arrow);
+  stage.addChild(me);
+  stage.addChild(otherPlayer);
   stage.update();
   state = state_share;  
   //handleKeyDown_Space2();
@@ -808,7 +855,12 @@ function ClearShareWait_Space()
 
 function ClearShareState_Space()
 {
-  stage.removeChild(slider);
+  stage.removeChild(slider1);
+  stage.removeChild(slider2);
+  stage.removeChild(me);
+  stage.removeChild(meShare);
+  stage.removeChild(otherPlayer);
+  stage.removeChild(otherPlayerShare);
   stage.removeChild(ship);
   stage.removeChild(maxAmmount);
   stage.removeChild(minAmmount);
@@ -916,7 +968,7 @@ function handleClick(e)
   if(state == state_share)
   {
     var mousePos = getMousePos(canvas,e); // 100,400,600,20
-	if ((mousePos.x >= 100) && (mousePos.x <= 700) && (mousePos.y >= 400) && (mousePos.y <= 420)) //if click on slider
+	if ((mousePos.x >= 80) && (mousePos.x <= 680) && (mousePos.y >= 400) && (mousePos.y <= 420)) //if click on slider
 	{
 		sendMouseInput(mousePos.x);
     	UpdateShareAmmount_Space(mousePos.x);
@@ -952,24 +1004,45 @@ function UpdateShareAmmount_Space(x)
 	  {
 		share -= 10;
 		if(share < 0){share = 0;}
-		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+		arrow.x = parseInt((share / score_value) * 600 + 80) - 9;
 	  }
 	  else if (x == -2) // if right key is pressed - see above function handleKeyDown_Space
 	  {
 		share += 10;
 		if(share > score_value){share = score_value;}
-		arrow.x = parseInt((share / score_value) * 600 + 100) - 9;
+		arrow.x = parseInt((share / score_value) * 600 + 80) - 9;
 	  }
 	  else // if click
 	  {
 		  var X = x;
-		  if(X < 100){X = 100;}
-		  if(X > 700){X = 700;}
-		  share = parseInt(score_value * (X -100)/(600));
+		  if(X < 80){X = 80;}
+		  if(X > 680){X = 680;}
+		  share = parseInt(score_value * (X -80)/(600));
 		  share = Math.round(share / 10) * 10; // round to closest 10
-		  arrow.x= parseInt((share / score_value) * 600 + 100) - 9;
+		  arrow.x= parseInt((share / score_value) * 600 + 80) - 9;
 		  
 	  }
+
+      stage.removeChild(slider1);
+	  stage.removeChild(slider2);
+	  stage.update();
+	  slider1 = new createjs.Shape();
+	  slider1.graphics.beginFill("#E07265").drawRect(80,400,arrow.x+9-80,20);
+	  slider2 = new createjs.Shape();
+      slider2.graphics.beginFill("#BFCFFF").drawRect(arrow.x+9,400,680-arrow.x-9,20);
+	  me.color = "#E07265";
+	  otherPlayer.color = "#BFCFFF";
+	  meShare.text = share;
+	  meShare.color = "#E07265";
+	  meShare.x = 80 + (arrow.x + 9 - 80) / 2;
+	  
+	  otherPlayerShare.text = 1000 - share;
+      otherPlayerShare.color = "#BFCFFF";
+	  otherPlayerShare.x = arrow.x + 9 + (680 - arrow.x - 9) / 2;
+  	  stage.addChild(slider1);
+      stage.addChild(slider2);
+	  stage.addChild(arrow);
+	  stage.update();
 	  //console.log(share);
 	  maxAmmount.text = score_value;
 	  minAmmount.text = 0;
