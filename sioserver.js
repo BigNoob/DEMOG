@@ -337,22 +337,35 @@ game_server.prototype.matchClients = function()
 
 	for(var i = 0; i < this.clientsinLobby.length; i++) // starts game with AI if clients wait for too long in the lobby
 	{
-		if (this.clientsinLobby[i].player.result.currentGame == 1)
+		if (this.clientsinLobby[i].player.result.tabActive) //make sure the timeout only counts time being active
 		{
-			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby1) > this.experiment.timeout)
+			if (this.clientsinLobby[i].player.result.currentGame == 1)
 			{
-					//this.clientsinLobby[i].emit('message','EXIT');
-					this.clientsinLobby[i].player.result.timedOut = true;
-					this.createGame(this.clientsinLobby[i],"fake");
-			} 
-		} else if (this.clientsinLobby[i].player.result.currentGame == 2)
+				if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby1) > this.experiment.timeout)
+				{
+						//this.clientsinLobby[i].emit('message','EXIT');
+						this.clientsinLobby[i].player.result.timedOut = true;
+						this.createGame(this.clientsinLobby[i],"fake");
+				} 
+			} else if (this.clientsinLobby[i].player.result.currentGame == 2)
+			{
+				if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby2) > this.experiment.timeout)
+				{
+						//this.clientsinLobby[i].emit('message','EXIT');
+						this.clientsinLobby[i].player.result.timedOut = true;
+						this.createGame(this.clientsinLobby[i],"fake");
+				} 
+			}
+		} else //we don't count this waiting time for the timeout
 		{
-			if ((new Date().getTime() - this.clientsinLobby[i].player.result.WaitingTimeLobby2) > this.experiment.timeout)
+
+			if (this.clientsinLobby[i].player.result.currentGame == 1)
 			{
-					//this.clientsinLobby[i].emit('message','EXIT');
-					this.clientsinLobby[i].player.result.timedOut = true;
-					this.createGame(this.clientsinLobby[i],"fake");
-			} 
+				this.clientsinLobby[i].player.result.WaitingTimeLobby1 += 1000; //function matchClients is called every second  
+			} else if (this.clientsinLobby[i].player.result.currentGame == 2)
+			{
+				this.clientsinLobby[i].player.result.WaitingTimeLobby2 += 1000;
+			}
 		}
 		
 	}
