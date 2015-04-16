@@ -133,7 +133,6 @@ game_server.prototype.isClientIPknown = function(ip)
 	{
 		if(ip == this.clients[i].player.result.IPaddress)
 		{
-			console.log('ingame');
 			return true;
 		}
 	}
@@ -141,7 +140,6 @@ game_server.prototype.isClientIPknown = function(ip)
 	{
 		if(ip == this.clientsinLobby[i].player.result.IPaddress)
 		{
-			console.log('inlobby');
 			return true;
 		}
 	}

@@ -428,7 +428,7 @@ function CreateSIOServer()
     sio = io.listen(server);
     sio.configure(function (){
 		sio.set('transports', ['websocket']);
-        sio.set('log level', 3);
+        sio.set('log level', 0);
         sio.set('authorization', function (handshakeData, callback){
             callback(null , true);
         });
@@ -462,21 +462,23 @@ if(sio != undefined)
 		{
 			console.log('imposteur');
 			wrap_server.exit(client);
-		}
+		} else 
+		{
 	
-		// var sHeaders = client.handshake.headers; //this gives the domain name ie xxxx.herokuapp.com
+			// var sHeaders = client.handshake.headers; //this gives the domain name ie xxxx.herokuapp.com
 
-        client.userid = UUID();
-        client.player = new player();
-        client.player.InitResult(client.userid,undefined);
-        client.player.result.updateStatus("waiting for games");
-	   
-		//console.log(client.request.connection.remoteAddress); request undefined
-		//console.log(client.request.headers["x-forwarded-for"]); request undefined LOCALLY, but OK on Heroku. 
-		//console.log(client.headers["x-forwarded-for"]); headers undefined
+		    client.userid = UUID();
+		    client.player = new player();
+		    client.player.InitResult(client.userid,undefined);
+		    client.player.result.updateStatus("waiting for games");
+		   
+			//console.log(client.request.connection.remoteAddress); request undefined
+			//console.log(client.request.headers["x-forwarded-for"]); request undefined LOCALLY, but OK on Heroku. 
+			//console.log(client.headers["x-forwarded-for"]); headers undefined
 	
-		client.player.result.updateIP(clientIp);     
-		wrap_server.addClient(client);
+			client.player.result.updateIP(clientIp);     
+			wrap_server.addClient(client);
+		}
 
         client.on('updateTime', function (first){  
 			if (client.player.result.currentGame == 1)
