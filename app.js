@@ -481,30 +481,35 @@ if(sio != undefined)
 			wrap_server.addClient(client);
 		}
 
-        client.on('updateTime', function (first){  
-			if (client.player.result.currentGame == 1)
+        client.on('updateTime', function (first){ 
+
+			if (typeof client.player !== 'undefined')
 			{
-				if (first) 
+				if (client.player.result.currentGame == 1)
 				{
-					client.player.result.WaitingTimeLobby1 = new Date().getTime();
-				} else
+					if (first) 
+					{
+						client.player.result.WaitingTimeLobby1 = new Date().getTime();
+					} else
+					{
+						client.player.result.WaitingTimeLobby1 = (new Date().getTime()) - client.player.result.WaitingTimeLobby1;
+					}
+					//console.log('1: '+client.player.result.WaitingTimeLobby1);	
+					//console.log('2: '+client.player.result.WaitingTimeLobby2);	
+				} else if (client.player.result.currentGame == 2)
 				{
-					client.player.result.WaitingTimeLobby1 = (new Date().getTime()) - client.player.result.WaitingTimeLobby1;
+					if (first) 
+					{
+						client.player.result.WaitingTimeLobby2 = new Date().getTime();
+					} else
+					{
+						client.player.result.WaitingTimeLobby2 = (new Date().getTime()) - client.player.result.WaitingTimeLobby2;
+					}
+					//console.log('1: '+client.player.result.WaitingTimeLobby1);	
+					//console.log('2: '+client.player.result.WaitingTimeLobby2);
 				}
-				//console.log('1: '+client.player.result.WaitingTimeLobby1);	
-				//console.log('2: '+client.player.result.WaitingTimeLobby2);	
-			} else if (client.player.result.currentGame == 2)
-			{
-				if (first) 
-				{
-					client.player.result.WaitingTimeLobby2 = new Date().getTime();
-				} else
-				{
-					client.player.result.WaitingTimeLobby2 = (new Date().getTime()) - client.player.result.WaitingTimeLobby2;
-				}
-				//console.log('1: '+client.player.result.WaitingTimeLobby1);	
-				//console.log('2: '+client.player.result.WaitingTimeLobby2);
-			} 		
+			} 
+ 		
         });  
       
         client.on('playerLogin', function (m){
