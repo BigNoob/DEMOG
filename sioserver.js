@@ -130,7 +130,6 @@ game_server.prototype.isClientInGame = function(client)
 game_server.prototype.isClientIPknown = function(ip)
 {
 	console.log('là');
-	console.log(this.clients[0].player.result.IPaddress);
 	for(var i =0 ; i < this.clients.length; i ++)
 	{
 		if(ip == this.clients[i].player.result.IPaddress)
