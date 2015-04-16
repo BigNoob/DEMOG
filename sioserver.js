@@ -129,6 +129,8 @@ game_server.prototype.isClientInGame = function(client)
 };
 game_server.prototype.isClientIPknown = function(ip)
 {
+	console.log('là');
+	console.log(this.clients);
 	for(var i =0 ; i < this.clients.length; i ++)
 	{
 		if(ip == this.clients[i].IPaddress)

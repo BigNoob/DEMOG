@@ -460,7 +460,7 @@ if(sio != undefined)
 		console.log(clientIp);
 		if (wrap_server.isClientIPknown(clientIp))
 		{
-			console.log('icil');
+			console.log('imposteur');
 			wrap_server.exit(client);
 		}
 	
