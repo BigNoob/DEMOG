@@ -457,8 +457,10 @@ if(sio != undefined)
     sio.sockets.on('connection', function (client){
 		//var socketId = client.id;
 		var clientIp = client.handshake.headers["x-forwarded-for"]; //undefined locally, works on heroku but could not work with newer versions of Nodejs/expressjs
+		console.log(clientIp);
 		if (wrap_server.isClientIPknown(clientIp))
 		{
+			console.log('icil');
 			wrap_server.exit(client);
 		}
 	
