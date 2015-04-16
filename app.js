@@ -471,12 +471,13 @@ if(sio != undefined)
 		    client.player = new player();
 		    client.player.InitResult(client.userid,undefined);
 		    client.player.result.updateStatus("waiting for games");
-		   
+
 			//console.log(client.request.connection.remoteAddress); request undefined
 			//console.log(client.request.headers["x-forwarded-for"]); request undefined LOCALLY, but OK on Heroku. 
 			//console.log(client.headers["x-forwarded-for"]); headers undefined
 	
 			client.player.result.updateIP(clientIp);     
+
 			wrap_server.addClient(client);
 		}
 
@@ -507,7 +508,10 @@ if(sio != undefined)
         });  
       
         client.on('playerLogin', function (m){
-            client.player.result.amazonId = m;
+			if (typeof client.player !== 'undefined')
+			{
+            	client.player.result.amazonId = m;
+			}
         });
 
         client.on('ici', function (){
