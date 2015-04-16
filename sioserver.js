@@ -130,10 +130,10 @@ game_server.prototype.isClientInGame = function(client)
 game_server.prototype.isClientIPknown = function(ip)
 {
 	console.log('là');
-	console.log(this.clients);
+	console.log(this.clients[0].player.result.IPaddress);
 	for(var i =0 ; i < this.clients.length; i ++)
 	{
-		if(ip == this.clients[i].IPaddress)
+		if(ip == this.clients[i].player.result.IPaddress)
 		{
 			console.log('ingame');
 			return true;
@@ -141,7 +141,7 @@ game_server.prototype.isClientIPknown = function(ip)
 	}
 	for(var i =0 ; i < this.clientsinLobby.length; i ++)
 	{
-		if(ip == this.clientsinLobby[i].IPaddress)
+		if(ip == this.clientsinLobby[i].player.result.IPaddress)
 		{
 			console.log('inlobby');
 			return true;
