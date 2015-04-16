@@ -129,7 +129,6 @@ game_server.prototype.isClientInGame = function(client)
 };
 game_server.prototype.isClientIPknown = function(ip)
 {
-	console.log('là');
 	for(var i =0 ; i < this.clients.length; i ++)
 	{
 		if(ip == this.clients[i].player.result.IPaddress)
@@ -317,7 +316,7 @@ game_server.prototype.findPartner = function(game,client)
 
 game_server.prototype.exit = function(client)
 {	
-	client.emit('exit'); 
+	client.emit('message','EXIT'); 
 };
 
 //this function finds a selected core game server instance based one of its client
