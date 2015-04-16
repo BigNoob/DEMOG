@@ -198,19 +198,19 @@ function StartLoading()
   me = new createjs.Text("", "20px Arial", "#FFFFFF");
   me.textAlign = "center";
   me.x = 50;
-  me.y = 400;
+  me.y = 390;
 
   otherPlayer = new createjs.Text("", "20px Arial", "#FFFFFF");
   otherPlayer.textAlign = "center";
   otherPlayer.x = 730;
-  otherPlayer.y = 390;
+  otherPlayer.y = 380;
 
-  meShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  meShare = new createjs.Text("", "35px Arial", "#FFFFFF");
   meShare.x = 50;
   meShare.y = 450;
   meShare.textAlign = "center";
 
-  otherPlayerShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  otherPlayerShare = new createjs.Text("", "35px Arial", "#FFFFFF");
   otherPlayerShare.textAlign = "center";
   otherPlayerShare.x = 730;
   otherPlayerShare.y = 450; 
@@ -703,8 +703,8 @@ function InitShareState()
   givenAmmount.width = 100;
   givenAmmount.text = "";
 
-  me.text = "FOR ME";
-  otherPlayer.text = "FOR THE\nOTHER\nPLAYER";
+  me.text = "FOR\nYOU:";
+  otherPlayer.text = "FOR THE\nOTHER\nPLAYER:";
 
   //slider = new createjs.Shape();
   //slider.graphics.beginFill("white").drawRect(100,400,600,20);
@@ -1010,12 +1010,14 @@ function UpdateShareAmmount(x)
 	  otherPlayer.color = "#BFCFFF";
 	  meShare.text = share;
 	  meShare.color = "#E07265";
-	  meShare.x = 80 + (arrow.x + 9 - 80) / 2;
-	  
+	  //meShare.x = 80 + (arrow.x + 9 - 80) / 2;
+	  meShare.x = 50;
+
 	  otherPlayerShare.text = 1000 - share;
       otherPlayerShare.color = "#BFCFFF";
-	  otherPlayerShare.x = arrow.x + 9 + (680 - arrow.x - 9) / 2;
-  	  stage.addChild(slider1);
+	  //otherPlayerShare.x = arrow.x + 9 + (680 - arrow.x - 9) / 2;
+  	  otherPlayerShare.x = 730;
+	  stage.addChild(slider1);
       stage.addChild(slider2);
 	  stage.addChild(arrow);
 	  stage.update();
