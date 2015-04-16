@@ -127,6 +127,24 @@ game_server.prototype.isClientInGame = function(client)
 	}
 	return false;
 };
+game_server.prototype.isClientIPknown = function(ip)
+{
+	for(var i =0 ; i < this.clients.length; i ++)
+	{
+		if(ip == this.clients[i].IPaddress)
+		{
+			return true;
+		}
+	}
+	for(var i =0 ; i < this.clientsinLobby.length; i ++)
+	{
+		if(ip == this.clientsinLobby[i].IPaddress)
+		{
+			return true;
+		}
+	}
+	return false;
+};
 game_server.prototype.getClientIndexFromGame = function(client)
 {
 	for(var i =0 ; i < this.clients.length; i ++)
@@ -292,7 +310,11 @@ game_server.prototype.findPartner = function(game,client)
 		{
 			game.p1.emit('partnerLost');
 		}	
+};
 
+game_server.prototype.exit = function(client)
+{	
+	client.emit('exit'); 
 };
 
 //this function finds a selected core game server instance based one of its client

@@ -602,7 +602,7 @@ function InitLobbyState(data)
 	progressText.text = "Your partner has disconnected. \n\n Please wait for another person to join.";
   } else
   {
-	progressText.text = "Please wait for another person to join. \n\n Keep this tab active or the game will not start. ";
+	progressText.text = "Please wait for another person to join. \n\n Stay on this tab or the game will not start. ";
   }
   progressText.y = 20;
   progressText.x = 400 ;
@@ -703,8 +703,8 @@ function InitShareState()
   givenAmmount.width = 100;
   givenAmmount.text = "";
 
-  me.text = "ME";
-  otherPlayer.text = "OTHER\nPLAYER";
+  me.text = "FOR ME";
+  otherPlayer.text = "FOR THE\nOTHER\nPLAYER";
 
   //slider = new createjs.Shape();
   //slider.graphics.beginFill("white").drawRect(100,400,600,20);

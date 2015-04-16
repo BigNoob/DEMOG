@@ -208,19 +208,19 @@ function StartLoading_Space()
   me = new createjs.Text("", "20px Arial", "#FFFFFF");
   me.textAlign = "center";
   me.x = 50;
-  me.y = 400;
+  me.y = 390;
 
   otherPlayer = new createjs.Text("", "20px Arial", "#FFFFFF");
   otherPlayer.textAlign = "center";
   otherPlayer.x = 730;
-  otherPlayer.y = 390;
+  otherPlayer.y = 380;
 
-  meShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  meShare = new createjs.Text("", "35px Arial", "#FFFFFF");
   meShare.x = 50;
   meShare.y = 450;
   meShare.textAlign = "center";
 
-  otherPlayerShare = new createjs.Text("", "20px Arial", "#FFFFFF");
+  otherPlayerShare = new createjs.Text("", "35px Arial", "#FFFFFF");
   otherPlayerShare.textAlign = "center";
   otherPlayerShare.x = 730;
   otherPlayerShare.y = 450; 
@@ -580,10 +580,10 @@ function InitLobbyState_Space(data)
   {
 	if (xpGame == "dg")
 	{
-		progressText.text = "Please wait for another person to join. \n\n Keep this tab active or the task will not start.";
+		progressText.text = "Please wait for another person to join. \n\n Stay on this tab or the task will not start.";
 	} else
 	{
-		progressText.text = "Please wait for another player to join. \n\n Keep this tab active or the game will not start.";
+		progressText.text = "Please wait for another player to join. \n\n Stay on this tab or the game will not start.";
 	}
   }
   progressText.y = 20;
@@ -704,11 +704,11 @@ function InitShareState_Space()
   ship.y = 390;
   ship.alpha = 0.0;
 
-  me.text = "ME";
+  me.text = "FOR\nYOU:";
   if (xpGame == "dg")
-  {otherPlayer.text = "OTHER\nPERSON";}
+  {otherPlayer.text = "FOR THE\nOTHER\nPERSON:";}
   else 
-  {otherPlayer.text = "OTHER\nPLAYER";} 
+  {otherPlayer.text = "FOR THE\nOTHER\nPLAYER:";} 
   
 
   arrow.x=100;
@@ -1032,11 +1032,13 @@ function UpdateShareAmmount_Space(x)
 	  otherPlayer.color = "#BFCFFF";
 	  meShare.text = share;
 	  meShare.color = "#E07265";
-	  meShare.x = 80 + (arrow.x + 9 - 80) / 2;
-	  
+	  //meShare.x = 80 + (arrow.x + 9 - 80) / 2; //for putting the amount in the middle of the slider
+	  meShare.x = 50;
+
 	  otherPlayerShare.text = 1000 - share;
       otherPlayerShare.color = "#BFCFFF";
-	  otherPlayerShare.x = arrow.x + 9 + (680 - arrow.x - 9) / 2;
+	  //otherPlayerShare.x = arrow.x + 9 + (680 - arrow.x - 9) / 2;
+	  otherPlayerShare.x = 730;
   	  stage.addChild(slider1);
       stage.addChild(slider2);
 	  stage.addChild(arrow);
