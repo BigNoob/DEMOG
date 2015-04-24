@@ -143,6 +143,14 @@ game_server.prototype.isClientIPknown = function(ip)
 			return true;
 		}
 	}
+	for(var i =0 ; i < this.experiment.result.playerResults.length; i ++)
+	{
+		if(ip == this.experiment.result.playerResults[i].IPaddress)
+		{
+			return true;
+		}
+	}
+
 	return false;
 };
 game_server.prototype.getClientIndexFromGame = function(client)
