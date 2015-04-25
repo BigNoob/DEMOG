@@ -52,6 +52,7 @@ var state_endAnim = 'STATE_ENDANIM';
 var state_share = 'STATE_SHARE';
 var state_reload = 'STATE_RELOAD';
 var state_fall = 'STATE_FALL';
+var canMoveAI2 = true;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //    Space Invaders Game Core Constructor
@@ -66,6 +67,7 @@ var rabbits_game_core = function(maxIter)
     this.maxIter = maxIter;
     this.isEnded = false;
 	this.canMoveAI = false;
+
 	this.world = 
 	{
         width : 800,
@@ -288,7 +290,6 @@ rabbits_game_core.prototype.physic_update = function(deltaT)
             this.moveMother();
             this.moveFlyer(deltaT); 
             this.checkCollisions();
-			
 			if (this.p1.player.result.timedOut && this.launcherNumber == 2 && (new Date().getTime() - this.loopNumber) > this.loopThreshold) 
 			{	
 				this.loopNumber = new Date().getTime();
@@ -301,7 +302,7 @@ rabbits_game_core.prototype.physic_update = function(deltaT)
 					this.loopThreshold = Math.floor((Math.random() * 800) + 400);
 				}
 			}
-			if (this.p1.player.result.timedOut && this.launcherNumber == 2 && this.canMoveAI)
+			if (this.p1.player.result.timedOut && this.launcherNumber == 2 && this.canMoveAI && canMoveAI2)
 			{
 				this.moveAI();
 			}
@@ -541,6 +542,7 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
 				this.loopThreshold = Math.floor((Math.random() * 1000) + 700);
 				this.canMoveAI = false;
 			}
+
             //console.log(this.launcherNumber);
             this.inAirTime = 0;
 			deltaX = (this.launcher.x + this.launcher.w/2)-(this.flyer.x+this.flyer.w/2); //distance between the middle of the seesaw and the middle of the flyer
@@ -573,6 +575,9 @@ rabbits_game_core.prototype.moveFlyer = function(deltaT)
 						this.loopNumber = new Date().getTime();
 						this.loopThreshold = 10000; // we allow the AI to move in one step
 						this.canMoveAI = true;
+						canMoveAI2 = false;
+						setTimeout(function(){canMoveAI2 = true},1000); //necessary to use a variable outside of this. for the timeout to work
+
 					}						
                     this.state = state_reload;
                     //this.p1.emit('message',state_reload);
