@@ -56,6 +56,7 @@ var PlayerResult = function()
 PlayerResult.prototype.init = function(userid, amazonId)
 {
 	this.amazonId = amazonId;
+	this.totalScore = -1;
 	this.userid = userid;
 	this.firstConnection = ISODateString(new Date());
 	this.lostPartner = -1;

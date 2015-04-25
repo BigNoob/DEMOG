@@ -2,21 +2,21 @@
 //  										DE-MOG
 // 					Dictator Experiment through Multiplayer Online Game
 //
-// Date: 2014/06/18
-// Version: 0.5
-// Author: Olivier Allouard
-// Website: http://running-panda.fr
-// Contact: olivier.allouard@gmail.com
+// Date: 2015/06/01
+// Version: 1.0
+// Author: Olivier Allouard and Stéphane Debove
+// Website: http://running-panda.fr and http://stephanedebove.net
+// Contact: olivier.allouard@gmail.com or http://stephanedebove.net/contact
 // Description:
 //					The Express server handles passing the content to the browser. It's the router
 //					The Socket.io server handles real time communications between clients and server
-// Nodejs version used at the first time of developping: 0.6.12
-// npm version used first: 1.1.4
+// 					Nodejs version used at the first time of developping: 0.6.12
+// 					npm version used first: 1.1.4
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright © Olivier Allouard
+// Copyright © Olivier Allouard and Stéphane Debove
 //
 //Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 //to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -113,7 +113,7 @@ var mailSenderPassw = 'wivyxuvozz';                           //password of the 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
 var 
-    current_experiment = CreateExperiment('dg_expe',"web",1,"dg","en",90),
+    current_experiment = CreateExperiment('dg_expe',"web",1,"space_coop","en",90),
     current_experiment_space = CreateExperiment('space_expe',"web",1,"space_coop","en",10),
     current_experiment_rabbits = CreateExperiment('rabbits_expe',"web",1,"rabbits","en",10),
     experimentsList = [current_experiment,current_experiment_space,current_experiment_rabbits];
