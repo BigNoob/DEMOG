@@ -1047,7 +1047,7 @@ function UpdateShareAmmount_Space(x)
 	  maxAmmount.text = score_value;
 	  minAmmount.text = 0;
 	  givenAmmount.text = share;
-	  shareSteps += share + '-';
+	  shareSteps += (1000 - share) + '-';
   }
 }
 function SendShareAmmount_Space()

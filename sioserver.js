@@ -33,7 +33,7 @@ module.exports = global.game_server = game_server;
 game_server.prototype.initServer = function(xp)
 {
 	this.experiment = xp;
-	this.experiment.initResults();
+	this.experiment.initResults(this.experiment.xpName,this.experiment.xpType,this.experiment.xpMaxIter,this.experiment.xpGame,this.experiment.launchDate);
 	//this.updateClient('ALL');
 };
 game_server.prototype.update = function()
@@ -414,11 +414,11 @@ game_server.prototype.checkEndedGames = function()
 	        //this.updateClient(this.games[i].p2);
 			if (this.experiment.xpGame == "rabbits")
 			{
-	        	this.experiment.addGameResultsRabbits(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2,this.games[i].p1MissedSeesaw,this.games[i].p2MissedSeesaw,this.games[i].p1DistanceSeesaw,this.games[i].p2DistanceSeesaw,this.games[i].p1BalloonsPopped,this.games[i].p2BalloonsPopped, this.games[i].gameLength,this.games[i].shareSteps);
+	        	this.experiment.addGameResultsRabbits(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2,this.games[i].p1MissedSeesaw,this.games[i].p2MissedSeesaw,this.games[i].p1DistanceSeesaw,this.games[i].p2DistanceSeesaw,this.games[i].p1BalloonsPopped,this.games[i].p2BalloonsPopped, this.games[i].gameLength,this.games[i].shareSteps,this.games[i].p1.player.result.amazonId, this.games[i].p2.player.result.amazonId, this.games[i].sharer.player.result.amazonId);
 			}
 			else 
 			{
-				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength, this.games[i].gotMothership,this.games[i].shareSteps);
+				this.experiment.addGameResultsSpace(this.games[i].id, this.games[i].score, this.games[i].p1.userid, this.games[i].p2.userid, this.games[i].sharer.userid, this.games[i].given, this.games[i].kept,this.games[i].inputsP1,this.games[i].inputsP2, this.games[i].p1ShotsFired, this.games[i].p2ShotsFired,  this.games[i].p1EnemyKilled, this.games[i].p2EnemyKilled, this.games[i].p1DistanceToMothership, this.games[i].p2DistanceToMothership, this.games[i].gameLength, this.games[i].gotMothership,this.games[i].shareSteps,this.games[i].p1.player.result.amazonId, this.games[i].p2.player.result.amazonId, this.games[i].sharer.player.result.amazonId);
 			
 			}
 			if (this.games[i].p1.player.result.timedOut)

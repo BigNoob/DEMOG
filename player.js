@@ -1,3 +1,13 @@
+function ISODateString(d){
+    function pad(n){return n<10 ? '0'+n : n}
+    return d.getUTCFullYear()+'-'
+    + pad(d.getUTCMonth()+1)+'-'
+    + pad(d.getUTCDate())+'T'
+    + pad(d.getUTCHours())+':'
+    + pad(d.getUTCMinutes())+':'
+    + pad(d.getUTCSeconds())+'Z'
+}
+
 var player = function()
 {
 	this.score = 0;
@@ -28,11 +38,10 @@ player.prototype.SetGameResultSpace = function(gameid, isSharer,total, given, ke
 
 var PlayerResult = function()
 {
-	this.userid;
 	this.amazonId;
+	this.userid;
+	this.firstConnection;
 	this.status;
-	this.totalScore;
-	this.gameLog;
 	this.lostPartner;
 	this.IPaddress;
 	this.WaitingTimeLobby1;
@@ -41,14 +50,14 @@ var PlayerResult = function()
 	this.timedOut;
 	this.tabActive;
 	this.switchTabNum;
+	this.gameLog;
 };
 
 PlayerResult.prototype.init = function(userid, amazonId)
 {
-	this.userid = userid;
 	this.amazonId = amazonId;
-	this.totalScore = -1;
-	this.gameLog = [];
+	this.userid = userid;
+	this.firstConnection = ISODateString(new Date());
 	this.lostPartner = -1;
 	this.IPaddress = -1;
 	this.WaitingTimeLobby1 = new Date().getTime();
@@ -57,6 +66,7 @@ PlayerResult.prototype.init = function(userid, amazonId)
 	this.timedOut = false;
 	this.tabActive = true;
 	this.switchTabNum = 0;
+	this.gameLog = [];
 };
 
 PlayerResult.prototype.updateStatus = function(status)
@@ -100,7 +110,7 @@ var GameResultRabbits = function(gameid,repetition, isSharer,total, given, kept,
 	this.isP1 = isP1;
 };
 
-var GameResultSpace = function(gameid,repetition, isSharer,total, given, kept, presentScore, shotsFired, enemyKilled, distanceToMothership, gameLength, isP1, gotMothership)
+var GameResultSpace = function(gameid, repetition, isSharer,total, given, kept, presentScore, shotsFired, enemyKilled, distanceToMothership, gameLength, isP1, gotMothership)
 {
 	this.gameid = gameid;
 	this.repetition = repetition;

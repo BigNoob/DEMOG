@@ -1,4 +1,13 @@
 
+function ISODateString(d){
+    function pad(n){return n<10 ? '0'+n : n}
+    return d.getUTCFullYear()+'-'
+    + pad(d.getUTCMonth()+1)+'-'
+    + pad(d.getUTCDate())+'T'
+    + pad(d.getUTCHours())+':'
+    + pad(d.getUTCMinutes())+':'
+    + pad(d.getUTCSeconds())+'Z'
+}
 
 var Experiment = function (xpName, xpType, xpMaxIter,xpGame,lang,timeout)
 {
@@ -10,7 +19,7 @@ var Experiment = function (xpName, xpType, xpMaxIter,xpGame,lang,timeout)
 	this.xpType = undefined;
 	this.xpGame = undefined;
 	this.isRunning = false;
-	this.launchDate = undefined;
+	this.launchDate = ISODateString(new Date());
 	this.timeout = timeout * 1000; // to get timeout in ms
 	this.language = this.LANG[1];
 
@@ -55,7 +64,7 @@ Experiment.prototype.generateLink = function ()
 Experiment.prototype.startXP = function()
 {
 	this.isRunning = true;
-	this.launchDate = new Date();
+	this.launchDate = ISODateString(new Date());
 	this.initResults(this.xpName, this.xpType, this.xpMaxIter, this.xpGame, this.launchDate);
 };
 
@@ -103,14 +112,14 @@ Experiment.prototype.addPlayerResults = function(playerResults)
 {
 	this.result.playerResults.push(playerResults);
 };
-Experiment.prototype.addGameResultsRabbits = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps)
+Experiment.prototype.addGameResultsRabbits = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId)
 {
-	this.result.gameResults.push(new gameResultRabbits(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps));
+	this.result.gameResults.push(new gameResultRabbits(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId));
 };
 
-Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps)
+Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1amazonId, p2amazonId, proposerMturkId)
 {
-	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps));
+	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1amazonId, p2amazonId, proposerMturkId));
 };
 
 Experiment.prototype.returnOldCLientsNum = function()
@@ -138,13 +147,16 @@ function XPResults()
 	
 }
 
-var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1MissedSeesaw, p2MissedSeesaw, p1DistanceSeesaw, p2DistanceSeesaw, p1BalloonsPopped, p2BalloonsPopped, gameLength, shareSteps)
+var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1MissedSeesaw, p2MissedSeesaw, p1DistanceSeesaw, p2DistanceSeesaw, p1BalloonsPopped, p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId)
 {
 	this.gameId = gameId;
-	this.gameScore = gameScore;
-	this.player1 = player1;
-	this.player2 = player2;
-	this.sharer = sharer;
+	this.date = ISODateString(new Date());
+	this.p1Id = player1;
+	this.p2Id = player2;
+	this.p1MturkId = p1AmazonId;
+	this.p2MturkId = p2AmazonId;
+	this.proposerId = sharer;
+	this.proposerMturkId = proposerMturkId; 
 	this.given = given;
 	this.kept = kept;
 	this.p1Input = inputP1;
@@ -159,13 +171,16 @@ var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, gi
     this.shareSteps = shareSteps;
 };
 
-var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps)
+var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId)
 {
 	this.gameId = gameId;
-	this.gameScore = gameScore;
-	this.player1 = player1;
-	this.player2 = player2;
-	this.sharer = sharer;
+	this.date = ISODateString(new Date());
+	this.p1Id = player1;
+	this.p2Id = player2;
+	this.p1MturkId = p1AmazonId;
+	this.p2MturkId = p2AmazonId;
+	this.proposerId = sharer;
+	this.proposerMturkId = proposerMturkId; 
 	this.given = given;
 	this.kept = kept;
 	this.p1Input = inputP1;
