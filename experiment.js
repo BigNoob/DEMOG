@@ -159,8 +159,6 @@ var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, gi
 	this.proposerMturkId = proposerMturkId; 
 	this.given = given;
 	this.kept = kept;
-	this.p1Input = inputP1;
-	this.p2Input = inputP2;
 	this.p1MissedSeesaw = p1MissedSeesaw;
 	this.p2MissedSeesaw = p2MissedSeesaw;
 	this.p1DistanceSeesaw = p1DistanceSeesaw;
@@ -169,6 +167,8 @@ var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, gi
 	this.p2BalloonsPopped = p2BalloonsPopped;
 	this.gameLength = gameLength;
     this.shareSteps = shareSteps;
+	this.p1Input = inputP1;
+	this.p2Input = inputP2;
 };
 
 var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId)
@@ -183,8 +183,6 @@ var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, give
 	this.proposerMturkId = proposerMturkId; 
 	this.given = given;
 	this.kept = kept;
-	this.p1Input = inputP1;
-	this.p2Input = inputP2;
 	this.p1ShotsFired = p1ShotsFired;
 	this.p2ShotsFired = p2ShotsFired;
 	this.p1EnemyKilled = p1EnemyKilled;
@@ -194,6 +192,8 @@ var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, give
 	this.gameLength = gameLength;
 	this.gotMothership = gotMothership;
     this.shareSteps = shareSteps;
+	this.p1Input = inputP1;
+	this.p2Input = inputP2;
 };
 
 if( 'undefined' != typeof global ) {
