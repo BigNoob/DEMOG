@@ -18,8 +18,8 @@ var ship_height = 16;
 var recordInputEach = 250;
 
 var canfire1 = true;
-var canfire2 = true;
-var canAImove = true;
+var canfire2 = false;
+var canAImove = false;
 var cooldown = 240; //240
 
 var writeResults1 = true;
@@ -264,6 +264,10 @@ space_game_core.prototype.beginInit = function()
 	else
 	{
 		this.beginGame();
+		setTimeout(function(){
+			canAImove = true;
+			canfire2 = true;
+		},2000);
 	}
     
 	
