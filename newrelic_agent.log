@@ -2007,3 +2007,7 @@
 {"name":"newrelic","hostname":"stephane-Dell-System-XPS-L321X","pid":11708,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2015-03-20T15:09:35.135Z","v":0}
 {"name":"newrelic","hostname":"stephane-Dell-System-XPS-L321X","pid":11708,"component":"new_relic_response","level":30,"msg":"Reporting to: https://rpm.newrelic.com/accounts/700671/applications/4583090","time":"2015-03-20T15:09:37.937Z","v":0}
 {"name":"newrelic","hostname":"stephane-Dell-System-XPS-L321X","pid":11708,"component":"collector_api","level":30,"msg":"Connected to collector-103.newrelic.com:443 with agent run ID 1575362332.","time":"2015-03-20T15:09:37.940Z","v":0}
+{"name":"newrelic","hostname":"stephane-Dell-System-XPS-L321X","pid":13921,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2015-04-28T18:32:57.585Z","v":0}
+{"name":"newrelic","hostname":"stephane-Dell-System-XPS-L321X","pid":13956,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2015-04-28T18:34:21.520Z","v":0}
+{"name":"newrelic","hostname":"stephane-Dell-System-XPS-L321X","pid":13956,"component":"collector_api","level":40,"msg":"No connection has been established to New Relic after 4 attempts.","time":"2015-04-28T18:35:25.244Z","v":0}
+{"name":"newrelic","hostname":"stephane-Dell-System-XPS-L321X","pid":13972,"level":30,"msg":"Starting New Relic for Node.js connection process.","time":"2015-04-28T18:36:02.667Z","v":0}

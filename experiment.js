@@ -112,14 +112,14 @@ Experiment.prototype.addPlayerResults = function(playerResults)
 {
 	this.result.playerResults.push(playerResults);
 };
-Experiment.prototype.addGameResultsRabbits = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId)
+Experiment.prototype.addGameResultsRabbits = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId, responderMturkId)
 {
-	this.result.gameResults.push(new gameResultRabbits(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId));
+	this.result.gameResults.push(new gameResultRabbits(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2,p1MissedSeesaw,p2MissedSeesaw,p1DistanceSeesaw,p2DistanceSeesaw, p1BalloonsPopped,p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId, responderMturkId));
 };
 
-Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1amazonId, p2amazonId, proposerMturkId)
+Experiment.prototype.addGameResultsSpace = function(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1amazonId, p2amazonId, proposerMturkId, responderMturkId)
 {
-	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1amazonId, p2amazonId, proposerMturkId));
+	this.result.gameResults.push(new gameResultSpace(gameId, gamescore, player1, player2, sharer, given, kept,inputP1,inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1amazonId, p2amazonId, proposerMturkId, responderMturkId));
 };
 
 Experiment.prototype.returnOldCLientsNum = function()
@@ -147,7 +147,7 @@ function XPResults()
 	
 }
 
-var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1MissedSeesaw, p2MissedSeesaw, p1DistanceSeesaw, p2DistanceSeesaw, p1BalloonsPopped, p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId)
+var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1MissedSeesaw, p2MissedSeesaw, p1DistanceSeesaw, p2DistanceSeesaw, p1BalloonsPopped, p2BalloonsPopped, gameLength, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId, responderMturkId)
 {
 	this.gameId = gameId;
 	this.date = ISODateString(new Date());
@@ -156,7 +156,8 @@ var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, gi
 	this.p1MturkId = p1AmazonId;
 	this.p2MturkId = p2AmazonId;
 	this.proposerId = sharer;
-	this.proposerMturkId = proposerMturkId; 
+	this.proposerMturkId = proposerMturkId;
+	this.responderMturkId = responderMturkId; 
 	this.given = given;
 	this.kept = kept;
 	this.p1MissedSeesaw = p1MissedSeesaw;
@@ -171,7 +172,7 @@ var gameResultRabbits = function(gameId, gameScore, player1, player2, sharer, gi
 	this.p2Input = inputP2;
 };
 
-var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId)
+var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, given, kept, inputP1, inputP2, p1ShotsFired, p2ShotsFired, p1EnemyKilled, p2EnemyKilled, p1DistanceToMothership, p2DistanceToMothership, gameLength, gotMothership, shareSteps, p1AmazonId, p2AmazonId, proposerMturkId, responderMturkId)
 {
 	this.gameId = gameId;
 	this.date = ISODateString(new Date());
@@ -181,6 +182,7 @@ var gameResultSpace = function(gameId, gameScore, player1, player2, sharer, give
 	this.p2MturkId = p2AmazonId;
 	this.proposerId = sharer;
 	this.proposerMturkId = proposerMturkId; 
+	this.responderMturkId = responderMturkId; 
 	this.given = given;
 	this.kept = kept;
 	this.p1ShotsFired = p1ShotsFired;
