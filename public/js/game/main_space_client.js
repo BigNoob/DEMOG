@@ -123,6 +123,7 @@ var keys=[];
 var KEYCODE_LEFT = 37;
 var KEYCODE_RIGHT = 39;
 var KEYCODE_SPACE = 32;
+var KEYCODE_CTRL = 17;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -151,6 +152,9 @@ function Main_Space(type,game) {
 
   window.addEventListener("keydown", function (event) {
       keys[event.keyCode] = true;
+	  if(event.keyCode == 32) {
+        	event.preventDefault(); //prevents scrolling down when pressing space to shoot
+      }
 	  if (state != state_game)
 	  {
 		handleKeyDown_Space2();
@@ -911,6 +915,7 @@ function handleKeyDown_Space2()
         tmpRight = 1;
     }
     if (keys[KEYCODE_SPACE]) {
+	//if (keys[KEYCODE_CTRL]) {
 	  tmpSpace = 1;      
     }
     if (tmpLeft+tmpRight+tmpSpace != 0) {
