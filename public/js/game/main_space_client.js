@@ -152,9 +152,9 @@ function Main_Space(type,game) {
 
   window.addEventListener("keydown", function (event) {
       keys[event.keyCode] = true;
-	  if(event.keyCode == 32) {
-        	event.preventDefault(); //prevents scrolling down when pressing space to shoot
-      }
+	  //if(event.keyCode == 32) {
+      //  	event.preventDefault(); //prevents scrolling down when pressing space to shoot
+      //}
 	  if (state != state_game)
 	  {
 		handleKeyDown_Space2();
