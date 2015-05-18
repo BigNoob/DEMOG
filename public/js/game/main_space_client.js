@@ -153,7 +153,7 @@ function Main_Space(type,game) {
   window.addEventListener("keydown", function (event) {
       keys[event.keyCode] = true;
 	  //if(event.keyCode == 32) {
-      //  	event.preventDefault(); //prevents scrolling down when pressing space to shoot
+      //  	event.preventDefault(); //prevents scrolling down when pressing space to shoot, but some users report impossible to shoot sometimes?
       //}
 	  if (state != state_game)
 	  {
